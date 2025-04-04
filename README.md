@@ -1,4 +1,4 @@
-# Trabajo Practico Desarrollo de Software <p> - Aplicacion Backend
+# Trabajo Practico Desarrollo de Software <p> - Aplicacion Frontend
 ## Profesores 
 - Meca, Adrian  
 - Tabacman, Ricardo
