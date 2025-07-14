@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useFetch } from "../reducers/UseFetch";
 
 interface Evento {
     id: number;
@@ -11,50 +11,28 @@ interface Evento {
     tags: string[];
 }
 
-interface ApiResponse {
-    message: string;
-    data: Evento[];
-}
-
-const ListadoEventos = () => {
-    const [eventos, setEventos] = useState<Evento[]>([]);
-    const [loading, setLoading] = useState<boolean>(true);
-    const [error, setError] = useState<string | null>(null);
-
-    useEffect(() => {
-        const fetchEventos = async () => {
-            try {
-                const response = await fetch("http://localhost:3000/api/evento");
-                if (!response.ok) throw new Error("Error al obtener eventos");
-
-                const json: ApiResponse = await response.json();
-                setEventos(json.data);
-            } catch (err: any) {
-                setError(err.message);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchEventos();
-    }, []);
+const EventosList = () => {
+    const { data: eventos, loading, error } = useFetch<Evento[]>("http://localhost:3000/api/evento");
 
     if (loading) return <p>Cargando eventos...</p>;
     if (error) return <p>Error: {error}</p>;
 
     return (
-        <>
-            {eventos.map(evento => (
-                <ul key={evento.id}>
-                    <h3>{evento.titulo}</h3>
-                    <p>{evento.descripcion}</p>
-                    <p>Desde: {new Date(evento.horaDesde).toLocaleString()}</p>
-                    <p>Hasta: {new Date(evento.horaHasta).toLocaleString()}</p>
-                    <p>Estado: {evento.estado}</p>
-                </ul>
-            ))}
-        </>
+        <div>
+            <h2>Lista de Eventos</h2>
+            <ul>
+                {eventos?.map(evento => (
+                    <li key={evento.id}>
+                        <h3>{evento.titulo}</h3>
+                        <p>{evento.descripcion}</p>
+                        <p>Desde: {new Date(evento.horaDesde).toLocaleString()}</p>
+                        <p>Hasta: {new Date(evento.horaHasta).toLocaleString()}</p>
+                        <p>Estado: {evento.estado}</p>
+                    </li>
+                ))}
+            </ul>
+        </div>
     );
 };
 
-export default ListadoEventos
+export default EventosList;
