@@ -1,4 +1,6 @@
 import { useFetch } from "../reducers/UseFetch";
+import 'bootstrap/dist/css/bootstrap.min.css'
+import imagenEvento from '../assets/eventoStock.jpg';
 
 interface Evento {
     id: number;
@@ -18,19 +20,18 @@ const EventosList = () => {
     if (error) return <p>Error: {error}</p>;
 
     return (
-        <div>
-            <h2>Lista de Eventos</h2>
-            <ul>
-                {eventos?.map(evento => (
-                    <li key={evento.id}>
-                        <h3>{evento.titulo}</h3>
-                        <p>{evento.descripcion}</p>
-                        <p>Desde: {new Date(evento.horaDesde).toLocaleString()}</p>
-                        <p>Hasta: {new Date(evento.horaHasta).toLocaleString()}</p>
-                        <p>Estado: {evento.estado}</p>
-                    </li>
-                ))}
-            </ul>
+        <div className="row row-cols-1 row-cols-md-3 g-4">
+            {eventos?.map(evento => (
+                <div key={evento.id} className="col">
+                    <div className="card h-100">
+                        <img src={imagenEvento} className="card-img-top" />
+                        <div className="card-body">
+                            <h5 className="card-title">{evento.titulo}</h5>
+                            <p className="card-text">{evento.descripcion}</p>
+                        </div>
+                    </div>
+                </div>
+            ))}
         </div>
     );
 };
