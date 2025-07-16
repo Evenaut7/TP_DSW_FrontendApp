@@ -1,10 +1,10 @@
-import './App.css'
+import './styles/App.css'
 import ListadoEventos from './components/ListadoEventos'
 
 function App() {
 
   return (
-    <ListadoEventos />
+    <ListadoEventos/>
   )
 }
 
