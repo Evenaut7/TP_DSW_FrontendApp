@@ -1,0 +1,20 @@
+.navbar {
+  background-color:#413933;
+}
+
+.navTitle{
+  color:blanchedalmond;
+  font-weight: 800;
+  font-size:x-large;
+  font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
+.navTitle:hover {
+  color:rgb(255, 243, 224);
+}
+
+.navLetters {
+  color:blanchedalmond;
+  font-size:large;
+  font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}

@@ -1,14 +1,9 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './styles/index.css'
-import App from './App.tsx'
-import { createBrowserRouter, RouterProvider } from 'react-router-dom'
-import NotFoundPage from './pages/NotFoundPage.tsx'
+import { RouterProvider } from 'react-router-dom'
 
-const router = createBrowserRouter([
-  {path: "/", element: <App/>},
-  {path: "*", element: <NotFoundPage/>}
-])
+import { router } from './router.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

@@ -1,0 +1,23 @@
+.homeTopDiv {
+  background-color: #dbd3ca;
+  height: 30%;
+  display: grid;
+  place-items: center;
+} 
+
+.homeTitleDiv{
+  padding-top: 5%;
+  padding-bottom: 1%;
+  align-self: center;
+}
+
+.homeTitle{
+  color:#413933;
+  font-size: 500%;
+  font-weight: 1000;
+  font-family:'Times New Roman', Times, serif;
+}
+
+.homeBottomDiv {
+  margin: 1%;
+}

@@ -13,7 +13,7 @@ interface Evento {
     tags: string[];
 }
 
-const EventosList = () => {
+const LisatadoEventos = () => {
     const { data: eventos, loading, error } = useFetch<Evento[]>("http://localhost:3000/api/evento");
 
     if (loading) return <p>Cargando eventos...</p>;
@@ -36,4 +36,4 @@ const EventosList = () => {
     );
 };
 
-export default EventosList;
+export default LisatadoEventos;
