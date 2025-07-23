@@ -1,0 +1,25 @@
+.topDivLocalidades{
+  background-color: #dbd3ca;
+   ;
+}
+
+.leftTopDivLocalidades{
+  allign-items: center;
+  width: 35%;
+  padding: 10px;
+}
+
+.titleLocalidades{
+  border-color: brown;
+  border-style: solid;
+  border-width: 2px;
+  text-align: center;
+}
+
+.descriptionLocalidades{
+  background-color: #aca69e;
+  text-align: justify;
+  padding: 10px;
+  margin-top: 10px;
+  height: 200px;
+}
