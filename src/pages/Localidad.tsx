@@ -4,6 +4,8 @@ import { useFetchById } from "../reducers/UseFetchByID.ts"
 import "../styles/Localidad.css"
 import 'bootstrap/dist/css/bootstrap.min.css'
 import imagenlocalidad from "../assets/rosario.webp";
+import imagenenEventoStock from "../assets/eventoStock.jpg";
+import { useState } from "react";
 
 interface Localidad {
   id: number;
@@ -14,8 +16,17 @@ interface Localidad {
   provincia: number;
 }
 
+const imagenes = [
+  imagenlocalidad,
+  imagenenEventoStock,
+  imagenlocalidad,
+  imagenenEventoStock,
+  ];
+
+
 const Localidad = () => {
   
+  const [indice, setIndice] = useState(0);
   const { id } = useParams<{ id: string }>();
 
   // Transformamos id a number o null
@@ -30,6 +41,16 @@ const Localidad = () => {
   if (error) return <p>Error: {error}</p>;
   if (!localidad) return <p>No se encontró la localidad</p>;
 
+
+  const siguiente = () => {
+    setIndice((indice + 1) % imagenes.length);
+  };
+
+  const anterior = () => {
+    setIndice((indice - 1 + imagenes.length) % imagenes.length);
+  };
+
+
   return (
     <>
       <Navbar/>
@@ -41,6 +62,26 @@ const Localidad = () => {
             </div>
             <div className="descriptionLocalidades">
               <p>Detalles de la localidad</p>
+            </div>
+          </div>
+          <div>
+            <div className="carrusel">
+              {imagenes.map((img, i) => {
+                const pos = (i - indice + imagenes.length) % imagenes.length;
+                if (pos >= 0 && pos < 3) {
+                  return (
+                    <img
+                      key={i}
+                      src={img}
+                      alt={`Imagen ${i + 1}`}
+                      className="imagenCarrusel"
+                    />
+                  );
+                }
+                return null; 
+              })}
+              <button onClick={anterior} className="control prev">‹</button>
+              <button onClick={siguiente} className="control next">›</button>
             </div>
           </div>
         </div>
