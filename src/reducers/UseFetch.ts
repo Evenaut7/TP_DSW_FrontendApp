@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
 export function useFetch<T>(url: string) {
   const [data, setData] = useState<T | null>(null);
@@ -9,12 +9,11 @@ export function useFetch<T>(url: string) {
     const fetchData = async () => {
       try {
         const response = await fetch(url);
-        if (!response.ok) throw new Error("Error al obtener datos");
+        if (!response.ok) throw new Error('Error al obtener datos');
 
         const json = await response.json();
-        setData(json.data ?? json); // Por si la API devuelve "data" o el objeto completo
-      } catch (err: any)
-      {
+        setData(json.data ?? json);
+      } catch (err: any) {
         setError(err.message);
       } finally {
         setLoading(false);
