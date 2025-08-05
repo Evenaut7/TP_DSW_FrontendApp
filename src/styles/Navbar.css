@@ -1,9 +1,16 @@
 .navbar {
   background-color:#413933;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 12px;
+  padding-left: 10px;
+  padding-right: 10px;
 }
 
 .navTitle{
   color:blanchedalmond;
+  background-color: transparent;
+  border: none;
   font-weight: 800;
   font-size:x-large;
   font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
@@ -17,4 +24,15 @@
   color:blanchedalmond;
   font-size:large;
   font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  text-decoration: none
+}
+
+.navLetters:hover{
+  color:rgb(255, 243, 224);
+}
+
+.navRight{
+  display: flex;
+  align-items: center;
+  justify-content: right;
 }
