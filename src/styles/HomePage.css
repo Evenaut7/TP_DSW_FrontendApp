@@ -3,21 +3,48 @@
   height: 30%;
   display: grid;
   place-items: center;
+  box-shadow: 0 0 8px 3px rgba(0, 0, 0, 0.3);
+  z-index: -1;
+  margin-bottom: 20px;
 } 
 
 .homeTitleDiv{
-  padding-top: 5%;
-  padding-bottom: 1%;
+  padding-top: 3%;
+  padding-bottom: 2%;
   align-self: center;
 }
 
 .homeTitle{
   color:#413933;
+  text-shadow: 2px 3px blanchedalmond;
   font-size: 500%;
   font-weight: 1000;
-  font-family:'Times New Roman', Times, serif;
+  font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif
 }
 
 .homeBottomDiv {
   margin: 1%;
+}
+
+.searchBoxHomeDiv {
+  display: grid;
+  place-items: center;  
+  padding: 20px 0 45px 0;
+}
+
+.searchBoxHome {
+  width: 200%;
+  height: 38px;
+  padding: 15px;
+  outline: none;
+  border-color: #63554a;
+  border-radius: 20px;
+  border-width: 2px;
+  border-style: solid;
+  background-color: rgba(255, 255, 255, 0.7);
+  text-align: center;
+}
+
+.searchBoxHome::placeholder {
+  color: #63554a;
 }

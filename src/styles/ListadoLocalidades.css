@@ -1,0 +1,21 @@
+.localidadCard {
+  box-shadow: 1px 1px 10px rgba(0,0,0,0.4); 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.25s ease;
+}
+
+.localidadCard:hover {
+   transform: scale(1.02);
+   text-shadow: 4px 4px rgba(0,0,0,0.75);
+}
+
+.cardTitle {
+  position: absolute; 
+  color: white; 
+  text-shadow: 2px 2px rgba(0,0,0,0.7);
+  border-radius: 25px; 
+  padding: 10px; 
+  font-size: 4vmax;
+}

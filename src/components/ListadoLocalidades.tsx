@@ -2,6 +2,8 @@ import { useFetch } from "../reducers/UseFetch";
 import 'bootstrap/dist/css/bootstrap.min.css'
 import imagenlocalidad from "../assets/rosario.webp";
 import {Link} from "react-router-dom"
+import "../styles/ListadoLocalidades.css"
+
 interface Localidad {
     id: number;
     nombre: string;
@@ -24,11 +26,9 @@ const ListadoLocalidades = () => {
             {localidades?.map(localidad => (
                 <div key={localidad.id} className="col">
                     <Link to={`/localidad/${localidad.id}`}> 
-                      <div className="card h-100">
-                          <img src={imagenlocalidad} className="card-img-top" />
-                          <div className="card-body">
-                              <h5 className="card-title">{localidad.nombre}</h5>
-                          </div>
+                      <div className="localidadCard card h-100">
+                        <img src={imagenlocalidad} className="card-img" />
+                        <h5 className="cardTitle">{localidad.nombre}</h5>
                       </div>
                     </Link>   
                 </div>
