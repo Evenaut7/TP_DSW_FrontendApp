@@ -48,3 +48,12 @@
 .searchBoxHome::placeholder {
   color: #63554a;
 }
+
+@media (max-width: 768px){
+  .searchBoxHome {
+    width: 100%;
+  }
+  .homeTitle {
+    font-size: 400%;
+  }
+}

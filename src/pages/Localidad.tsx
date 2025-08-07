@@ -90,7 +90,9 @@ const Localidad = () => {
           </div>
           <div className="underDescriptionLocalidades">
             <Estrellas rating={3} reviews={37}/>
-            <button className="verMasButton"> Ver Mas </button>
+            <div className = "verMasButtonDiv">
+              <button className="verMasButton"> Ver Mas </button>
+            </div>
           </div>
         </div>
         <div>

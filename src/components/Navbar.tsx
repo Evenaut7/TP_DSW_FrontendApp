@@ -25,7 +25,7 @@ const Navbar = () => {
           Favoritos
         </a>
         <button
-          className="btn p-1 d-inline-blockh-auto d-inline-block"
+          className="profileImage"
           type="button"
         >
           <img src={usuario} height={'40px'}/>
