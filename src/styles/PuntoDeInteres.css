@@ -1,0 +1,14 @@
+.pdi-section {
+  background-color: #f8f9fa; /* gris muy claro */
+}
+
+.pdi-section img {
+  border-radius: 0.5rem;
+}
+
+.nombrePDI {
+  font-family: Poppins;
+  font-weight: 600;
+  font-size: 2.5rem;
+  color: #343a40; /* gris oscuro */
+}

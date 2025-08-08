@@ -1,5 +1,5 @@
 .navbar {
-  background-color:#57361c;
+  background-color: #50b9e0;
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-gap: 12px;
@@ -7,38 +7,40 @@
   padding-right: 10px;
 }
 
-.navTitle{
-  color:blanchedalmond;
+.navTitle {
+  color: blanchedalmond;
   background-color: transparent;
   border: none;
   font-weight: 800;
-  font-size:x-large;
-  font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  font-size: x-large;
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande',
+    'Lucida Sans', Arial, sans-serif;
 }
 
 .navTitle:hover {
-  color:rgb(255, 243, 224);
+  color: rgb(255, 243, 224);
 }
 
 .navLetters {
-  color:blanchedalmond;
-  font-size:large;
-  font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-  text-decoration: none
+  color: blanchedalmond;
+  font-size: large;
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande',
+    'Lucida Sans', Arial, sans-serif;
+  text-decoration: none;
 }
 
-.navLetters:hover{
-  color:rgb(255, 243, 224);
+.navLetters:hover {
+  color: rgb(255, 243, 224);
 }
 
-.navRight{
+.navRight {
   display: flex;
   align-items: center;
   justify-content: right;
 }
 
 .profileImage {
-  border:none;
+  border: none;
   decoration: none;
   background-color: transparent;
   padding: 1px 0px 1px 0px;
