@@ -119,32 +119,10 @@
   background-color: white; 
 }
 
+/* Modifico la propiedad de la componente */
 .tagsDiv {
   margin: 8px;
-  overflow-X: auto;
-  white-Space: nowrap
 }
-
-.tagButton {
-  background-color: #00bf63;
-  border-radius: 1px;
-  border-color: 1px;
-  margin: 0 3px 0 0;
-  border-radius: 20px;
-  color: black;
-  font-size: 16px;
-  border: none;
-  padding: 3px 12px 3px 12px;
-  cursor: pointer;
-  transform: scale(1);
-  transition: background-color 0.3s ease-in-out, transform 0.3s ease-in-out;
-}
-
-.tagButton:hover {
-  background-color: rgb(69, 232, 69); 
-}
- 
-
 
 @media (max-width: 768px) {
   .topDivLocalidades {

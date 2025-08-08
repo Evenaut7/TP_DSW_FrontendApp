@@ -2,20 +2,14 @@ import Navbar from '../components/Navbar.tsx';
 import Estrellas from '../components/Estrellas.tsx';
 import { useParams } from 'react-router-dom';
 import { useFetchById } from '../reducers/UseFetchByID.ts';
-import { useFetch } from '../reducers/UseFetch.ts';
 import '../styles/Localidad.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import imagenlocalidad from '../assets/rosario.webp';
 import imagenenEventoStock from '../assets/eventoStock.jpg';
 import { useState } from 'react';
 import PantallaDeCarga from '../components/PantallaDeCarga.tsx';
-
-interface Tag {
-  id: number;
-  tipo: string;
-  descripcion: string; 
-  nombre: string;
-}
+import ListadoLocalidades from '../components/ListadoLocalidades.tsx';
+import ListadoDeTags from '../components/ListadoDeTags.tsx';
 
 interface Localidad {
   id: number;
@@ -55,12 +49,6 @@ const Localidad = () => {
     localidadId
   );
 
-  const {
-  data: tags
-  } = useFetch<Tag[]>(
-    'http://localhost:3000/api/tags'
-  );
-
   if (loading) return <PantallaDeCarga mensaje={"Localidad"}/>;
   if (error) return <p>Error: {error}</p>;
   if (!localidad) return <p>No se encontró la localidad</p>;
@@ -72,8 +60,6 @@ const Localidad = () => {
   const anterior = () => {
     setIndice((indice - 1 + imagenes.length) % imagenes.length);
   };
-
-
 
   return (
     <>
@@ -123,11 +109,8 @@ const Localidad = () => {
       <div className='pdiSearchboxDiv'>
         <input className='pdiSearchbox' placeholder='Busca un Punto De Interes'></input>
       </div>
-      <div className='tagsDiv'>
-        {tags.map((tag) => {
-          return(<button className='tagButton'>{tag.nombre}</button>)
-        })}
-      </div>
+      <ListadoDeTags/>
+      <ListadoLocalidades/>
     </>
   );
 };
