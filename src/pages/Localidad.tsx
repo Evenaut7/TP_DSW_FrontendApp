@@ -8,8 +8,8 @@ import imagenlocalidad from '../assets/rosario.webp';
 import imagenenEventoStock from '../assets/eventoStock.jpg';
 import { useState } from 'react';
 import PantallaDeCarga from '../components/PantallaDeCarga.tsx';
-import ListadoLocalidades from '../components/ListadoLocalidades.tsx';
 import ListadoDeTags from '../components/ListadoDeTags.tsx';
+import ListadoPDI from '../components/ListadoPDI.tsx';
 
 interface Localidad {
   id: number;
@@ -22,6 +22,14 @@ interface Localidad {
     nombre: string;
     codUta: string;
   };
+  puntosDeInteres?: {
+    id: number;
+    nombre: string;
+    descripcion: string;
+    imagen: string;
+    calle: string;
+    altura: number;
+  }[];
 }
 
 const imagenes = [
@@ -49,7 +57,7 @@ const Localidad = () => {
     localidadId
   );
 
-  if (loading) return <PantallaDeCarga mensaje={"Localidad"}/>;
+  if (loading) return <PantallaDeCarga mensaje={'Localidad'} />;
   if (error) return <p>Error: {error}</p>;
   if (!localidad) return <p>No se encontró la localidad</p>;
 
@@ -75,8 +83,8 @@ const Localidad = () => {
             <p>Detalles de la localidad</p>
           </div>
           <div className="underDescriptionLocalidades">
-            <Estrellas rating={3} reviews={37}/>
-            <div className = "verMasButtonDiv">
+            <Estrellas rating={3} reviews={37} />
+            <div className="verMasButtonDiv">
               <button className="verMasButton"> Ver Mas </button>
             </div>
           </div>
@@ -106,11 +114,17 @@ const Localidad = () => {
           </div>
         </div>
       </div>
-      <div className='pdiSearchboxDiv'>
-        <input className='pdiSearchbox' placeholder='Busca un Punto De Interes'></input>
+      <div className="pdiSearchboxDiv">
+        <input
+          className="pdiSearchbox"
+          placeholder="Busca un Punto De Interes"
+        ></input>
       </div>
-      <ListadoDeTags/>
-      <ListadoLocalidades/>
+      <ListadoDeTags />
+      <div className="container my-4">
+        <h4>Puntos de Interés</h4>
+        <ListadoPDI pdis={localidad.puntosDeInteres ?? []} />
+      </div>
     </>
   );
 };

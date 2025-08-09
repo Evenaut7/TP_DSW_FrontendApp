@@ -1,17 +1,12 @@
+// src/components/PDI.tsx
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../styles/PuntoDeInteres.css';
-import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { useFetchById } from '../reducers/UseFetchByID';
 import Container from 'react-bootstrap/Container';
-import StarRating from './Estrellas.tsx';
+import StarRating from './Estrellas';
 import { GeoAltFill } from 'react-bootstrap-icons';
-
-{
-  /* agregagar use fetch desde reducers, use paramas */
-}
-
-type PDIProps = {
-  id: number;
-};
+import PantallaDeCarga from './PantallaDeCarga';
 
 type PDIData = {
   id: number;
@@ -21,27 +16,21 @@ type PDIData = {
   calle: string;
   altura: number;
   localidad: number;
-  // agregar otros campos según sea necesario
 };
 
-const PDI = ({ id }: PDIProps) => {
-  const [pdi, setPdi] = useState<PDIData | null>(null);
+const PDI = () => {
+  const { id } = useParams<{ id: string }>();
+  const pdiId = id ? parseInt(id, 10) : null;
 
-  useEffect(() => {
-    fetch(`http://localhost:3000/api/puntosDeInteres/${id}`)
-      .then((res) => res.json())
-      .then((data) => setPdi(data.data))
-      .catch((err) => console.error('Error al cargar el PDI:', err));
-  }, [id]);
+  const {
+    data: pdi,
+    loading,
+    error,
+  } = useFetchById<PDIData>('http://localhost:3000/api/puntosDeInteres', pdiId);
 
-  const imageModules = import.meta.glob(
-    '../assets/PDI_imgPrueba/*.{jpg,jpeg,png}',
-    { eager: true }
-  ) as Record<string, { default: string }>;
-
-  const images = Object.values(imageModules).map((mod) => mod.default);
-
-  if (!pdi) return <p>Cargando punto de interés...</p>;
+  if (loading) return <PantallaDeCarga mensaje="Punto de interés" />;
+  if (error) return <p>{error}</p>;
+  if (!pdi) return <p>No se encontró el PDI</p>;
 
   return (
     <section className="pdi-section py-4">
@@ -52,14 +41,13 @@ const PDI = ({ id }: PDIProps) => {
               <h5 className="fw-bold nombrePDI">{pdi.nombre}</h5>
               <p className="mb-2">
                 <GeoAltFill style={{ marginRight: '5px', color: '#d9534f' }} />
-                {pdi.calle} {pdi.altura}, {pdi.localidad}{' '}
-                {/* esto deberia mandar a la localidad en caso que se quiera */}
+                {pdi.calle} {pdi.altura}, {pdi.localidad}
               </p>
               <p>{pdi.descripcion}</p>
               <StarRating rating={4} reviews={20} />
             </div>
 
-            {/* Carrusel de imágenes */}
+            {/* carrusel de imágenes */}
             <div className="col-md-6">
               <div
                 id="carouselExample"
@@ -68,13 +56,13 @@ const PDI = ({ id }: PDIProps) => {
                 data-bs-interval="2000"
               >
                 <div className="carousel-inner">
-                  {images.map((img, i) => (
+                  {[...Array(6)].map((_, i) => (
                     <div
                       className={`carousel-item ${i === 0 ? 'active' : ''}`}
                       key={i}
                     >
                       <img
-                        src={img}
+                        src="/assets/PDI_imgPrueba/default.jpg"
                         className="d-block w-100 img-fluid"
                         alt={`Imagen ${i + 1}`}
                         style={{ maxHeight: '300px', objectFit: 'cover' }}
