@@ -104,19 +104,19 @@
 }
 
 .pdiSearchbox {
-  background-color: rgb(240, 240, 240,0.8);
-  padding: 10px 12px; 
-  border: 1px solid #ccc; 
-  border-radius: 20px; 
-  font-size: 16px; 
-  width: 99%; 
+  background-color: rgb(240, 240, 240, 0.8);
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  font-size: 16px;
+  width: 99%;
 }
 
 .pdiSearchbox:focus {
-  outline: none; 
-  border-color: #dbd3ca; 
+  outline: none;
+  border-color: #dbd3ca;
   box-shadow: 0px 0px 1px rgba(40, 40, 40, 0.5);
-  background-color: white; 
+  background-color: white;
 }
 
 /* Modifico la propiedad de la componente */
@@ -126,14 +126,21 @@
 
 @media (max-width: 768px) {
   .topDivLocalidades {
-    display: flex; 
+    display: flex;
     flex-direction: column;
   }
-  .descriptionLocalidades{
+  .descriptionLocalidades {
     height: 200px;
   }
   .carrusel {
     width: auto;
     height: 30vw;
   }
+}
+
+/* Listado PDI */
+.container.my-4 {
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
 }

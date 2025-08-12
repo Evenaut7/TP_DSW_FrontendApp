@@ -18,6 +18,14 @@ type PDIData = {
   localidad: number;
 };
 
+// solo de prueba, las imágenes deberían venir del PDI
+import img1 from '../assets/PDI_imgPrueba/img1.jpg';
+import img2 from '../assets/PDI_imgPrueba/img2.jpg';
+import img3 from '../assets/PDI_imgPrueba/img3.jpg';
+import img4 from '../assets/PDI_imgPrueba/img4.jpg';
+
+const images = [img1, img2, img3, img4];
+
 const PDI = () => {
   const { id } = useParams<{ id: string }>();
   const pdiId = id ? parseInt(id, 10) : null;
@@ -37,6 +45,7 @@ const PDI = () => {
       <Container className="my-4 d-flex justify-content-center">
         <div className="w-100">
           <div className="row g-0 align-items-center">
+            {/* Info del PDI */}
             <div className="col-md-6 p-4">
               <h5 className="fw-bold nombrePDI">{pdi.nombre}</h5>
               <p className="mb-2">
@@ -44,10 +53,18 @@ const PDI = () => {
                 {pdi.calle} {pdi.altura}, {pdi.localidad}
               </p>
               <p>{pdi.descripcion}</p>
-              <StarRating rating={4} reviews={20} />
+              <div className="d-flex justify-content-between align-items-center mt-3">
+                <StarRating rating={4} reviews={20} />
+                <button
+                  className="btn"
+                  style={{ backgroundColor: '#74acdf', color: '#fff' }}
+                >
+                  Ver más
+                </button>
+              </div>
             </div>
 
-            {/* carrusel de imágenes */}
+            {/* Carrusel con las 4 imágenes de prueba */}
             <div className="col-md-6">
               <div
                 id="carouselExample"
@@ -56,13 +73,13 @@ const PDI = () => {
                 data-bs-interval="2000"
               >
                 <div className="carousel-inner">
-                  {[...Array(6)].map((_, i) => (
+                  {images.map((url, i) => (
                     <div
                       className={`carousel-item ${i === 0 ? 'active' : ''}`}
-                      key={i}
+                      key={url}
                     >
                       <img
-                        src="/assets/PDI_imgPrueba/default.jpg"
+                        src={url}
                         className="d-block w-100 img-fluid"
                         alt={`Imagen ${i + 1}`}
                         style={{ maxHeight: '300px', objectFit: 'cover' }}
@@ -83,6 +100,7 @@ const PDI = () => {
                   ></span>
                   <span className="visually-hidden">Anterior</span>
                 </button>
+
                 <button
                   className="carousel-control-next"
                   type="button"
