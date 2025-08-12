@@ -114,6 +114,7 @@ const Localidad = () => {
           </div>
         </div>
       </div>
+      <h4>Lugares para conocer en {localidad.nombre}</h4>
       <div className="pdiSearchboxDiv">
         <input
           className="pdiSearchbox"
@@ -122,7 +123,6 @@ const Localidad = () => {
       </div>
       <ListadoDeTags />
       <div className="container my-4">
-        <h4>Puntos de Interés</h4>
         <ListadoPDI pdis={localidad.puntosDeInteres ?? []} />
       </div>
     </>

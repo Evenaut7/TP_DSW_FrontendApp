@@ -12,3 +12,20 @@
   font-size: 2.5rem;
   color: #343a40; /* gris oscuro */
 }
+
+/* Seccion de eventos */
+
+.eventos-titulo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  font-size: 1.4rem;
+  color: #4a90e2;
+  background-color: #eaf4ff;
+  padding: 8px 20px;
+  border-radius: 8px;
+  max-width: fit-content;
+  margin: 40px auto 20px;
+  box-shadow: 0 3px 8px rgba(74, 144, 226, 0.15);
+}

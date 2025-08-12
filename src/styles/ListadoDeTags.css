@@ -1,7 +1,6 @@
-
 .tagsDiv {
-  overflow-X: auto;
-  white-Space: nowrap
+  overflow-x: auto;
+  white-space: nowrap;
 }
 
 .tagButton {
@@ -20,5 +19,5 @@
 }
 
 .tagButton:hover {
-  background-color: rgb(69, 232, 69); 
+  background-color: rgb(69, 232, 69);
 }
