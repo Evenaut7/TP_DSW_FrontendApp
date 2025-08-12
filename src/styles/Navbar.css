@@ -1,5 +1,5 @@
 .navbar {
-  background-color: #50b9e0;
+  background-color: rgb(76, 42, 16);
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-gap: 12px;
