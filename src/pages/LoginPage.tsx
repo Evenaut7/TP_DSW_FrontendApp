@@ -6,11 +6,11 @@ import { Link } from "react-router-dom";
 function LoginPage(){
     return (
         <div className="login-container">
-            <div className="signup-container">
+            <header className="header-signup">
                 <Link to="/">
                     <Boton texto="Registrarme" />
                 </Link>
-            </div>
+            </header>
             <div className="login-content">
                 <h1 className="title">TRAVEL APP</h1>
                 <div className="mb-3">
