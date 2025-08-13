@@ -12,19 +12,11 @@ type PDIData = {
   id: number;
   nombre: string;
   descripcion: string;
-  imagen: string;
+  imagenes: string[];
   calle: string;
   altura: number;
   localidad: number;
 };
-
-// solo de prueba, las imágenes deberían venir del PDI
-import img1 from '../assets/PDI_imgPrueba/img1.jpg';
-import img2 from '../assets/PDI_imgPrueba/img2.jpg';
-import img3 from '../assets/PDI_imgPrueba/img3.jpg';
-import img4 from '../assets/PDI_imgPrueba/img4.jpg';
-
-const images = [img1, img2, img3, img4];
 
 const PDI = () => {
   const { id } = useParams<{ id: string }>();
@@ -73,13 +65,13 @@ const PDI = () => {
                 data-bs-interval="2000"
               >
                 <div className="carousel-inner">
-                  {images.map((url, i) => (
+                  {pdi.imagenes.map((url, i) => (
                     <div
                       className={`carousel-item ${i === 0 ? 'active' : ''}`}
                       key={url}
                     >
                       <img
-                        src={url}
+                        src={`http://localhost:3000/public/${url}`}
                         className="d-block w-100 img-fluid"
                         alt={`Imagen ${i + 1}`}
                         style={{ maxHeight: '300px', objectFit: 'cover' }}
