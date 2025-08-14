@@ -8,8 +8,8 @@ import SignUpPage from './pages/SignUpPage.tsx';
 import CreatePuntoDeInteres from './pages/CreatePDI.tsx';
 
 export const router = createBrowserRouter([
-  { path: '/login', element: <LoginPage /> },
   { path: '/', element: <HomePage /> },
+  { path: '/login', element: <LoginPage /> },
   { path: '/localidad/:id', element: <Localidad /> },
   { path: '*', element: <NotFoundPage /> },
   { path: '/punto-de-interes/:id', element: <PuntoDeInteres /> },
