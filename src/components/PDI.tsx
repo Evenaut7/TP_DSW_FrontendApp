@@ -12,7 +12,7 @@ type PDIData = {
   id: number;
   nombre: string;
   descripcion: string;
-  imagen: string;
+  imagenes: string[];
   calle: string;
   altura: number;
   localidad: number;
@@ -37,6 +37,7 @@ const PDI = () => {
       <Container className="my-4 d-flex justify-content-center">
         <div className="w-100">
           <div className="row g-0 align-items-center">
+            {/* Info del PDI */}
             <div className="col-md-6 p-4">
               <h5 className="fw-bold nombrePDI">{pdi.nombre}</h5>
               <p className="mb-2">
@@ -44,10 +45,18 @@ const PDI = () => {
                 {pdi.calle} {pdi.altura}, {pdi.localidad}
               </p>
               <p>{pdi.descripcion}</p>
-              <StarRating rating={4} reviews={20} />
+              <div className="d-flex justify-content-between align-items-center mt-3">
+                <StarRating rating={4} reviews={20} />
+                <button
+                  className="btn"
+                  style={{ backgroundColor: '#74acdf', color: '#fff' }}
+                >
+                  Ver más
+                </button>
+              </div>
             </div>
 
-            {/* carrusel de imágenes */}
+            {/* Carrusel con las 4 imágenes de prueba */}
             <div className="col-md-6">
               <div
                 id="carouselExample"
@@ -56,13 +65,13 @@ const PDI = () => {
                 data-bs-interval="2000"
               >
                 <div className="carousel-inner">
-                  {[...Array(6)].map((_, i) => (
+                  {pdi.imagenes.map((url, i) => (
                     <div
                       className={`carousel-item ${i === 0 ? 'active' : ''}`}
-                      key={i}
+                      key={url}
                     >
                       <img
-                        src="/assets/PDI_imgPrueba/default.jpg"
+                        src={`http://localhost:3000/public/${url}`}
                         className="d-block w-100 img-fluid"
                         alt={`Imagen ${i + 1}`}
                         style={{ maxHeight: '300px', objectFit: 'cover' }}
@@ -83,6 +92,7 @@ const PDI = () => {
                   ></span>
                   <span className="visually-hidden">Anterior</span>
                 </button>
+
                 <button
                   className="carousel-control-next"
                   type="button"

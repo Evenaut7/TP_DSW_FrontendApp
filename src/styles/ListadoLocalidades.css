@@ -4,11 +4,16 @@
   justify-content: center;
   align-items: center;
   transition: transform 0.25s ease;
+  height: 200px;
 }
 
 .localidadCard:hover {
    transform: scale(1.02);
    text-shadow: 4px 4px rgba(0,0,0,0.75);
+}
+
+.localidadImage {
+  object-fit: cover;
 }
 
 .cardTitle {

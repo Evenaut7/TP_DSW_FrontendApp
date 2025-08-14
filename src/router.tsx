@@ -5,6 +5,7 @@ import PuntoDeInteres from './pages/PuntoDeInteres.tsx';
 import { createBrowserRouter } from 'react-router-dom';
 import LoginPage from './pages/LoginPage.tsx';
 import SignUpPage from './pages/SignUpPage.tsx';
+import CreatePuntoDeInteres from './pages/CreatePDI.tsx';
 
 export const router = createBrowserRouter([
   { path: '/login', element: <LoginPage /> },
@@ -13,5 +14,6 @@ export const router = createBrowserRouter([
   { path: '*', element: <NotFoundPage /> },
   { path: '/punto-de-interes/:id', element: <PuntoDeInteres /> },
   { path: '/login', element: <LoginPage /> },
-  { path: '/signup', element: <SignUpPage /> }
+  { path: '/signup', element: <SignUpPage /> },
+  { path: '/CreatePDI', element: <CreatePuntoDeInteres /> }
 ]);

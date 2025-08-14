@@ -1,26 +1,32 @@
+.divLocalidades{
+  padding: 0 10vw 0 10vw;
+  background-image: url("../assets/PDI_imgPrueba/fondo2.png");
+}
+
 .topDivLocalidades {
-  background-color: #dbd3ca;
+  background-color: #d6d5d4;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 3fr 1fr;
   gap: 15px;
   padding: 12px;
+  border-radius: 30px;
 }
 
 .leftTopDivLocalidades {
   align-items: center;
+  padding: 10px 15px 0 15px;
 }
 
 .titleLocalidades {
-  border-color: brown;
-  border-style: solid;
-  border-width: 2px;
-  text-align: center;
+  text-align: left;
+  padding: 10px;
 }
 
 .descriptionLocalidades {
-  background-color: #aca69e;
+  background-color: rgb(255,255,255,0.6);
+  border-radius: 30px;
   text-align: justify;
-  padding: 10px;
+  padding: 20px;
   margin-top: 10px;
   height: 140px;
 }
@@ -57,45 +63,17 @@
   background-color: rgb(255, 216, 61);
 }
 
-/* Carrusel */
+.imageContainer {
+  width: 100%; 
+  height: 300px; 
+}
 
-.carrusel {
-  position: relative;
+.image {
   width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   height: 100%;
+  border-radius: 20px;
+  object-fit: cover; 
 }
-
-.carrusel img {
-  max-width: 33.33%;
-  height: 100%;
-  object-fit: cover;
-  overflow: hidden;
-}
-
-.control {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background: rgba(255, 255, 255, 0.6);
-  border: none;
-  font-size: 2rem;
-  cursor: pointer;
-  padding: 0 0.5rem;
-  z-index: 10;
-}
-
-.prev {
-  left: 0;
-}
-
-.next {
-  right: 0;
-}
-
-/* Carrusel */
 
 .pdiSearchboxDiv {
   display: grid;
@@ -104,19 +82,19 @@
 }
 
 .pdiSearchbox {
-  background-color: rgb(240, 240, 240,0.8);
-  padding: 10px 12px; 
-  border: 1px solid #ccc; 
-  border-radius: 20px; 
-  font-size: 16px; 
-  width: 99%; 
+  background-color: rgb(240, 240, 240, 0.8);
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  font-size: 16px;
+  width: 99%;
 }
 
 .pdiSearchbox:focus {
-  outline: none; 
-  border-color: #dbd3ca; 
+  outline: none;
+  border-color: #dbd3ca;
   box-shadow: 0px 0px 1px rgba(40, 40, 40, 0.5);
-  background-color: white; 
+  background-color: white;
 }
 
 /* Modifico la propiedad de la componente */
@@ -126,14 +104,21 @@
 
 @media (max-width: 768px) {
   .topDivLocalidades {
-    display: flex; 
+    display: flex;
     flex-direction: column;
   }
-  .descriptionLocalidades{
+  .descriptionLocalidades {
     height: 200px;
   }
   .carrusel {
     width: auto;
     height: 30vw;
   }
+}
+
+/* Listado PDI */
+.container.my-4 {
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
 }
