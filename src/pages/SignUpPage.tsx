@@ -10,11 +10,11 @@ function SignUpPage(){
     return (
         <div className="signup-container">
             <header className="header-login">
-                <Link to="/home">
+                <Link to="/">
                     <BotonRojo texto="Home Page" />
                 </Link>
                 <Link to="/login">
-                    <BotonCel texto="Log in" />
+                    <BotonCel className="btn-celeste" texto="Log in" />
                 </Link>
             </header>
 
@@ -22,7 +22,10 @@ function SignUpPage(){
                 <h1 className="title">TRAVEL APP</h1>
                 <div className="signup-form">
                     <InputLabel label="Email" />
-                    <BotonCel texto="Sign" />
+                    <InputLabel label="Password" />
+                    <InputLabel label="Username" />
+                    <InputLabel label="Location" />
+                    <BotonCel texto="Sign Up" />
                 </div>
             </div>
         </div>

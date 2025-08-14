@@ -60,3 +60,19 @@
     font-size: small;
   }
 }
+/* Suaviza el fondo cuando el modal está visible */
+.modal-backdrop.show {
+  backdrop-filter: blur(25px);
+  background-color: rgba(0, 0, 0, 0.074); /* leve oscurecido */
+}
+.modal-body > * {
+  margin-bottom: 1rem; /* separa cada hijo del body del modal */
+  /* display: flex;
+  flex-direction: column;
+  justify-content: space-between; */
+}
+.modal-footer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}

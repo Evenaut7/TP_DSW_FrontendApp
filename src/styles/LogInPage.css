@@ -7,7 +7,7 @@
 .header-signup {
     display: flex;
     flex-direction: row;
-    justify-content: end;
+    justify-content: start;
     padding: 16px 24px;
 }
 .login-content{

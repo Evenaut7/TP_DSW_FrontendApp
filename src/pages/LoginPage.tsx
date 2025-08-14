@@ -7,7 +7,7 @@ function LoginPage(){
     return (
         <div className="login-container">
             <header className="header-signup">
-                <Link to="/">
+                <Link to="/signup">
                     <Boton texto="Registrarme" />
                 </Link>
             </header>
