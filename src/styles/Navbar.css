@@ -6,7 +6,7 @@
   padding-left: 18px;
   padding-right: 18px;
   border-radius: 35px;
-  margin: 20px 0 35px 0;
+  margin: 20px 0 0 0;
 }
 
 .navTitle {
@@ -48,21 +48,34 @@
   padding: 1px 0px 1px 0px;
 }
 
-@media (max-width: 768px) {
-  .navbar {
-    padding: 2px;
-    grid-gap: 6px;
-    padding-left: 5px;
-    padding-right: 5px;
-  }
-  .navTitle {
-    font-size: medium;
-  }
-  .navLetters {
-    font-size: small;
-  }
+.bottom-navbar {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr; 
+  justify-items: center;
+  justify-content: space-around;
+  background-color: #333;
+  color: rgb(255, 255, 255);
+  padding: 15px 0 10px 0;
+  text-align: center;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1;
 }
-/* Suaviza el fondo cuando el modal está visible */
+
+.bottom-navbar a {
+  text-decoration: none;
+  color: white;
+}
+
+.bottom-navbar div {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
+}
+
 .modal-backdrop.show {
   backdrop-filter: blur(25px);
   background-color: rgba(0, 0, 0, 0.074); /* leve oscurecido */
