@@ -56,12 +56,10 @@ const Navbar = () => {
         <Modal.Body className="modal-body">
           <InputLabel label="Email" />
           <InputLabel label="Password" />
-          <InputLabel label="Username" />
-          <InputLabel label="Location" />
         </Modal.Body>
         <Modal.Footer className="modal-footer">
-          <Link to={"/login"}>I already have an account</Link>
-          <BotonCel texto="Create account > " />
+          <Link to={"/login"}>Create account</Link>
+          <BotonCel texto="Sign in" />
         </Modal.Footer>
         </Modal>
     </>

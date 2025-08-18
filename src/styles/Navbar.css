@@ -71,7 +71,7 @@
   margin-bottom: 1rem; /* separa cada hijo del body del modal */
   /* display: flex;
   flex-direction: column;
-  justify-content: space-between; */
+  align-items: center; */
 }
 .modal-footer {
   display: flex;

@@ -2,12 +2,11 @@ import Button from 'react-bootstrap/Button';
 
 type BotonProps = {
     texto: string;
-    className?: string;
 };
 
-function BotonCel({ texto, className }: BotonProps) {
+function BotonCel({ texto }: BotonProps) {
     return (
-        <Button variant="info" className={className}>{texto}</Button>
+        <Button variant="info" className="btn btn-primary">{texto}</Button>
     );
 }
 

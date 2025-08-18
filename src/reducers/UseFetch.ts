@@ -12,7 +12,7 @@ export function useFetch<T>(url: string) {
         if (!response.ok) throw new Error('Error al obtener datos');
 
         const json = await response.json();
-        setData(json.data ?? json);
+        setData(json.data ?? json); 
       } catch (err: any) {
         setError(err.message);
       } finally {

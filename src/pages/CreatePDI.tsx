@@ -43,7 +43,7 @@ const CreatePDI = () => {
     const { name, value, type, checked, files } = e.target as HTMLInputElement;
 
     if (name === 'imagenes' && files) {
-      setForm((prev) => ({
+      setForm((prev) => ({   //convierte FileList en File[]
         ...prev,
         imagenes: Array.from(files),
       }));

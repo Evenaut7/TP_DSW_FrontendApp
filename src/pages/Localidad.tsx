@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import { useFetchById } from '../reducers/UseFetchByID.ts';
 import '../styles/Localidad.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { useState } from 'react';
+//import { useState } from 'react';
 import PantallaDeCarga from '../components/PantallaDeCarga.tsx';
 import ListadoDeTags from '../components/ListadoDeTags.tsx';
 import ListadoPDI from '../components/ListadoPDI.tsx';
