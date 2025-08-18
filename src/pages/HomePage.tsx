@@ -19,9 +19,7 @@ const HomePage = () => {
           />
         </div>
       </div>
-      <div className="homeBottomDiv">
         <ListadoLocalidades />
-      </div>
     </>
   );
 };

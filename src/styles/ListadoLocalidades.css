@@ -1,3 +1,29 @@
+@media (max-width: 768px) {
+  .contenedor-localidades {
+  /* GRID */
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  padding: 20px;
+}
+  .col{
+    height: clamp(100px, 20vh, 130px);
+    /* width: 25%; */
+  }
+}
+@media (min-width: 769px) {
+  .contenedor-localidades {
+    /* GRID */
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    padding: 20px;
+  }
+  .col{
+    height: clamp(100px, 20vh, 130px);
+    /* width: 25%; */
+  }
+}
 .localidadCard {
   box-shadow: 1px 1px 6px rgba(0,0,0,0.4); 
   display: flex;
@@ -25,16 +51,4 @@
   border-radius: 25px; 
   padding: 10px; 
   font-size: 3vmax;
-}
-@media (max-width: 768px) {
-  .col{
-    height: clamp(100px, 20vh, 130px);
-    width: clamp(150px, 32vw, 270px);
-  }
-}
-@media (min-width: 769px) {
-  .col{
-    height: clamp(100px, 20vh, 130px);
-    width: clamp(80px, 30vw, 265px);
-  }
 }
