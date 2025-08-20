@@ -2,12 +2,11 @@ import { Link } from "react-router-dom"
 import "../styles/NotFoundPage.css"
 import 'bootstrap/dist/css/bootstrap.min.css'
 import "../styles/Navbar.css"
-import usuario from '../assets/userStock.png'
 import { useState, useEffect } from "react"
 import Modal from 'react-bootstrap/Modal';
 import BotonCel from "../components/BotonCeleste.tsx";
 import InputLabel from "../components/InputLabel.tsx";
-import { House, Map, Notebook, CircleUserRound } from "lucide-react"
+import { House, Map, Notebook, CircleUserRound, Star } from "lucide-react"
 
 
 const Navbar = () => {
@@ -37,12 +36,15 @@ const Navbar = () => {
           <div className="navRight gap-3">
             <a className="fw-semibold navLetters" href="#">
               Mapa
+              <Map />
             </a>
             <a className="fw-semibold navLetters" href="#">
               Agenda
+              <Notebook />
             </a>
             <a className="fw-semibold navLetters" href="#">
               Favoritos
+              <Star />
             </a>
 
             <button
@@ -50,7 +52,7 @@ const Navbar = () => {
               type="button"
               onClick={() => setLgShow(true)}
             >
-              <img src={usuario} height={'40px'} />
+              <CircleUserRound color="White" size={35}/>
             </button>
 
           </div>
@@ -68,6 +70,10 @@ const Navbar = () => {
           <div>
             <Notebook />
             <a href="#">Agenda</a>
+          </div>
+          <div>
+            <Star />
+            <a href="#">Favoritos</a>
           </div>
           <div>
             <CircleUserRound />

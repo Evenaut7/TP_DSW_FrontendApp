@@ -1,12 +1,13 @@
 .navbar {
-  background-color: #74acdf;
+  background-color: #2D9CDB;
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-gap: 12px;
   padding-left: 18px;
   padding-right: 18px;
-  border-radius: 35px;
-  margin: 20px 0 0 0;
+  border-radius: 10px;
+  margin: 8px 8px 0px 8px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
 }
 
 .navTitle {
@@ -15,8 +16,7 @@
   border: none;
   font-weight: 800;
   font-size: x-large;
-  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande',
-    'Lucida Sans', Arial, sans-serif;
+  font-family: 'poppins';
 }
 
 .navTitle:hover {
@@ -24,10 +24,12 @@
 }
 
 .navLetters {
+  display: flex;
+  align-items: center;
+  gap: 5px;
   color: #ffffff;
   font-size: large;
-  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande',
-    'Lucida Sans', Arial, sans-serif;
+  font-family: 'poppins';
   text-decoration: none;
 }
 
@@ -50,12 +52,12 @@
 
 .bottom-navbar {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr; 
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr; 
   justify-items: center;
   justify-content: space-around;
   background-color: #333;
   color: rgb(255, 255, 255);
-  padding: 15px 0 10px 0;
+  padding: 15px 0 8px 0;
   text-align: center;
   position: fixed;
   bottom: 0;

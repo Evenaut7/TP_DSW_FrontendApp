@@ -1,3 +1,10 @@
+.divListadoPDI {
+  display: grid;
+  justify-items: center;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 15px
+}
+
 .listado-pdi-card {
   border-radius: 12px;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
