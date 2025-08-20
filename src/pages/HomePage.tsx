@@ -1,13 +1,13 @@
 import '../styles/HomePage.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Navbar from '../components/Navbar.tsx';
+import NavbarHomePage from '../components/NavbarHomePage.tsx';
 import ListadoLocalidades from '../components/ListadoLocalidades.tsx';
 
 const HomePage = () => {
   return (
     <>
-      <Navbar />
       <div className="homeTopDiv">
+      <NavbarHomePage />
         <div className="homeTitleDiv">
           <h1 className="homeTitle text-center">¿Adónde Quisieras Ir?</h1>
         </div>

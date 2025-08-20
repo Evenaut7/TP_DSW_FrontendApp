@@ -2,7 +2,7 @@
   .contenedor-localidades {
   /* GRID */
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(autofill, minmax(1, 1fr));
   gap: 20px;
   padding: 20px;
 }
@@ -15,7 +15,7 @@
   .contenedor-localidades {
     /* GRID */
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(autofill, minmax(4, 1fr));
     gap: 20px;
     padding: 20px;
   }

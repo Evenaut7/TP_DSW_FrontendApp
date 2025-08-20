@@ -1,12 +1,17 @@
 .navbar {
-  background-color: #74acdf;
-  display: grid;
+  /* Grid*/
+  background-color: rgb(255, 255, 255, 0.3);
+  /* display: grid;
   grid-template-columns: 1fr 1fr;
-  grid-gap: 12px;
+  grid-gap: 12px; */
   padding-left: 18px;
   padding-right: 18px;
   border-radius: 35px;
-  margin: 20px 0 0 0;
+  margin: 20px 0 0 0; 
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .navTitle {

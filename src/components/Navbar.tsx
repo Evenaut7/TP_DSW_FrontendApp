@@ -7,12 +7,17 @@ import { useState, useEffect } from "react"
 import Modal from 'react-bootstrap/Modal';
 import BotonCel from "../components/BotonCeleste.tsx";
 import InputLabel from "../components/InputLabel.tsx";
-import { House, Map, Notebook, CircleUserRound } from "lucide-react"
+import { House, Map, Notebook, CircleUserRound } from "lucide-react";
+
 
 
 const Navbar = () => {
   const [lgShow, setLgShow] = useState(false);
   const [width, setWidth] = useState(window.innerWidth)
+  //const [user, setUser] = useState(null)
+  // const [show, setShow] = useState(false);
+  // const handleClose = () => setShow(false);
+  // const handleShow = () => setShow(true);
 
   useEffect(() => {
     const handleResize = () => setWidth(window.innerWidth)
@@ -97,6 +102,17 @@ const Navbar = () => {
           <BotonCel texto="Sign in" />
         </Modal.Footer>
       </Modal>
+      
+      {/* <Offcanvas show={show} onHide={handleClose} responsive="lg">
+            <Offcanvas.Header closeButton>
+            <Offcanvas.Title>Offcanvas</Offcanvas.Title>
+            </Offcanvas.Header>
+            <Offcanvas.Body>
+            Some text as placeholder. In real life you can have the elements you
+            have chosen. Like, text, images, lists, etc.
+            </Offcanvas.Body>
+        </Offcanvas> */}
+
     </>
   );
 }
