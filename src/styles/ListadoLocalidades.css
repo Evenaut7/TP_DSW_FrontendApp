@@ -24,6 +24,11 @@
     /* width: 25%; */
   }
 }
+.contenedor-localidades{
+  /* background-color: rgba(6, 16, 43, 0.815); */
+  /* background-color: #0F1626; */
+  /* background-color: #0f1626b4; */
+}
 .localidadCard {
   box-shadow: 1px 1px 6px rgba(0,0,0,0.4); 
   display: flex;

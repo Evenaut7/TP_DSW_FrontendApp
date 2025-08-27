@@ -44,7 +44,7 @@ const NavbarHomePage = () => {
                 <i className="bi bi-star-fill"/> 
                 <p>Favoritos</p>
                 </a>
-                <a className="item-navbarHomePage" href="#">
+                <a className="item-navbarHomePage" href="#" onClick={() => setLgShow(true)}>
                 <i className="bi bi-person-circle"/> 
                 <p>Usuario</p>
                 </a>

@@ -103,20 +103,25 @@
   grid-template-columns: 1fr 1fr 1fr 1fr;
   justify-content: space-around;
   justify-items: center;
-  grid-gap: 12px;
+  grid-gap: 20px;
   padding-left: 18px;
   padding-right: 18px;
   border-radius: 35px;
-  margin: 0px 0 0 0; 
+  margin: 10px 0 10px 0; 
 }
 .item-navbarHomePage {
-  display: grid;
-  justify-content: space-between;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
   text-decoration: none;
-  margin: 2px 0 0 0;
   color: white;
+  /* display: grid;
+  grid-template-rows: 1fr auto;
+  justify-content: space-evenly;
+  margin: 2px 0 0 0; */
 }
-.bi.bi-geo-alt {
+/* .bi.bi-geo-alt {
   display: grid;
   justify-content: center;
 }
@@ -131,4 +136,4 @@
 .bi.bi-person-circle {
   display: grid;
   justify-content: center;
-}
+} */

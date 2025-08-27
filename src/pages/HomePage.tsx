@@ -9,7 +9,7 @@ const HomePage = () => {
       <div className="homeTopDiv">
       <NavbarHomePage />
         <div className="homeTitleDiv">
-          <h1 className="homeTitle text-center">¿Adónde Quisieras Ir?</h1>
+          <h1 className="homeTitle text-center">¿Adónde quisieras ir?</h1>
         </div>
         <div className="searchBoxHomeDiv">
           <input
@@ -19,7 +19,7 @@ const HomePage = () => {
           />
         </div>
       </div>
-        <ListadoLocalidades />
+      <ListadoLocalidades />
     </>
   );
 };
