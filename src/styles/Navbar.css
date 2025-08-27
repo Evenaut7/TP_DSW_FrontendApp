@@ -96,3 +96,39 @@
   flex-direction: row;
   justify-content: space-between;
 }
+.navbarHomePage {
+  /* Grid*/
+  background-color: rgb(255, 255, 255, 0.3);
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  justify-content: space-around;
+  justify-items: center;
+  grid-gap: 12px;
+  padding-left: 18px;
+  padding-right: 18px;
+  border-radius: 35px;
+  margin: 0px 0 0 0; 
+}
+.item-navbarHomePage {
+  display: grid;
+  justify-content: space-between;
+  text-decoration: none;
+  margin: 2px 0 0 0;
+  color: white;
+}
+.bi.bi-geo-alt {
+  display: grid;
+  justify-content: center;
+}
+.bi.bi-calendar-week {
+  display: grid;
+  justify-content: center;
+}
+.bi.bi-star-fill {
+  display: grid;
+  justify-content: center;
+}
+.bi.bi-person-circle {
+  display: grid;
+  justify-content: center;
+}

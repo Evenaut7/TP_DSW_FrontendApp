@@ -9,7 +9,7 @@ import BotonCel from "../components/BotonCeleste.tsx";
 import InputLabel from "../components/InputLabel.tsx";
 import { House, Map, Notebook, CircleUserRound } from "lucide-react";
 
-
+// actualizar
 
 const Navbar = () => {
   const [lgShow, setLgShow] = useState(false);

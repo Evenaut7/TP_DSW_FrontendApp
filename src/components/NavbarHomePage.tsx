@@ -31,38 +31,23 @@ const NavbarHomePage = () => {
     return (
         <>
         {width > 768 ? (
-            <nav className="navbar">
-            {/* <div>
-                <Link to={"/"}>
-                <button className='navTitle'>
-                    ¿QUE HACEMOS?
-                </button>
-                </Link>
-            </div> */}
-            <div className="navRight gap-3">
-                <a className="fw-semibold navLetters" href="#">
-                <i className="bi bi-geo-alt"> Mapa</i>
+            <nav className="navbarHomePage">
+                <a className="item-navbarHomePage" href="#">
+                <i className="bi bi-geo-alt"/> 
+                <p>Localidades</p>
                 </a>
-                <a className="fw-semibold navLetters" href="#">
-                <i className="bi bi-calendar-week"> Agenda</i> 
+                <a className="item-navbarHomePage" href="#">
+                <i className="bi bi-calendar-week"/> 
+                <p>Agenda</p>
                 </a>
-                <a className="fw-semibold navLetters" href="#">
-                <i className="bi bi-star-fill"> Favoritos</i>
+                <a className="item-navbarHomePage" href="#">
+                <i className="bi bi-star-fill"/> 
+                <p>Favoritos</p>
                 </a>
-                <a className="fw-semibold navLetters" href="#">
-                <i className="bi bi-person-circle"> User</i>
+                <a className="item-navbarHomePage" href="#">
+                <i className="bi bi-person-circle"/> 
+                <p>Usuario</p>
                 </a>
-                
-                <button
-                className="profileImage"
-                type="button"
-                onClick={() => setLgShow(true)}
-                >
-                {/* <img src={usuario} height={'40px'} /> */}
-                
-                </button>
-
-            </div>
             </nav>
         ) : (
             <nav className="bottom-navbar">
