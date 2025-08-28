@@ -2,8 +2,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { Link } from 'react-router-dom';
 import '../styles/ListadoPDI.css';
 
-import img1 from '../assets/PDI_imgPrueba/img4.jpg'; // ejemplo, luego desde backend
-
 interface PDIData {
   id: number;
   nombre: string;
@@ -21,9 +19,9 @@ const ListadoPDI = ({ pdis }: ListadoPDIProps) => {
   if (!pdis.length) return <p>No hay puntos de interés disponibles</p>;
 
   return (
-    <div className="row g-4">
+    <div className="divListadoPDI">
       {pdis.map((pdi) => (
-        <div className="col-sm-4 " key={pdi.id}>
+        <div key={pdi.id}>
           <Link
             to={`/punto-de-interes/${pdi.id}`}
             className="text-decoration-none text-dark"

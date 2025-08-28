@@ -1,0 +1,54 @@
+.evento-card {
+  border-radius: 14px;
+  background: #ffffff;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(116, 172, 223, 0.15);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.evento-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 24px rgba(116, 172, 223, 0.25);
+}
+
+.card-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+  color: #343a40;
+}
+
+.card-subtitle {
+  font-size: 0.95rem;
+  color: #6c757d;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.card-text {
+  font-size: 1rem;
+  color: #495057;
+  line-height: 1.4;
+  margin-bottom: 14px;
+  flex-grow: 1;
+}
+
+.btn-guardar {
+  align-self: flex-start;
+  background-color: #74acdf;
+  border-color: #74acdf;
+  color: #fff;
+  transition: background-color 0.3s ease;
+}
+
+.btn-guardar:hover {
+  background-color: #5a91c9;
+  border-color: #5a91c9;
+}
