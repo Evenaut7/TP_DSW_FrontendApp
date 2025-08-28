@@ -49,7 +49,7 @@ const Localidad = () => {
   if (!localidad) return <p>No se encontró la localidad</p>;
 
   return (
-    <>
+    <div className="backgroundLocalidad">
       <Navbar />
       <div className="divLocalidades">
         <div className="topDivLocalidades">
@@ -58,15 +58,12 @@ const Localidad = () => {
               <h3>
                 {localidad.nombre}, {localidad.provincia.nombre}
               </h3>
+              <div className="underDescriptionLocalidades">
+                <Estrellas rating={3} reviews={37} />
+              </div>
             </div>
             <div className="descriptionLocalidades">
               <p>Detalles de la localidad</p>
-            </div>
-            <div className="underDescriptionLocalidades">
-              <Estrellas rating={3} reviews={37} />
-              <div className="verMasButtonDiv">
-                <button className="verMasButton"> Ver Mas </button>
-              </div>
             </div>
           </div>
           <div className="imageContainer">
@@ -76,20 +73,18 @@ const Localidad = () => {
             />
           </div>
         </div>
-
-        <h4>Lugares para conocer en {localidad.nombre}</h4>
+        <ListadoDeTags />
         <div className="pdiSearchboxDiv">
           <input
             className="pdiSearchbox"
             placeholder="Busca un Punto De Interes"
           ></input>
         </div>
-        <ListadoDeTags />
-        <div className="container my-4">
+        <div className="listadoPDI">
           <ListadoPDI pdis={localidad.puntosDeInteres ?? []} />
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

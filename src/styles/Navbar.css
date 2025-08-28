@@ -1,17 +1,13 @@
 .navbar {
-  /* Grid*/
   background-color: rgb(90, 154, 228);
-  /* display: grid;
+  display: grid;
   grid-template-columns: 1fr 1fr;
-  grid-gap: 12px; */
+  grid-gap: 12px; 
   padding-left: 18px;
   padding-right: 18px;
-  border-radius: 35px;
-  margin: 20px 0 0 0; 
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
+  border-radius: 10px;
+  margin: 8px 8px 0px 8px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
 }
 
 .navTitle {
@@ -20,8 +16,7 @@
   border: none;
   font-weight: 800;
   font-size: x-large;
-  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande',
-    'Lucida Sans', Arial, sans-serif;
+  font-family: 'poppins';
 }
 
 .navTitle:hover {
@@ -29,10 +24,12 @@
 }
 
 .navLetters {
+  display: flex;
+  align-items: center;
+  gap: 5px;
   color: #ffffff;
   font-size: large;
-  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande',
-    'Lucida Sans', Arial, sans-serif;
+  font-family: 'poppins';
   text-decoration: none;
 }
 
@@ -55,12 +52,12 @@
 
 .bottom-navbar {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr; 
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr; 
   justify-items: center;
   justify-content: space-around;
   background-color: #333;
   color: rgb(255, 255, 255);
-  padding: 15px 0 10px 0;
+  padding: 15px 0 8px 0;
   text-align: center;
   position: fixed;
   bottom: 0;
@@ -96,44 +93,3 @@
   flex-direction: row;
   justify-content: space-between;
 }
-.navbarHomePage {
-  /* Grid*/
-  background-color: rgb(255, 255, 255, 0.3);
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-  justify-content: space-around;
-  justify-items: center;
-  grid-gap: 20px;
-  padding-left: 18px;
-  padding-right: 18px;
-  border-radius: 35px;
-  margin: 10px 0 10px 0; 
-}
-.item-navbarHomePage {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-  align-items: center;
-  text-decoration: none;
-  color: white;
-  /* display: grid;
-  grid-template-rows: 1fr auto;
-  justify-content: space-evenly;
-  margin: 2px 0 0 0; */
-}
-/* .bi.bi-geo-alt {
-  display: grid;
-  justify-content: center;
-}
-.bi.bi-calendar-week {
-  display: grid;
-  justify-content: center;
-}
-.bi.bi-star-fill {
-  display: grid;
-  justify-content: center;
-}
-.bi.bi-person-circle {
-  display: grid;
-  justify-content: center;
-} */
