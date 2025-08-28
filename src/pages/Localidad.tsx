@@ -50,8 +50,8 @@ const Localidad = () => {
 
   return (
     <>
+      <Navbar />
       <div className="divLocalidades">
-        <Navbar />
         <div className="topDivLocalidades">
           <div className="leftTopDivLocalidades">
             <div className="titleLocalidades">
