@@ -6,7 +6,7 @@ import "../styles/Navbar.css"
 import { useState, useEffect } from "react"
 //import Modal from 'react-bootstrap/Modal';
 //import InputLabel from "../components/InputLabel.tsx";
-import { House, Map, Notebook, CircleUserRound } from "lucide-react";
+import { House, Map, Notebook, CircleUserRound, Star } from "lucide-react";
 import { SignedIn, SignedOut, SignUpButton, UserButton } from "@clerk/clerk-react"
 
 
@@ -48,7 +48,7 @@ const NavbarHomePage = () => {
                     {/* <a className="item-navbarHomePage" href="#" onClick={() => setLgShow(true)}> */}
                     <div className="item-navbarHomePage">
                     <i className="bi bi-person-circle"/>
-                    <SignUpButton mode="modal"/>
+                    <SignUpButton mode="modal">Usuario</SignUpButton>
                     </div>
                 </SignedOut>
                 <SignedIn>
@@ -73,11 +73,13 @@ const NavbarHomePage = () => {
                 <a href="#">Agenda</a>
             </div>
             <div>
+                <Star />
+                <a href="#">Favoritos</a>
+            </div>
+            <div>
                 <SignedOut>
-                    
                     <CircleUserRound />
-                    <SignUpButton mode="modal"/>
-            
+                    <SignUpButton mode="modal">Usuario</SignUpButton>
                 </SignedOut>
                 <SignedIn>
                     <UserButton />

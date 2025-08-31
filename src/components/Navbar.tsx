@@ -7,6 +7,7 @@ import Modal from 'react-bootstrap/Modal';
 import BotonCel from "../components/BotonCeleste.tsx";
 import InputLabel from "../components/InputLabel.tsx";
 import { House, Map, Notebook, CircleUserRound, Star } from "lucide-react";
+import { SignedIn, SignedOut, SignUpButton, UserButton } from "@clerk/clerk-react"
 
 // actualizar
 
@@ -51,14 +52,25 @@ const Navbar = () => {
               Favoritos
               <Star />
             </a>
-
-            <button
+            <SignedOut>
+                    {/* <a className="item-navbarHomePage" href="#" onClick={() => setLgShow(true)}> */}
+                    <div className="fw-semibold navLetters">
+                    <SignUpButton mode="modal">Usuario</SignUpButton>
+                    <i className="bi bi-person-circle"/>
+                    </div>
+                </SignedOut>
+                <SignedIn>
+                    <div className="fw-semibold navLetters">
+                    <UserButton />
+                    </div>
+                </SignedIn>
+            {/* <button
               className="profileImage"
               type="button"
               onClick={() => setLgShow(true)}
             >
               <CircleUserRound color="White" size={35}/>
-            </button>
+            </button> */}
 
           </div>
         </nav>
@@ -81,8 +93,14 @@ const Navbar = () => {
             <a href="#">Favoritos</a>
           </div>
           <div>
-            <CircleUserRound />
-              <a href="#" onClick={() => setLgShow(true)}>Usuario</a>
+            <SignedOut>
+                    <CircleUserRound />
+                    <SignUpButton mode="modal">Usuario</SignUpButton>
+                </SignedOut>
+                <SignedIn>
+                    <UserButton />
+                    <p>Usuario</p>
+                </SignedIn>
           </div>
         </nav>
       )}
