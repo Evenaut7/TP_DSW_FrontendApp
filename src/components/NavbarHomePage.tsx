@@ -1,18 +1,18 @@
-import { Link } from "react-router-dom"
+//import { Link } from "react-router-dom"
 import "../styles/NotFoundPage.css"
 import 'bootstrap/dist/css/bootstrap.min.css'
 import "../styles/Navbar.css"
 // import usuario from '../assets/userStock.png'
 import { useState, useEffect } from "react"
-import Modal from 'react-bootstrap/Modal';
-import BotonCel from "../components/BotonCeleste.tsx";
-import InputLabel from "../components/InputLabel.tsx";
+//import Modal from 'react-bootstrap/Modal';
+//import InputLabel from "../components/InputLabel.tsx";
 import { House, Map, Notebook, CircleUserRound } from "lucide-react";
+import { SignedIn, SignedOut, SignUpButton, UserButton } from "@clerk/clerk-react"
 
 
 
 const NavbarHomePage = () => {
-    const [lgShow, setLgShow] = useState(false);
+    // const [lgShow, setLgShow] = useState(false);
     const [width, setWidth] = useState(window.innerWidth)
     //const [user, setUser] = useState(null)
     // const [show, setShow] = useState(false);
@@ -44,10 +44,19 @@ const NavbarHomePage = () => {
                 <i className="bi bi-star-fill"/> 
                 <p>Favoritos</p>
                 </a>
-                <a className="item-navbarHomePage" href="#" onClick={() => setLgShow(true)}>
-                <i className="bi bi-person-circle"/> 
-                <p>Usuario</p>
-                </a>
+                <SignedOut>
+                    {/* <a className="item-navbarHomePage" href="#" onClick={() => setLgShow(true)}> */}
+                    <div className="item-navbarHomePage">
+                    <i className="bi bi-person-circle"/>
+                    <SignUpButton mode="modal"/>
+                    </div>
+                </SignedOut>
+                <SignedIn>
+                    <div className="item-navbarHomePage">
+                    <UserButton />
+                    <p>Usuario</p>
+                    </div>
+                </SignedIn>
             </nav>
         ) : (
             <nav className="bottom-navbar">
@@ -64,13 +73,21 @@ const NavbarHomePage = () => {
                 <a href="#">Agenda</a>
             </div>
             <div>
-                <CircleUserRound />
-                <a href="#" onClick={() => setLgShow(true)}>Usuario</a>
+                <SignedOut>
+                    
+                    <CircleUserRound />
+                    <SignUpButton mode="modal"/>
+            
+                </SignedOut>
+                <SignedIn>
+                    <UserButton />
+                    <p>Usuario</p>
+                </SignedIn>
             </div>
             </nav>
         )}
 
-        <Modal
+        {/* <Modal
             size="lg"
             show={lgShow}
             onHide={() => setLgShow(false)}
@@ -87,11 +104,12 @@ const NavbarHomePage = () => {
             <InputLabel label="Password" />
             </Modal.Body>
             <Modal.Footer className="modal-footer">
-            <Link to={"/login"}>Create account</Link>
-            <BotonCel texto="Sign in" />
+            <Link to={"/signup"}>Create account</Link>
+            <BotonCel texto="Sign in" /> 
+            <SignInButton mode="modal"/>
             </Modal.Footer>
         </Modal>
-        
+         */}
         {/* <Offcanvas show={show} onHide={handleClose} responsive="lg">
                 <Offcanvas.Header closeButton>
                 <Offcanvas.Title>Offcanvas</Offcanvas.Title>

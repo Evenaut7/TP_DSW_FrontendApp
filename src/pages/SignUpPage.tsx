@@ -1,9 +1,9 @@
-import BotonCel from "../components/BotonCeleste.tsx";
-import InputLabel from "../components/InputLabel.tsx";
+
+//import InputLabel from "../components/InputLabel.tsx";
 import BotonRojo from "../components/BotonRojo.tsx";
 import { Link } from "react-router-dom";
 import '../styles/SignUpPage.css'
-
+import { SignUp } from "@clerk/clerk-react";
 
 
 function SignUpPage(){
@@ -13,12 +13,12 @@ function SignUpPage(){
                 <Link to="/">
                     <BotonRojo texto="Home Page" />
                 </Link>
-                <Link to="/login">
-                    <BotonCel className="btn-celeste" texto="Log in" />
-                </Link>
+                {/* <Link to="/login">
+                    <BotonCel texto="Log in" />
+                </Link> */}
             </header>
-
-            <div className="signup-content">
+            <SignUp />
+            {/* <div className="signup-content">
                 <h1 className="title">TRAVEL APP</h1>
                 <div className="signup-form">
                     <InputLabel label="Email" />
@@ -27,7 +27,7 @@ function SignUpPage(){
                     <InputLabel label="Location" />
                     <BotonCel texto="Sign Up" />
                 </div>
-            </div>
+            </div> */}
         </div>
     );
 }
