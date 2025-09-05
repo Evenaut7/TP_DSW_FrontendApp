@@ -1,54 +1,116 @@
+.eventos-container {
+  margin-top: 2rem;
+}
+
+.eventos-titulo {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: #2d9cdb;
+  margin-bottom: 1.5rem;
+}
+
 .evento-card {
-  border-radius: 14px;
-  background: #ffffff;
-  padding: 20px;
-  box-shadow: 0 4px 12px rgba(116, 172, 223, 0.15);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  cursor: pointer;
-  height: 100%;
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  align-items: center;
+  background-color: #ffffff;
+  border-radius: 1rem;
+  box-shadow: 0 4px 12px rgba(45, 156, 219, 0.15);
+  margin-bottom: 1rem;
+  overflow: hidden;
+  transition: transform 0.3s ease-in-out;
 }
 
 .evento-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 10px 24px rgba(116, 172, 223, 0.25);
+  transform: translateY(-4px);
 }
 
-.card-title {
-  font-size: 1.3rem;
-  font-weight: 700;
-  margin-bottom: 6px;
-  color: #343a40;
-}
-
-.card-subtitle {
-  font-size: 0.95rem;
-  color: #6c757d;
-  margin-bottom: 12px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.card-text {
-  font-size: 1rem;
-  color: #495057;
-  line-height: 1.4;
-  margin-bottom: 14px;
-  flex-grow: 1;
-}
-
-.btn-guardar {
-  align-self: flex-start;
+.evento-fecha {
   background-color: #74acdf;
-  border-color: #74acdf;
-  color: #fff;
-  transition: background-color 0.3s ease;
+  color: #ffffff;
+  padding: 1rem;
+  text-align: center;
+  width: 80px;
+  flex-shrink: 0;
 }
 
-.btn-guardar:hover {
-  background-color: #5a91c9;
-  border-color: #5a91c9;
+.evento-dia {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.evento-mes {
+  display: block;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+}
+
+.evento-info {
+  flex: 1;
+  padding: 1rem 1.5rem;
+}
+
+.evento-titulo {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  color: #74acdf;
+  margin-bottom: 0.5rem;
+}
+
+.evento-horario {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  color: #828282;
+  margin-bottom: 0.75rem;
+}
+
+.evento-descripcion {
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  color: #333333;
+  margin-bottom: 1rem;
+}
+
+.evento-acciones {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.evento-acciones .btn {
+  flex: 1;
+  min-width: 120px;
+  height: 45px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.375rem 0.75rem;
+}
+
+/* Desktop: ancho natural */
+@media (min-width: 769px) {
+  .evento-acciones .btn {
+    flex: initial;
+    min-width: auto;
+    height: auto;
+  }
+}
+
+/* Botón favorito */
+.favoriteBtn {
+  font-weight: 500;
+  font: inter;
+  color: inherit;
+  border-color: #000000;
+  background-color: transparent;
+}
+
+/* Solo hover o active */
+.favoriteBtn:hover,
+.favoriteBtn.active {
+  background-color: #f1c40f;
+  color: white !important;
+  border-color: #f1c40f;
 }
