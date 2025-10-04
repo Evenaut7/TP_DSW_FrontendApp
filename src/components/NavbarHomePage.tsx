@@ -32,23 +32,23 @@ const NavbarHomePage = () => {
         <>
         {width > 768 ? (
             <nav className="navbarHomePage">
-                <a className="item-navbarHomePage" href="#">
+                <a className="navLetters" href="#">
                 <i className="bi bi-geo-alt"/> 
                 <p>Localidades</p>
                 </a>
-                <a className="item-navbarHomePage" href="#">
+                <a className="navLetters" href="#">
                 <i className="bi bi-calendar-week"/> 
                 <p>Agenda</p>
                 </a>
-                <a className="item-navbarHomePage" href="#">
-                <i className="bi bi-star-fill"/> 
+                <a className="navLetters" href="#">
+                <i data-testid="favorites-icon" className="bi bi-star-fill"/> 
                 <p>Favoritos</p>
                 </a>
                 <SignedOut>
                     {/* <a className="item-navbarHomePage" href="#" onClick={() => setLgShow(true)}> */}
                     <div className="item-navbarHomePage">
                     <i className="bi bi-person-circle"/>
-                    <SignUpButton mode="modal">Usuario</SignUpButton>
+                    <SignUpButton data-testid="sign-up-button" mode="modal">Usuario</SignUpButton>
                     </div>
                 </SignedOut>
                 <SignedIn>
@@ -79,7 +79,7 @@ const NavbarHomePage = () => {
             <div>
                 <SignedOut>
                     <CircleUserRound />
-                    <SignUpButton mode="modal">Usuario</SignUpButton>
+                    <SignUpButton data-testid="sign-up-button" mode="modal">Usuario</SignUpButton>
                 </SignedOut>
                 <SignedIn>
                     <UserButton />
