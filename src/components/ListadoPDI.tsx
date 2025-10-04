@@ -23,12 +23,12 @@ const ListadoPDI = ({ pdis }: ListadoPDIProps) => {
       {pdis.map((pdi) => (
         <div key={pdi.id}>
           <Link
-            to={`/punto-de-interes/${pdi.id}`}
+            to={`/pdi/${pdi.id}`}
             className="text-decoration-none text-dark"
           >
             <div className="card h-100 shadow-sm listado-pdi-card">
               <img
-                src={`http://localhost:3000/public/${pdi.imagenes[0]}`} 
+                src={`http://localhost:3000/public/${pdi.imagenes[0]}`}
                 className="card-img-top listado-pdi-img"
                 alt={pdi.nombre}
               />
