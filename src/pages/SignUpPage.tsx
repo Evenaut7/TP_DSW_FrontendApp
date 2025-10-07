@@ -14,7 +14,7 @@ function SignUpPage(){
                     <BotonRojo texto="Home Page" />
                 </Link>
                 <Link to="/login">
-                    <BotonCel className="btn-celeste" texto="Log in" />
+                    <BotonCel texto="Log in" />
                 </Link>
             </header>
 
@@ -24,7 +24,6 @@ function SignUpPage(){
                     <InputLabel label="Email" />
                     <InputLabel label="Password" />
                     <InputLabel label="Username" />
-                    <InputLabel label="Location" />
                     <BotonCel texto="Sign Up" />
                 </div>
             </div>

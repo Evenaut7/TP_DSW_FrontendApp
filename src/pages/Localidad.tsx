@@ -50,11 +50,6 @@ const Localidad = () => {
 
   return (
     <div className="backgroundLocalidad">
-      {/* DEBUG: muestra el JSON recibido para verificar shape de datos */}
-      <div style={{ padding: 12, background: '#f8f9fa', borderBottom: '1px solid #e9ecef' }}>
-        <strong>DEBUG - localidad (raw):</strong>
-        <pre style={{ maxHeight: 200, overflow: 'auto' }}>{JSON.stringify(localidad, null, 2)}</pre>
-      </div>
       <Navbar />
       <div className="divLocalidades">
         <div className="topDivLocalidades">

@@ -1,11 +1,21 @@
 type InputLabelProps = {
     label: string;
+    type?: string;
+    value?: string;
+    onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    required?: boolean;
 };
 
 function InputLabel(props: InputLabelProps) {
     return (
         <>
-        <input type="text" className="form-control" id="formGroupExampleInput" placeholder={props.label} />
+        <input className="form-control" 
+        id="formGroupExampleInput" 
+        placeholder={props.label} 
+        type={props.type} 
+        value={props.value} 
+        onChange={props.onChange} 
+        required={props.required} />
         </>
     );
 }
