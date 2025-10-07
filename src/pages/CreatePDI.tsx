@@ -40,7 +40,7 @@ const CreatePDI = () => {
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
-    const { name, value, type, checked, files } = e.target as HTMLInputElement;
+    const { name, value, checked, files } = e.target as HTMLInputElement;
 
     if (name === 'imagenes' && files) {
       setForm((prev) => ({   //convierte FileList en File[]
@@ -117,8 +117,12 @@ const CreatePDI = () => {
         usuario: 0,
         localidad: 0,
       });
-    } catch (error: any) {
-      alert(error.message || 'Error desconocido');
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        alert(error.message);
+      } else {
+        alert('Error desconocido');
+      }
     } finally {
       setLoading(false);
     }

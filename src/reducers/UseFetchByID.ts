@@ -16,8 +16,12 @@ export function useFetchById<T>(baseUrl: string, id: number | null) {
 
         const json = await response.json();
         setData(json.data ?? json);
-      } catch (err: any) {
-        setError(err.message);
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError('Error desconocido');
+        }
       } finally {
         setLoading(false);
       }
