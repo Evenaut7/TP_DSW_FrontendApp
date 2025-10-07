@@ -12,7 +12,7 @@ interface PDI {
   id: number;
   nombre: string;
   descripcion: string;
-  imagenes: string[];
+  imagen: string;
   calle: string;
   altura: number;
   localidad: {
@@ -50,7 +50,7 @@ const PDIPage = () => {
         {/* Hero con imagen + título */}
         <div className="heroPDI">
           <img
-            src={`http://localhost:3000/public/${pdi.imagenes[0]}`}
+            src={`http://localhost:3000/public/${pdi.imagen}`}
             alt={pdi.nombre}
             className="heroImage"
           />

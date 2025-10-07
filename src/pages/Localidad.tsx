@@ -25,7 +25,7 @@ interface Localidad {
     id: number;
     nombre: string;
     descripcion: string;
-    imagenes: string[];
+    imagen: string;
     calle: string;
     altura: number;
   }[];

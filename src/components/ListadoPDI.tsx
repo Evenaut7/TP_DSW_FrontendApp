@@ -6,7 +6,7 @@ interface PDIData {
   id: number;
   nombre: string;
   descripcion: string;
-  imagenes: string[];
+  imagen: string;
   calle: string;
   altura: number;
 }
@@ -28,7 +28,7 @@ const ListadoPDI = ({ pdis }: ListadoPDIProps) => {
           >
             <div className="card h-100 shadow-sm listado-pdi-card">
               <img
-                src={`http://localhost:3000/public/${pdi.imagenes[0]}`}
+                src={`http://localhost:3000/public/${pdi.imagen}`}
                 className="card-img-top listado-pdi-img"
                 alt={pdi.nombre}
               />
