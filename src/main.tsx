@@ -12,6 +12,9 @@ import PuntoDeInteres from './pages/PuntoDeInteres.tsx';
 // import LoginPage from './pages/LoginPage.tsx';
 // import SignUpPage from './pages/SignUpPage.tsx';
 import CreatePuntoDeInteres from './pages/CreatePDI.tsx';
+import MainLayout from './layouts/MainLayout.tsx';
+import ProtectedRoute from './components/ProtectedRoute.tsx';
+import { UserProvider } from './context/userProvider.tsx';
 // Import your Publishable Key
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
 
@@ -23,13 +26,20 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
       <ClerkProvider publishableKey={PUBLISHABLE_KEY} signInUrl='/login'>
+        <UserProvider>
         <Routes>
-          <Route path='/' element={<HomePage />} />
+          <Route path='/' element={<MainLayout />} />
+          <Route index element={<HomePage />} />
           <Route path='/localidad/:id' element={<Localidad />} />
           <Route path='/punto-de-interes/:id' element={<PuntoDeInteres />} />
-          <Route path='/CreatePDI' element={<CreatePuntoDeInteres />} />
+          <Route path='/CreatePDI' element={
+              <ProtectedRoute>
+                <CreatePuntoDeInteres />
+              </ProtectedRoute>
+            } />
           <Route path='*' element={<NotFoundPage />} />
         </Routes>
+        </UserProvider>
       </ClerkProvider>
     </BrowserRouter>
   </StrictMode>

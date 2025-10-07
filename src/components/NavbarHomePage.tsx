@@ -8,6 +8,7 @@ import { useState, useEffect } from "react"
 //import InputLabel from "../components/InputLabel.tsx";
 import { House, Map, Notebook, CircleUserRound, Star } from "lucide-react";
 import { SignedIn, SignedOut, SignUpButton, UserButton } from "@clerk/clerk-react"
+//import { useUser } from "../context/UserContext.tsx";
 
 
 
@@ -18,6 +19,7 @@ const NavbarHomePage = () => {
     // const [show, setShow] = useState(false);
     // const handleClose = () => setShow(false);
     // const handleShow = () => setShow(true);
+
 
     useEffect(() => {
         const handleResize = () => setWidth(window.innerWidth)
@@ -52,6 +54,9 @@ const NavbarHomePage = () => {
                     </div>
                 </SignedOut>
                 <SignedIn>
+                    <a href="/CreatePDI" className="fw-semibold navLetters">
+                        Crear PDI
+                    </a>
                     <div className="item-navbarHomePage">
                     <UserButton />
                     <p>Usuario</p>

@@ -15,3 +15,8 @@ export interface UserContextType {
     isLoadingUser: boolean;
     setIsLoadingUser: (loading: boolean) => void;
 }
+
+export interface ApiResponse<T> {
+    message: string;
+    data: T;
+}

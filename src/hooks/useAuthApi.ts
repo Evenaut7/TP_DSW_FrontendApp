@@ -1,11 +1,8 @@
 import { useAuth } from '@clerk/clerk-react';
 import { useUser } from '../context/UserContext'; 
 import type { UsuarioLocal } from '../context/types';
+import type { ApiResponse } from '../context/types';
 
-interface ApiResponse<T> {
-    message: string;
-    data: T;
-}
 
 export function useAuthApi() {
     const { getToken, isLoaded, isSignedIn } = useAuth();
@@ -36,7 +33,7 @@ export function useAuthApi() {
 
         // 401 Unauthorized del backend (por tu middleware 'protect')
         if (response.status === 401) {
-             throw new Error("Acceso no autorizado (401). Token inválido o expirado.");
+            throw new Error("Acceso no autorizado (401). Token inválido o expirado.");
         }
 
         if (!response.ok) {
