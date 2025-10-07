@@ -1,5 +1,9 @@
-// Define la interfaz de tu Usuario local (completa con todas las propiedades que necesitas)
-export interface UsuarioLocal {
+
+export interface ApiResponse<T> {
+    message: string;
+    data: T;
+}
+export type UsuarioLocal = {
     clerkUserId: string;
     gmail: string;
     nombreUsuario?: string;
@@ -8,15 +12,9 @@ export interface UsuarioLocal {
     puntosDeInteres?: number[];
     favoritos?: number[];
 }
-
-export interface UserContextType {
+export type UserContextType = {
     userLocal: UsuarioLocal | null;
     setUserLocal: (user: UsuarioLocal | null) => void;
     isLoadingUser: boolean;
     setIsLoadingUser: (loading: boolean) => void;
-}
-
-export interface ApiResponse<T> {
-    message: string;
-    data: T;
 }

@@ -1,19 +1,24 @@
 import { createContext, useState } from 'react';
-import type { ReactNode } from 'react';
-import type { UsuarioLocal, UserContextType } from './types'; 
-
-
+import type {  UserContextType, UsuarioLocal } from './types';
 
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
-export const UserProvider = ({ children }: { children: ReactNode }) => {
+export const UserProvider = (props: userProviderProps) => {
     const [userLocal, setUserLocal] = useState<UsuarioLocal | null>(null);
     const [isLoadingUser, setIsLoadingUser] = useState(false);
 
     return (
         <UserContext.Provider value={{ userLocal, setUserLocal, isLoadingUser, setIsLoadingUser }}>
-            {children}
+            {props.children}
         </UserContext.Provider>
     );
 };
+
+
+
+
+type userProviderProps = {
+    children: React.ReactNode;
+}
+

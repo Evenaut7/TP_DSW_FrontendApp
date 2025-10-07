@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react';
-import type {  UserContextType } from './types'; 
+import type {  UsuarioLocal } from './types'; 
 
 
 
@@ -23,4 +23,10 @@ export const useUser = () => {
         throw new Error('useUser debe ser usado dentro de un UserProvider');
     }
     return context;
+};
+type UserContextType = {
+    userLocal: UsuarioLocal | null;
+    setUserLocal: (user: UsuarioLocal | null) => void;
+    isLoadingUser: boolean;
+    setIsLoadingUser: (loading: boolean) => void;
 };

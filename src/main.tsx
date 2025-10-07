@@ -26,7 +26,7 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
       <ClerkProvider publishableKey={PUBLISHABLE_KEY} signInUrl='/login'>
-        <UserProvider>
+        <UserProvider> 
         <Routes>
           <Route path='/' element={<MainLayout />} />
           <Route index element={<HomePage />} />
