@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import type { FormEvent } from 'react';
 import { useFetch } from '../reducers/UseFetch';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { SignedIn, SignedOut, SignUpButton } from '@clerk/clerk-react';
 
 interface Tag {
   id: number;
@@ -40,7 +41,7 @@ const CreatePDI = () => {
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
-    const { name, value, type, checked, files } = e.target as HTMLInputElement;
+    const { name, value, checked, files } = e.target as HTMLInputElement;
 
     if (name === 'imagenes' && files) {
       setForm((prev) => ({   //convierte FileList en File[]
@@ -117,8 +118,12 @@ const CreatePDI = () => {
         usuario: 0,
         localidad: 0,
       });
-    } catch (error: any) {
-      alert(error.message || 'Error desconocido');
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        alert(error.message);
+      } else {
+        alert(String(error) || 'Error desconocido');
+      }
     } finally {
       setLoading(false);
     }
@@ -126,6 +131,12 @@ const CreatePDI = () => {
 
   return (
     <div className="container mt-4">
+      <SignedOut>
+        <h2>Crear Punto de Interés</h2>
+        <p>Debes estar autenticado para crear un Punto de Interés.</p>
+        <SignUpButton mode='modal'/>
+      </SignedOut>
+      <SignedIn>
       <h2>Crear Punto de Interés</h2>
       <form onSubmit={handleSubmit} encType="multipart/form-data">
         {/* Nombre */}
@@ -270,7 +281,9 @@ const CreatePDI = () => {
           {loading ? 'Guardando...' : 'Crear Punto de Interés'}
         </button>
       </form>
+      </SignedIn>
     </div>
+    
   );
 };
 

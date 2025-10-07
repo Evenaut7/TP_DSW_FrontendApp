@@ -25,8 +25,6 @@ createRoot(document.getElementById('root')!).render(
       <ClerkProvider publishableKey={PUBLISHABLE_KEY} signInUrl='/login'>
         <Routes>
           <Route path='/' element={<HomePage />} />
-          {/* <Route path='/signup' element={<SignUpPage />} />
-          <Route path='/login' element={<LoginPage />} /> */}
           <Route path='/localidad/:id' element={<Localidad />} />
           <Route path='/punto-de-interes/:id' element={<PuntoDeInteres />} />
           <Route path='/CreatePDI' element={<CreatePuntoDeInteres />} />
