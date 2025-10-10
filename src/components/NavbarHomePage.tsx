@@ -1,21 +1,30 @@
-
 import "../styles/NotFoundPage.css"
 import 'bootstrap/dist/css/bootstrap.min.css'
 import "../styles/Navbar.css"
 import { useState, useEffect } from "react"
-import { House, Map, Notebook, CircleUserRound } from "lucide-react";
+import { CircleUserRound, House, Map, Notebook, Star } from "lucide-react";
 import AuthModal from "./AuthModal";
 import RegisterModal from "./RegisterModal";
 import { Link } from "react-router-dom";
+import UserBotton from "./UserBotton";
+import BottomUserBoton from "./BottomUserBoton";
 
 
 
-const NavbarHomePage = () => {
+function NavbarHomePage() {
     const [showAuth, setShowAuth] = useState(false);
     const [showRegister, setShowRegister] = useState(false);
     const [width, setWidth] = useState(window.innerWidth)
-    //const [user, setUser] = useState(null)
 
+    const validarToken = () => {
+        const token = localStorage.getItem('token');
+        if (token) {
+        //Aquí puedes agregar lógica para validar el token si es necesario
+            return true; // Token existe
+        } else {
+            return false; // Token no existe
+        }
+    }
 
     useEffect(() => {
         const handleResize = () => setWidth(window.innerWidth)
@@ -39,23 +48,17 @@ const NavbarHomePage = () => {
                 <Link className="fw-semibold navLetters" to={"/favoritos"}>
                 <i className="bi bi-star-fill"> Favoritos</i>
                 </Link>
-                <Link className="fw-semibold navLetters" to="#" onClick={() => setShowAuth(true)}>
-                <i className="bi bi-person-circle"> User</i>
-                </Link>
-                
-                <button
-                className="profileImage"
-                type="button"
-                onClick={() => setShowAuth(true)}
-                >
-                {/* <img src={usuario} height={'40px'} /> */}
-                
-                </button>
-
-            
+                <>{validarToken() ? (
+                    <UserBotton buttonClassName="profileImage" onLogout={() => setShowAuth(false)} />
+                ) : (
+                    <Link to="#" onClick={() => setShowAuth(true)}>
+                    <CircleUserRound />
+                        Usuario
+                    </Link>
+                )}</>
             </nav>
         ) : (
-            <nav className="bottom-navbar-HomePage">
+            <nav className="bottom-navbar">
             <div>
                 <House />
                 <Link to="/">Inicio</Link>
@@ -69,8 +72,20 @@ const NavbarHomePage = () => {
                 <Link to="/agenda">Agenda</Link>
             </div>
             <div>
-                <CircleUserRound />
-                <Link to="#" onClick={() => setShowAuth(true)}>Usuario</Link>
+                <Star />
+                <Link to="/favoritos">Favoritos</Link>
+            </div>
+            <div>
+                {validarToken() ? (
+                    <>
+                        <BottomUserBoton buttonClassName="profileImage" onLogout={() => setShowAuth(false)} />
+                    </>
+                ) : (
+                    <>
+                        <CircleUserRound />
+                        <Link to="#" onClick={() => setShowAuth(true)}>Usuario</Link>
+                    </>
+                )}
             </div>
             </nav>
         )}

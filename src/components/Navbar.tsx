@@ -5,7 +5,9 @@ import "../styles/Navbar.css"
 import { useState, useEffect } from "react"
 import AuthModal from "./AuthModal.tsx"
 import RegisterModal from "./RegisterModal.tsx"
-import { House, Map, Notebook, CircleUserRound, Star } from "lucide-react";
+import { House, Map, Notebook,  Star, CircleUserRound } from "lucide-react";
+import UserBotton from "./UserBotton.tsx"
+import BottomUserBoton from "./BottomUserBoton";
 
 
 
@@ -13,8 +15,16 @@ const Navbar = () => {
   const [showRegister, setShowRegister] = useState(false);
   const [showAuth, setShowAuth] = useState(false);
   const [width, setWidth] = useState(window.innerWidth)
-  //const [user, setUser] = useState(null)
-  
+
+  const validarToken = () => {
+    const token = localStorage.getItem('token');
+    if (token) {
+    //Aquí puedes agregar lógica para validar el token si es necesario
+       return true; // Token existe
+    } else {
+      return false; // Token no existe
+    }
+  }
 
   useEffect(() => {
     const handleResize = () => setWidth(window.innerWidth)
@@ -49,14 +59,14 @@ const Navbar = () => {
               Favoritos
               <Star />
             </Link>
-
-            <button
-              className="profileImage"
-              type="button"
-              onClick={() => setShowAuth(true)}
-            >
-              <CircleUserRound color="White" size={35}/>
-            </button>
+            <>{validarToken() ? (
+                    <UserBotton buttonClassName="profileImage" onLogout={() => setShowAuth(false)} />
+                ) : (
+                    <Link to="#" onClick={() => setShowAuth(true)}>
+                    <CircleUserRound />
+                        Usuario
+                    </Link>
+                )}</>
 
           </div>
         </nav>
@@ -79,12 +89,22 @@ const Navbar = () => {
             <Link to={"/favoritos"}>Favoritos</Link>
           </div>
           <div>
-            <CircleUserRound />
-            <Link to="#" onClick={() => setShowAuth(true)}>Usuario</Link>
+            {validarToken() ? (
+              <>
+                <CircleUserRound />
+                <BottomUserBoton buttonClassName="profileImage" onLogout={() => setShowAuth(false)} />
+              </>
+            ) : (
+              <>
+                <CircleUserRound />
+                <Link to="#" onClick={() => setShowAuth(true)}>Usuario</Link>
+              </>
+            )}
           </div>
         </nav>
       )}
 
+      
       <AuthModal
             show={showAuth}
             onClose={() => setShowAuth(false)}
