@@ -1,18 +1,17 @@
-import { Link } from "react-router-dom"
+
 import "../styles/NotFoundPage.css"
 import 'bootstrap/dist/css/bootstrap.min.css'
 import "../styles/Navbar.css"
-// import usuario from '../assets/userStock.png'
 import { useState, useEffect } from "react"
-import Modal from 'react-bootstrap/Modal';
-import BotonCel from "../components/BotonCeleste.tsx";
-import InputLabel from "../components/InputLabel.tsx";
 import { House, Map, Notebook, CircleUserRound } from "lucide-react";
+import AuthModal from "./AuthModal";
+import RegisterModal from "./RegisterModal";
 
 
 
 const NavbarHomePage = () => {
-    const [lgShow, setLgShow] = useState(false);
+    const [showAuth, setShowAuth] = useState(false);
+    const [showRegister, setShowRegister] = useState(false);
     const [width, setWidth] = useState(window.innerWidth)
     //const [user, setUser] = useState(null)
     // const [show, setShow] = useState(false);
@@ -31,15 +30,7 @@ const NavbarHomePage = () => {
     return (
         <>
         {width > 768 ? (
-            <nav className="navbar">
-            {/* <div>
-                <Link to={"/"}>
-                <button className='navTitle'>
-                    ¿QUE HACEMOS?
-                </button>
-                </Link>
-            </div> */}
-            <div className="navRight gap-3">
+            <nav className="navHomePage">
                 <a className="fw-semibold navLetters" href="#">
                 <i className="bi bi-geo-alt"> Mapa</i>
                 </a>
@@ -49,20 +40,20 @@ const NavbarHomePage = () => {
                 <a className="fw-semibold navLetters" href="#">
                 <i className="bi bi-star-fill"> Favoritos</i>
                 </a>
-                <a className="fw-semibold navLetters" href="#">
+                <a className="fw-semibold navLetters" href="#" onClick={() => setShowAuth(true)}>
                 <i className="bi bi-person-circle"> User</i>
                 </a>
                 
                 <button
                 className="profileImage"
                 type="button"
-                onClick={() => setLgShow(true)}
+                onClick={() => setShowAuth(true)}
                 >
                 {/* <img src={usuario} height={'40px'} /> */}
                 
                 </button>
 
-            </div>
+            
             </nav>
         ) : (
             <nav className="bottom-navbar">
@@ -80,32 +71,21 @@ const NavbarHomePage = () => {
             </div>
             <div>
                 <CircleUserRound />
-                <a href="#" onClick={() => setLgShow(true)}>Usuario</a>
+                <a href="#" onClick={() => setShowAuth(true)}>Usuario</a>
             </div>
             </nav>
         )}
 
-        <Modal
-            size="lg"
-            show={lgShow}
-            onHide={() => setLgShow(false)}
-            aria-labelledby="contained-modal-title-vcenter"
-            centered
-        >
-            <Modal.Header closeButton>
-            <Modal.Title id="contained-modal-title-vcenter">
-                Sign Up for Travel App
-            </Modal.Title>
-            </Modal.Header>
-            <Modal.Body className="modal-body">
-            <InputLabel label="Email" />
-            <InputLabel label="Password" />
-            </Modal.Body>
-            <Modal.Footer className="modal-footer">
-            <Link to={"/login"}>Create account</Link>
-            <BotonCel texto="Sign in" />
-            </Modal.Footer>
-        </Modal>
+        <AuthModal
+            show={showAuth}
+            onClose={() => setShowAuth(false)}
+            onOpenRegister={() => setShowRegister(true)}
+        />
+        <RegisterModal
+            show={showRegister}
+            onClose={() => setShowRegister(false)}
+            onBackToLogin={() => setShowAuth(true)}
+        />
         
         {/* <Offcanvas show={show} onHide={handleClose} responsive="lg">
                 <Offcanvas.Header closeButton>
