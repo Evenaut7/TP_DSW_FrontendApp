@@ -6,6 +6,7 @@ import { useState, useEffect } from "react"
 import { House, Map, Notebook, CircleUserRound } from "lucide-react";
 import AuthModal from "./AuthModal";
 import RegisterModal from "./RegisterModal";
+import { Link } from "react-router-dom";
 
 
 
@@ -14,9 +15,7 @@ const NavbarHomePage = () => {
     const [showRegister, setShowRegister] = useState(false);
     const [width, setWidth] = useState(window.innerWidth)
     //const [user, setUser] = useState(null)
-    // const [show, setShow] = useState(false);
-    // const handleClose = () => setShow(false);
-    // const handleShow = () => setShow(true);
+
 
     useEffect(() => {
         const handleResize = () => setWidth(window.innerWidth)
@@ -31,18 +30,18 @@ const NavbarHomePage = () => {
         <>
         {width > 768 ? (
             <nav className="navHomePage">
-                <a className="fw-semibold navLetters" href="#">
+                <Link className="fw-semibold navLetters" to={"/map"}>
                 <i className="bi bi-geo-alt"> Mapa</i>
-                </a>
-                <a className="fw-semibold navLetters" href="#">
+                </Link>
+                <Link className="fw-semibold navLetters" to={"/agenda"}>
                 <i className="bi bi-calendar-week"> Agenda</i> 
-                </a>
-                <a className="fw-semibold navLetters" href="#">
+                </Link>
+                <Link className="fw-semibold navLetters" to={"/favoritos"}>
                 <i className="bi bi-star-fill"> Favoritos</i>
-                </a>
-                <a className="fw-semibold navLetters" href="#" onClick={() => setShowAuth(true)}>
+                </Link>
+                <Link className="fw-semibold navLetters" to="#" onClick={() => setShowAuth(true)}>
                 <i className="bi bi-person-circle"> User</i>
-                </a>
+                </Link>
                 
                 <button
                 className="profileImage"
@@ -56,22 +55,22 @@ const NavbarHomePage = () => {
             
             </nav>
         ) : (
-            <nav className="bottom-navbar">
+            <nav className="bottom-navbar-HomePage">
             <div>
                 <House />
-                <a href="/">Inicio</a>
+                <Link to="/">Inicio</Link>
             </div>
             <div>  
                 <Map />
-                <a href="#">Mapa</a>
+                <Link to={"/map"}>Mapa</Link>
             </div>
             <div>
                 <Notebook />
-                <a href="#">Agenda</a>
+                <Link to="/agenda">Agenda</Link>
             </div>
             <div>
                 <CircleUserRound />
-                <a href="#" onClick={() => setShowAuth(true)}>Usuario</a>
+                <Link to="#" onClick={() => setShowAuth(true)}>Usuario</Link>
             </div>
             </nav>
         )}
@@ -86,16 +85,6 @@ const NavbarHomePage = () => {
             onClose={() => setShowRegister(false)}
             onBackToLogin={() => setShowAuth(true)}
         />
-        
-        {/* <Offcanvas show={show} onHide={handleClose} responsive="lg">
-                <Offcanvas.Header closeButton>
-                <Offcanvas.Title>Offcanvas</Offcanvas.Title>
-                </Offcanvas.Header>
-                <Offcanvas.Body>
-                Some text as placeholder. In real life you can have the elements you
-                have chosen. Like, text, images, lists, etc.
-                </Offcanvas.Body>
-            </Offcanvas> */}
 
         </>
     );

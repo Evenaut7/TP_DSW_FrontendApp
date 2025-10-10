@@ -3,20 +3,18 @@ import "../styles/NotFoundPage.css"
 import 'bootstrap/dist/css/bootstrap.min.css'
 import "../styles/Navbar.css"
 import { useState, useEffect } from "react"
-import Modal from 'react-bootstrap/Modal';
-import BotonCel from "../components/BotonCeleste.tsx";
-import InputLabel from "../components/InputLabel.tsx";
+import AuthModal from "./AuthModal.tsx"
+import RegisterModal from "./RegisterModal.tsx"
 import { House, Map, Notebook, CircleUserRound, Star } from "lucide-react";
 
 
 
 const Navbar = () => {
-  const [lgShow, setLgShow] = useState(false);
+  const [showRegister, setShowRegister] = useState(false);
+  const [showAuth, setShowAuth] = useState(false);
   const [width, setWidth] = useState(window.innerWidth)
   //const [user, setUser] = useState(null)
-  // const [show, setShow] = useState(false);
-  // const handleClose = () => setShow(false);
-  // const handleShow = () => setShow(true);
+  
 
   useEffect(() => {
     const handleResize = () => setWidth(window.innerWidth)
@@ -39,23 +37,23 @@ const Navbar = () => {
             </Link>
           </div>
           <div className="navRight gap-3">
-            <a className="fw-semibold navLetters" href="#">
+            <Link className="fw-semibold navLetters" to={"/map"}>
               Mapa
               <Map />
-            </a>
-            <a className="fw-semibold navLetters" href="#">
+            </Link>
+            <Link className="fw-semibold navLetters" to={"/agenda"}>
               Agenda
               <Notebook />
-            </a>
-            <a className="fw-semibold navLetters" href="#">
+            </Link>
+            <Link className="fw-semibold navLetters" to={"/favoritos"}>
               Favoritos
               <Star />
-            </a>
+            </Link>
 
             <button
               className="profileImage"
               type="button"
-              onClick={() => setLgShow(true)}
+              onClick={() => setShowAuth(true)}
             >
               <CircleUserRound color="White" size={35}/>
             </button>
@@ -66,58 +64,37 @@ const Navbar = () => {
         <nav className="bottom-navbar">
           <div>
             <House />
-            <a href="/">Inicio</a>
+            <Link to={"/"}>Inicio</Link>
           </div>
           <div>  
             <Map />
-            <a href="#">Mapa</a>
+            <Link to={"/map"}>Mapa</Link>
           </div>
           <div>
             <Notebook />
-            <a href="#">Agenda</a>
+            <Link to={"/agenda"}>Agenda</Link>
           </div>
           <div>
             <Star />
-            <a href="#">Favoritos</a>
+            <Link to={"/favoritos"}>Favoritos</Link>
           </div>
           <div>
             <CircleUserRound />
-              <a href="#" onClick={() => setLgShow(true)}>Usuario</a>
+            <Link to="#" onClick={() => setShowAuth(true)}>Usuario</Link>
           </div>
         </nav>
       )}
 
-      <Modal
-        size="lg"
-        show={lgShow}
-        onHide={() => setLgShow(false)}
-        aria-labelledby="contained-modal-title-vcenter"
-        centered
-      >
-        <Modal.Header closeButton>
-          <Modal.Title id="contained-modal-title-vcenter">
-            Sign Up for Travel App
-          </Modal.Title>
-        </Modal.Header>
-        <Modal.Body className="modal-body">
-          <InputLabel label="Email" />
-          <InputLabel label="Password" />
-        </Modal.Body>
-        <Modal.Footer className="modal-footer">
-          <Link to={"/login"}>Create account</Link>
-          <BotonCel texto="Sign in" />
-        </Modal.Footer>
-      </Modal>
-      
-      {/* <Offcanvas show={show} onHide={handleClose} responsive="lg">
-            <Offcanvas.Header closeButton>
-            <Offcanvas.Title>Offcanvas</Offcanvas.Title>
-            </Offcanvas.Header>
-            <Offcanvas.Body>
-            Some text as placeholder. In real life you can have the elements you
-            have chosen. Like, text, images, lists, etc.
-            </Offcanvas.Body>
-        </Offcanvas> */}
+      <AuthModal
+            show={showAuth}
+            onClose={() => setShowAuth(false)}
+            onOpenRegister={() => setShowRegister(true)}
+        />
+        <RegisterModal
+            show={showRegister}
+            onClose={() => setShowRegister(false)}
+            onBackToLogin={() => setShowAuth(true)}
+        />
 
     </>
   );
