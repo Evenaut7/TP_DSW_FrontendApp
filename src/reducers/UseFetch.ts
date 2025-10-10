@@ -8,7 +8,7 @@ export function useFetch<T>(url: string) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(url);
+        const response = await fetch(url, {credentials: 'include',});
         if (!response.ok) throw new Error('Error al obtener datos');
 
         const json = await response.json();

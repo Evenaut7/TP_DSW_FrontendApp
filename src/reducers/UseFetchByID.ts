@@ -11,7 +11,7 @@ export function useFetchById<T>(baseUrl: string, id: number | null) {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`${baseUrl}/${id}`);
+        const response = await fetch(`${baseUrl}/${id}`, {credentials: 'include',});
         if (!response.ok) throw new Error("Error al obtener el recurso");
 
         const json = await response.json();

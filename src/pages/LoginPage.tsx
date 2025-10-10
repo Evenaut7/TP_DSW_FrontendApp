@@ -21,8 +21,8 @@ function LoginPage(){
         const res = await fetch('http://localhost:3000/api/usuarios/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            // si tu backend usa cookies para la sesión, añade: credentials: 'include'
-            body: JSON.stringify({ gmail, password })
+            body: JSON.stringify({ gmail, password }),
+            credentials: 'include'
         });
 
         if (!res.ok) {
