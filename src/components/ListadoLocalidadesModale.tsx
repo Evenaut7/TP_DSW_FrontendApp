@@ -1,140 +1,133 @@
-import { useState } from 'react';
-import BotonCeleste from './BotonCeleste';
-import '../styles/ListadoLocalidades.css';
+import React, { useEffect, useState } from 'react';
+import { Modal, Card, Row, Col } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 
 interface Localidad {
-  id?: number;
+  id: number;
   nombre: string;
-  codUta?: string;
+  imagen?: string;
   latitud?: number;
   longitud?: number;
-  imagen?: string;
-  provincia?: string;
 }
 
-interface ListadoLocalidadesModalProps {
-  localidades: Localidad[];
-  onAdd: (loc: Localidad) => void;
-  onUpdate: (loc: Localidad) => void;
-  onDelete: (id?: number) => void;
+interface Props {
+  show: boolean;
+  onHide: () => void;
+  provinciaId: number;
 }
 
-const ListadoLocalidadesModal = ({
-  localidades,
-  onAdd,
-  onUpdate,
-  onDelete,
-}: ListadoLocalidadesModalProps) => {
-  const [editingId, setEditingId] = useState<number | null>(null);
-  const [editNombre, setEditNombre] = useState<string>('');
-  const [newNombre, setNewNombre] = useState<string>('');
+const ListadoLocalidadesModal: React.FC<Props> = ({
+  show,
+  onHide,
+  provinciaId,
+}) => {
+  const [localidades, setLocalidades] = useState<Localidad[]>([]);
+  const navigate = useNavigate();
+
+  const fetchLocalidades = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:3000/api/provincias/${provinciaId}`
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        setLocalidades(data.data.localidades || []);
+      } else {
+        console.error('Error al obtener las localidades');
+      }
+    } catch (error) {
+      console.error('Error al obtener las localidades:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (show) fetchLocalidades();
+  }, [show]);
+
+  const handleEditar = (id: number) => {
+    onHide();
+    navigate(`/CRUDlocalidad/${id}`);
+  };
+
+  const handleCrear = () => {
+    onHide();
+    navigate(`/localidades/nueva?provinciaId=${provinciaId}`);
+  };
 
   return (
-    <div className="contenedor-localidades">
-      {localidades.map((loc) => (
-        <div key={loc.id} className="col">
-          <div className="localidadCard card h-100 position-relative">
-            {editingId === loc.id ? (
-              <div className="d-flex flex-column align-items-center p-2">
-                <input
-                  type="text"
-                  value={editNombre}
-                  onChange={(e) => setEditNombre(e.target.value)}
-                  className="mb-2 form-control"
-                />
-                <div className="d-flex gap-1">
-                  <div
-                    onClick={() => {
-                      onUpdate({ ...loc, nombre: editNombre });
-                      setEditingId(null);
-                    }}
-                    style={{ cursor: 'pointer' }}
-                  >
-                    <BotonCeleste type="button" texto="💾" />
-                  </div>
-                  <div
-                    onClick={() => setEditingId(null)}
-                    style={{ cursor: 'pointer' }}
-                  >
-                    <BotonCeleste type="button" texto="❌" />
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <>
+    <Modal show={show} onHide={onHide} size="xl" centered>
+      <Modal.Header closeButton>
+        <Modal.Title>Localidades de la provincia</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Row className="g-4">
+          {localidades.map((loc) => (
+            <Col key={loc.id} xs={12} md={6} lg={4}>
+              <Card
+                className="shadow-sm border-0 localidad-card h-100"
+                style={{
+                  borderRadius: '14px',
+                  transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+                  cursor: 'pointer',
+                }}
+                onClick={() => handleEditar(loc.id)}
+                onMouseEnter={(e) =>
+                  (e.currentTarget.style.boxShadow =
+                    '0 4px 12px rgba(0,0,0,0.15)')
+                }
+                onMouseLeave={(e) => (e.currentTarget.style.boxShadow = 'none')}
+              >
                 {loc.imagen && (
-                  <img
+                  <Card.Img
+                    variant="top"
                     src={`http://localhost:3000/public/${loc.imagen}`}
-                    className="card-img"
                     alt={loc.nombre}
+                    style={{
+                      height: '160px',
+                      objectFit: 'cover',
+                      borderTopLeftRadius: '14px',
+                      borderTopRightRadius: '14px',
+                    }}
                   />
                 )}
-                <h5 className="cardTitle">{loc.nombre}</h5>
-                <div
-                  className="d-flex justify-content-end gap-1 position-absolute"
-                  style={{ top: 5, right: 5 }}
-                >
-                  <div
-                    onClick={() => {
-                      setEditingId(loc.id!);
-                      setEditNombre(loc.nombre);
-                    }}
-                    style={{ cursor: 'pointer' }}
-                  >
-                    <BotonCeleste type="button" texto="✏️" />
-                  </div>
-                  <div
-                    onClick={() => onDelete(loc.id)}
-                    style={{ cursor: 'pointer' }}
-                  >
-                    <BotonCeleste type="button" texto="🗑️" />
-                  </div>
-                </div>
-              </>
-            )}
-          </div>
-        </div>
-      ))}
+                <Card.Body>
+                  <Card.Title className="d-flex justify-content-between align-items-center">
+                    <span className="fw-semibold">{loc.nombre}</span>
+                    <i className="bi bi-pencil-square text-primary fs-5"></i>
+                  </Card.Title>
+                </Card.Body>
+              </Card>
+            </Col>
+          ))}
 
-      {/* Tarjeta para agregar nueva localidad */}
-      <div className="col">
-        <div
-          className="localidadCard card h-100 d-flex align-items-center justify-content-center"
-          style={{ cursor: 'pointer' }}
-        >
-          {newNombre ? (
-            <div className="d-flex flex-column align-items-center p-2">
-              <input
-                type="text"
-                value={newNombre}
-                onChange={(e) => setNewNombre(e.target.value)}
-                placeholder="Nombre localidad"
-                className="mb-2 form-control"
-              />
-              <div className="d-flex gap-1">
-                <div
-                  onClick={() => {
-                    onAdd({ nombre: newNombre });
-                    setNewNombre('');
-                  }}
-                  style={{ cursor: 'pointer' }}
-                >
-                  <BotonCeleste type="button" texto="💾" />
-                </div>
-                <div
-                  onClick={() => setNewNombre('')}
-                  style={{ cursor: 'pointer' }}
-                >
-                  <BotonCeleste type="button" texto="❌" />
-                </div>
+          {/* Tarjeta para agregar nueva */}
+          <Col xs={12} md={6} lg={4}>
+            <Card
+              className="shadow-sm border-0 d-flex align-items-center justify-content-center text-center h-100"
+              style={{
+                borderRadius: '14px',
+                background: '#f8f9fa',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+              }}
+              onClick={handleCrear}
+              onMouseEnter={(e) =>
+                (e.currentTarget.style.background = '#e9ecef')
+              }
+              onMouseLeave={(e) =>
+                (e.currentTarget.style.background = '#f8f9fa')
+              }
+            >
+              <div>
+                <i className="bi bi-plus-circle fs-1 text-primary"></i>
+                <div className="fw-semibold mt-2">Agregar nueva localidad</div>
               </div>
-            </div>
-          ) : (
-            <h1 onClick={() => setNewNombre('')}>+</h1>
-          )}
-        </div>
-      </div>
-    </div>
+            </Card>
+          </Col>
+        </Row>
+      </Modal.Body>
+    </Modal>
   );
 };
 

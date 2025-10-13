@@ -6,8 +6,12 @@ import { useProvinciaCRUD } from '../hooks/useProvinciaCRUD';
 import type { Provincia } from '../hooks/useProvinciaCRUD';
 import { Modal, Button } from 'react-bootstrap';
 import ListadoLocalidadesModal from '../components/ListadoLocalidadesModale.tsx';
+import { useAuthAdmin } from '../hooks/useAuthAdmin';
 
 function CRUDProvincia() {
+  const { isAdmin, loading } = useAuthAdmin();
+  const provinciasHook = useProvinciaCRUD();
+
   const {
     provincias,
     editingId,
@@ -23,9 +27,8 @@ function CRUDProvincia() {
     handleUpdate,
     handleDelete,
     handleCreate,
-  } = useProvinciaCRUD();
+  } = provinciasHook;
 
-  // Modal de localidades
   const [showLocalidadesModal, setShowLocalidadesModal] = useState(false);
   const [localidades, setLocalidades] = useState<
     { id?: number; nombre: string }[]
@@ -38,6 +41,10 @@ function CRUDProvincia() {
     setShowLocalidadesModal(true);
   };
 
+  if (loading) return <p>Cargando...</p>;
+  if (error) return <p style={{ color: 'red' }}>{error}</p>;
+  if (isAdmin === false) return <p>No podés acceder a esta página</p>;
+
   return (
     <>
       <Navbar />
@@ -46,7 +53,9 @@ function CRUDProvincia() {
         style={{ border: 'none', backgroundColor: '#f8f9fa', padding: '1rem' }}
       >
         <h2>CRUD Provincias</h2>
-        {error && <p style={{ color: '#555' }}>{error}</p>}
+        {error && (
+          <div style={{ color: 'red', marginBottom: '1rem' }}>{error}</div>
+        )}
 
         <table className="table">
           <thead>
@@ -142,54 +151,13 @@ function CRUDProvincia() {
         </table>
       </div>
 
-      <Modal
-        show={showLocalidadesModal}
-        onHide={() => setShowLocalidadesModal(false)}
-        size="lg"
-      >
-        <Modal.Header closeButton>
-          <Modal.Title>Localidades de {provActual?.nombre}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <ListadoLocalidadesModal
-            localidades={localidades}
-            onAdd={async (loc) => {
-              const res = await fetch(`http://localhost:3000/api/localidades`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ...loc, provincia: provActual?.id }),
-              });
-              const data = await res.json();
-              setLocalidades([...localidades, data.data]);
-            }}
-            onUpdate={async (loc) => {
-              await fetch(`http://localhost:3000/api/localidades/${loc.id}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(loc),
-              });
-              setLocalidades(
-                localidades.map((l) => (l.id === loc.id ? loc : l))
-              );
-            }}
-            onDelete={async (id) => {
-              if (!id) return;
-              await fetch(`http://localhost:3000/api/localidades/${id}`, {
-                method: 'DELETE',
-              });
-              setLocalidades(localidades.filter((l) => l.id !== id));
-            }}
-          />
-        </Modal.Body>
-        <Modal.Footer>
-          <Button
-            variant="secondary"
-            onClick={() => setShowLocalidadesModal(false)}
-          >
-            Cerrar
-          </Button>
-        </Modal.Footer>
-      </Modal>
+      <Modal.Body>
+        <ListadoLocalidadesModal
+          show={showLocalidadesModal}
+          onHide={() => setShowLocalidadesModal(false)}
+          provinciaId={provActual?.id ?? 0}
+        />
+      </Modal.Body>
     </>
   );
 }

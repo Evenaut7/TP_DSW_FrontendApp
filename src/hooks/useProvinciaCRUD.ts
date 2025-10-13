@@ -1,4 +1,3 @@
-// src/hooks/useProvinciaCRUD.ts
 import { useState, useEffect } from 'react';
 
 export type Provincia = {
@@ -21,6 +20,10 @@ export function useProvinciaCRUD() {
         credentials: 'include',
       });
       const data = await res.json();
+      if (!res.ok) {
+        setError(data?.message || `Error ${res.status}`);
+        return;
+      }
       setProvincias(data.data || []);
     } catch (err) {
       console.error(err);
@@ -41,6 +44,7 @@ export function useProvinciaCRUD() {
   const handleCancelEdit = () => {
     setEditingId(null);
     setEditNombre('');
+    setError(null);
   };
 
   const handleUpdate = async (id: number) => {
@@ -73,18 +77,23 @@ export function useProvinciaCRUD() {
   // Eliminar
   const handleDelete = async (id?: number) => {
     if (!id) return;
+    if (!window.confirm('¿Estás seguro que querés eliminar esta provincia?'))
+      return;
+
     try {
       const res = await fetch(`http://localhost:3000/api/provincias/${id}`, {
         method: 'DELETE',
         credentials: 'include',
       });
+
+      const data = await res.json();
+
       if (!res.ok) {
-        const data = await res.json();
-        setError(
-          data?.message || 'No se pudo eliminar. Revisa si tiene localidades.'
-        );
+        setError(data?.message || 'No se pudo eliminar. Revisa dependencias.');
         return;
       }
+
+      setError(null);
       fetchProvincias();
     } catch (err) {
       console.error(err);
@@ -98,6 +107,7 @@ export function useProvinciaCRUD() {
       setError('El nombre no puede estar vacío');
       return;
     }
+
     try {
       const res = await fetch('http://localhost:3000/api/provincias', {
         method: 'POST',
@@ -105,11 +115,14 @@ export function useProvinciaCRUD() {
         body: JSON.stringify({ nombre: nuevoNombre }),
         credentials: 'include',
       });
+
       const data = await res.json();
+
       if (!res.ok) {
-        setError(data?.message || `Error ${res.status}`);
+        setError(data?.message || 'No se pudo agregar la provincia');
         return;
       }
+
       setNuevoNombre('');
       setAddingNew(false);
       setError(null);

@@ -7,6 +7,7 @@ import LoginPage from './pages/LoginPage.tsx';
 import SignUpPage from './pages/SignUpPage.tsx';
 import CreatePuntoDeInteres from './pages/CreatePDI.tsx';
 import ProvinciaPage from './pages/CRUDProvincia.tsx';
+import CRUDLocalidadPage from './pages/CRUDLocalidad.tsx';
 
 export const router = createBrowserRouter([
   { path: '/', element: <HomePage /> },
@@ -18,4 +19,5 @@ export const router = createBrowserRouter([
   { path: '/signup', element: <SignUpPage /> },
   { path: '/CreatePDI', element: <CreatePuntoDeInteres /> },
   { path: '/provincias', element: <ProvinciaPage /> },
+  { path: '/CRUDlocalidad/:id', element: <CRUDLocalidadPage /> },
 ]);
