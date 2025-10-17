@@ -5,6 +5,7 @@ import "../styles/Navbar.css"
 import { useState, useEffect } from "react"
 import AuthModal from "./AuthModal.tsx"
 import RegisterModal from "./RegisterModal.tsx"
+import WelcomeModal from "./WelcomeModal";
 import { House, Map, Notebook,  Star, CircleUserRound } from "lucide-react";
 import UserBotton from "./UserBotton.tsx"
 import BottomUserBoton from "./BottomUserBoton";
@@ -15,6 +16,8 @@ const Navbar = () => {
   const [showRegister, setShowRegister] = useState(false);
   const [showAuth, setShowAuth] = useState(false);
   const [width, setWidth] = useState(window.innerWidth)
+  const [showWelcome, setShowWelcome] = useState(false);
+  const [welcomeName, setWelcomeName] = useState('');
 
   const validarToken = () => {
     const token = localStorage.getItem('token');
@@ -62,7 +65,7 @@ const Navbar = () => {
             <>{validarToken() ? (
                     <UserBotton buttonClassName="profileImage" onLogout={() => setShowAuth(false)} />
                 ) : (
-                    <Link to="#" onClick={() => setShowAuth(true)}>
+                    <Link className="fw-semibold navLetters" to="#" onClick={() => setShowAuth(true)}>
                     <CircleUserRound />
                         Usuario
                     </Link>
@@ -107,14 +110,18 @@ const Navbar = () => {
       
       <AuthModal
             show={showAuth}
-            onClose={() => setShowAuth(false)}
-            onOpenRegister={() => setShowRegister(true)}
+      onClose={() => setShowAuth(false)}
+      onOpenRegister={() => setShowRegister(true)}
+      onSuccess={(name) => { setShowAuth(false); setWelcomeName(name); setShowWelcome(true);  }}
         />
         <RegisterModal
             show={showRegister}
-            onClose={() => setShowRegister(false)}
-            onBackToLogin={() => setShowAuth(true)}
+      onClose={() => setShowRegister(false)}
+      onBackToLogin={() => setShowAuth(true)}
+      onSuccess={(name) => {  setShowRegister(false);  setWelcomeName(name); setShowWelcome(true);}}
         />
+
+    <WelcomeModal show={showWelcome} onClose={() => setShowWelcome(false)} userName={welcomeName}/>
 
     </>
   );

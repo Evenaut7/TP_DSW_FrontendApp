@@ -6,18 +6,14 @@ import FormField from './forms/FormField';
 import FormSelect from './forms/FormSelect';
 
 interface Props {
-  onSubmit: (data: any) => void;
+  onSubmit: (data: unknown) => void;
   loading: boolean;
 }
 
 const PDIForm = ({ onSubmit, loading }: Props) => {
-  const { data: tags } = useFetch<any[]>('http://localhost:3000/api/tags');
-  const { data: usuarios } = useFetch<any[]>(
-    'http://localhost:3000/api/usuarios'
-  );
-  const { data: localidades } = useFetch<any[]>(
-    'http://localhost:3000/api/localidades'
-  );
+  const { data: tags } = useFetch<unknown[]>('http://localhost:3000/api/tags');
+  const { data: usuarios } = useFetch<unknown[]>('http://localhost:3000/api/usuarios');
+  const { data: localidades } = useFetch<unknown[]>('http://localhost:3000/api/localidades');
   const { form, handleChange } = usePDIForm();
 
   const handleSubmit = (e: React.FormEvent) => {

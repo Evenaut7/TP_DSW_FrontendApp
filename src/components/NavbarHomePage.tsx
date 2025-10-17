@@ -5,6 +5,7 @@ import { useState, useEffect } from "react"
 import { CircleUserRound, House, Map, Notebook, Star } from "lucide-react";
 import AuthModal from "./AuthModal";
 import RegisterModal from "./RegisterModal";
+import WelcomeModal from "./WelcomeModal";
 import { Link } from "react-router-dom";
 import UserBotton from "./UserBotton";
 import BottomUserBoton from "./BottomUserBoton";
@@ -14,6 +15,8 @@ import BottomUserBoton from "./BottomUserBoton";
 function NavbarHomePage() {
     const [showAuth, setShowAuth] = useState(false);
     const [showRegister, setShowRegister] = useState(false);
+    const [showWelcome, setShowWelcome] = useState(false);
+    const [welcomeName, setWelcomeName] = useState('');
     const [width, setWidth] = useState(window.innerWidth)
 
     const validarToken = () => {
@@ -51,7 +54,7 @@ function NavbarHomePage() {
                 <>{validarToken() ? (
                     <UserBotton buttonClassName="profileImage" onLogout={() => setShowAuth(false)} />
                 ) : (
-                    <Link to="#" onClick={() => setShowAuth(true)}>
+                    <Link className="fw-semibold navLetters" to="#" onClick={() => setShowAuth(true)}>
                     <CircleUserRound />
                         Usuario
                     </Link>
@@ -94,12 +97,16 @@ function NavbarHomePage() {
             show={showAuth}
             onClose={() => setShowAuth(false)}
             onOpenRegister={() => setShowRegister(true)}
+            onSuccess={(name) => { setWelcomeName(name); setShowWelcome(true); setShowAuth(false); }}
         />
         <RegisterModal
             show={showRegister}
             onClose={() => setShowRegister(false)}
             onBackToLogin={() => setShowAuth(true)}
+            onSuccess={(name) => { setWelcomeName(name); setShowWelcome(true); setShowRegister(false); }}
         />
+
+        <WelcomeModal show={showWelcome} onClose={() => setShowWelcome(false)} userName={welcomeName} />
 
         </>
     );
