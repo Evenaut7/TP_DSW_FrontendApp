@@ -16,16 +16,18 @@ function RegisterModal({ show, onClose, onBackToLogin, onSuccess }: RegisterModa
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [creator, setCreator] = useState(false);
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
         setError(null);
         setLoading(true);
+        const tipo = creator ? 'creador' : 'usuario';   
         try {
         const res = await fetch('http://localhost:3000/api/usuarios/register', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ nombre: usuario, tipo: 'usuario', gmail, password }),
+            body: JSON.stringify({ nombre: usuario, tipo, gmail, password }),
         });
 
         if (!res.ok) {
@@ -62,6 +64,7 @@ function RegisterModal({ show, onClose, onBackToLogin, onSuccess }: RegisterModa
             <InputLabel label="Nombre de usuario" type="string" value={usuario} onChange={(e) => setUsuario(e.target.value)} required />
             <InputLabel label="Gmail" type="email" value={gmail} onChange={(e) => setGmail(e.target.value)} required />
             <InputLabel label="Contraseña minima 6 caracteres" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+            <InputLabel label="Creador de contenido" type="checkbox" checked={creator} onChange={(e) => setCreator(e.target.checked)} />
             {error && <p style={{ color: 'red', margin: 0 }}>{error}</p>}
             </Modal.Body>
             <Modal.Footer className="modal-footer">
