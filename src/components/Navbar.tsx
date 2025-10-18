@@ -2,13 +2,12 @@ import { Link } from "react-router-dom"
 import "../styles/NotFoundPage.css"
 import 'bootstrap/dist/css/bootstrap.min.css'
 import "../styles/Navbar.css"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
+import { getCurrentUser, logout, type User } from '../utils/session';
 import AuthModal from "./AuthModal.tsx"
 import RegisterModal from "./RegisterModal.tsx"
 import WelcomeModal from "./WelcomeModal";
 import { House, Map, Notebook,  Star, CircleUserRound } from "lucide-react";
-import UserBotton from "./UserBotton.tsx"
-import BottomUserBoton from "./BottomUserBoton";
 
 
 
@@ -18,16 +17,18 @@ const Navbar = () => {
   const [width, setWidth] = useState(window.innerWidth)
   const [showWelcome, setShowWelcome] = useState(false);
   const [welcomeName, setWelcomeName] = useState('');
+  const [user, setUser] = useState<User | null>(null);
 
-  const validarToken = () => {
-    const token = localStorage.getItem('token');
-    if (token) {
-    //Aquí puedes agregar lógica para validar el token si es necesario
-       return true; // Token existe
-    } else {
-      return false; // Token no existe
-    }
-  }
+  const mountedRef = useRef(true);
+
+    useEffect(() => {
+        (async () => {
+        const u = await getCurrentUser();
+        if (mountedRef.current) setUser(u);
+        })();
+
+        return () => { mountedRef.current = false; };
+    }, []);
 
   useEffect(() => {
     const handleResize = () => setWidth(window.innerWidth)
@@ -62,14 +63,25 @@ const Navbar = () => {
               Favoritos
               <Star />
             </Link>
-            <>{validarToken() ? (
-                    <UserBotton buttonClassName="profileImage" onLogout={() => setShowAuth(false)} />
-                ) : (
-                    <Link className="fw-semibold navLetters" to="#" onClick={() => setShowAuth(true)}>
-                    <CircleUserRound />
-                        Usuario
-                    </Link>
-                )}</>
+            {user ? (
+              <div className="dropdown">
+                <button className="btn btn-link dropdown-toggle navLetters" data-bs-toggle="dropdown" aria-expanded="false">
+                  {user.nombre ?? user.gmail }
+                </button>
+                <ul className="dropdown-menu dropdown-menu-end">
+                  <li>
+                    <button className="dropdown-item" onClick={async () => { await logout(); setUser(null); }}>
+                      Cerrar sesión
+                    </button>
+                  </li>
+                </ul>
+              </div>
+            ) : (
+              <Link className="fw-semibold navLetters" to="#" onClick={() => setShowAuth(true)}>
+                <CircleUserRound />
+                Usuario
+              </Link>
+            )}
 
           </div>
         </nav>
@@ -92,10 +104,17 @@ const Navbar = () => {
             <Link to={"/favoritos"}>Favoritos</Link>
           </div>
           <div>
-            {validarToken() ? (
+            {user ? (
               <>
                 <CircleUserRound />
-                <BottomUserBoton buttonClassName="profileImage" onLogout={() => setShowAuth(false)} />
+                        <div className="dropdown">
+                            <button className="btn btn-link dropdown-toggle navLetters" data-bs-toggle="dropdown">
+                                {user.nombre ?? user.gmail ?? 'Usuario'}
+                            </button>
+                            <ul className="dropdown-menu dropdown-menu-end">
+                                <li><button className="dropdown-item" onClick={async () => { await logout(); setUser(null); }}>Cerrar sesión</button></li>
+                            </ul>
+                        </div>
               </>
             ) : (
               <>
@@ -112,13 +131,23 @@ const Navbar = () => {
             show={showAuth}
       onClose={() => setShowAuth(false)}
       onOpenRegister={() => setShowRegister(true)}
-      onSuccess={(name) => { setShowAuth(false); setWelcomeName(name); setShowWelcome(true);  }}
+      onSuccess={async (name) => { 
+                const u = await getCurrentUser();
+                setUser(u);
+                setWelcomeName(name); 
+                setShowWelcome(true); 
+                setShowAuth(false); }}
         />
         <RegisterModal
             show={showRegister}
       onClose={() => setShowRegister(false)}
       onBackToLogin={() => setShowAuth(true)}
-      onSuccess={(name) => {  setShowRegister(false);  setWelcomeName(name); setShowWelcome(true);}}
+      onSuccess={async (name) => { 
+                const u = await getCurrentUser();
+                setUser(u);
+                setWelcomeName(name); 
+                setShowWelcome(true); 
+                setShowAuth(false); }}
         />
 
     <WelcomeModal show={showWelcome} onClose={() => setShowWelcome(false)} userName={welcomeName}/>

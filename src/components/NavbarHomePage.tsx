@@ -1,14 +1,14 @@
 import "../styles/NotFoundPage.css"
 import 'bootstrap/dist/css/bootstrap.min.css'
 import "../styles/Navbar.css"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
+import { getCurrentUser, logout, type User } from '../utils/session';
 import { CircleUserRound, House, Map, Notebook, Star } from "lucide-react";
 import AuthModal from "./AuthModal";
 import RegisterModal from "./RegisterModal";
 import WelcomeModal from "./WelcomeModal";
 import { Link } from "react-router-dom";
-import UserBotton from "./UserBotton";
-import BottomUserBoton from "./BottomUserBoton";
+// imports removed: UserBotton, BottomUserBoton not used here
 
 
 
@@ -17,17 +17,18 @@ function NavbarHomePage() {
     const [showRegister, setShowRegister] = useState(false);
     const [showWelcome, setShowWelcome] = useState(false);
     const [welcomeName, setWelcomeName] = useState('');
+    const [user, setUser] = useState<User | null>(null);
     const [width, setWidth] = useState(window.innerWidth)
 
-    const validarToken = () => {
-        const token = localStorage.getItem('token');
-        if (token) {
-        //Aquí puedes agregar lógica para validar el token si es necesario
-            return true; // Token existe
-        } else {
-            return false; // Token no existe
-        }
-    }
+    const mountedRef = useRef(true);
+    useEffect(() => {
+        (async () => {
+        const u = await getCurrentUser();
+        if (mountedRef.current) setUser(u);
+        })();
+
+        return () => { mountedRef.current = false; };
+    }, []);
 
     useEffect(() => {
         const handleResize = () => setWidth(window.innerWidth)
@@ -51,14 +52,21 @@ function NavbarHomePage() {
                 <Link className="fw-semibold navLetters" to={"/favoritos"}>
                 <i className="bi bi-star-fill"> Favoritos</i>
                 </Link>
-                <>{validarToken() ? (
-                    <UserBotton buttonClassName="profileImage" onLogout={() => setShowAuth(false)} />
+                {user ? (
+                    <div className="dropdown">
+                        <button className="btn btn-link dropdown-toggle navLetters" data-bs-toggle="dropdown">
+                            {user.nombre ?? user.gmail}
+                        </button>
+                        <ul className="dropdown-menu dropdown-menu-end">
+                            <li><button className="dropdown-item" onClick={async () => { await logout(); setUser(null); }}>Cerrar sesión</button></li>
+                        </ul>
+                    </div>
                 ) : (
                     <Link className="fw-semibold navLetters" to="#" onClick={() => setShowAuth(true)}>
-                    <CircleUserRound />
+                        <CircleUserRound />
                         Usuario
                     </Link>
-                )}</>
+                )}
             </nav>
         ) : (
             <nav className="bottom-navbar">
@@ -79,9 +87,17 @@ function NavbarHomePage() {
                 <Link to="/favoritos">Favoritos</Link>
             </div>
             <div>
-                {validarToken() ? (
+                {user ? (
                     <>
-                        <BottomUserBoton buttonClassName="profileImage" onLogout={() => setShowAuth(false)} />
+                        <CircleUserRound />
+                        <div className="dropdown">
+                            <button className="btn btn-link dropdown-toggle navLetters" data-bs-toggle="dropdown">
+                                {user.nombre ?? user.gmail ?? 'Usuario'}
+                            </button>
+                            <ul className="dropdown-menu dropdown-menu-end">
+                                <li><button className="dropdown-item" onClick={async () => { await logout(); setUser(null); }}>Cerrar sesión</button></li>
+                            </ul>
+                        </div>
                     </>
                 ) : (
                     <>
@@ -97,13 +113,24 @@ function NavbarHomePage() {
             show={showAuth}
             onClose={() => setShowAuth(false)}
             onOpenRegister={() => setShowRegister(true)}
-            onSuccess={(name) => { setWelcomeName(name); setShowWelcome(true); setShowAuth(false); }}
+            onSuccess={async (name) => { 
+                const u = await getCurrentUser();
+                setUser(u);
+                setWelcomeName(name); 
+                setShowWelcome(true); 
+                setShowAuth(false); 
+            }}
         />
         <RegisterModal
             show={showRegister}
             onClose={() => setShowRegister(false)}
             onBackToLogin={() => setShowAuth(true)}
-            onSuccess={(name) => { setWelcomeName(name); setShowWelcome(true); setShowRegister(false); }}
+            onSuccess={async (name) => { 
+                const u = await getCurrentUser();
+                setUser(u);
+                setWelcomeName(name); 
+                setShowWelcome(true); 
+                setShowRegister(false); }}
         />
 
         <WelcomeModal show={showWelcome} onClose={() => setShowWelcome(false)} userName={welcomeName} />

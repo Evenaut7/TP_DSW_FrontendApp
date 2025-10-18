@@ -37,13 +37,13 @@ function AuthModal({ show, onClose, onOpenRegister, onSuccess }: AuthModalProps)
         if (data.token) {
             localStorage.setItem('token', data.token);
         }
-        // prefer server-provided user name, fallback to gmail
-        const userName = (data.user && data.user.nombre) || data.nombre || gmail;
+        
+        const userName = (data.user && data.user.nombre) || data.nombre || data.gmail;
         onClose();
         if (onSuccess) onSuccess(userName);
         } catch (err: unknown) {
-        if (err instanceof Error) setError(err.message);
-        else setError('Error desconocido');
+            if (err instanceof Error) setError(err.message);
+            else setError('Error desconocido');
         } finally {
         setLoading(false);
         }
