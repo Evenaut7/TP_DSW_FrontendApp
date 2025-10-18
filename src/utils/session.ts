@@ -9,19 +9,6 @@ export type User = {
     agendaPDI?: number
 } | null;
 
-// export async function getCurrentUser(): Promise<User> {
-//     try {
-//         const res = await fetch('http://localhost:3000/api/usuarios/currentUser', {
-//         credentials: 'include',
-//         });
-//         if (!res.ok) return null;
-//         const data: User = await res.json().catch(() => null);
-        
-//         return (data);
-//     } catch {
-//         return null;
-//     }
-// }
 export async function getCurrentUser(): Promise<User> {
     try {
         const res = await fetch('http://localhost:3000/api/usuarios/currentUser', {

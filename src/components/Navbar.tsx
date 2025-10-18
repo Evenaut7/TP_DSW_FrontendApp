@@ -2,8 +2,8 @@ import { Link } from "react-router-dom"
 import "../styles/NotFoundPage.css"
 import 'bootstrap/dist/css/bootstrap.min.css'
 import "../styles/Navbar.css"
-import { useState, useEffect, useRef } from "react"
-import { getCurrentUser, logout, type User } from '../utils/session';
+import { useState, useEffect } from "react"
+import { useUser } from '../hooks/useUser';
 import AuthModal from "./AuthModal.tsx"
 import RegisterModal from "./RegisterModal.tsx"
 import WelcomeModal from "./WelcomeModal";
@@ -17,18 +17,7 @@ const Navbar = () => {
   const [width, setWidth] = useState(window.innerWidth)
   const [showWelcome, setShowWelcome] = useState(false);
   const [welcomeName, setWelcomeName] = useState('');
-  const [user, setUser] = useState<User | null>(null);
-
-  const mountedRef = useRef(true);
-
-    useEffect(() => {
-        (async () => {
-        const u = await getCurrentUser();
-        if (mountedRef.current) setUser(u);
-        })();
-
-        return () => { mountedRef.current = false; };
-    }, []);
+  const { user, refreshUser, logout } = useUser();
 
   useEffect(() => {
     const handleResize = () => setWidth(window.innerWidth)
@@ -70,7 +59,7 @@ const Navbar = () => {
                 </button>
                 <ul className="dropdown-menu dropdown-menu-end">
                   <li>
-                    <button className="dropdown-item" onClick={async () => { await logout(); setUser(null); }}>
+                    <button className="dropdown-item" onClick={async () => { await logout(); }}>
                       Cerrar sesión
                     </button>
                   </li>
@@ -112,7 +101,7 @@ const Navbar = () => {
                                 {user.nombre ?? user.gmail ?? 'Usuario'}
                             </button>
                             <ul className="dropdown-menu dropdown-menu-end">
-                                <li><button className="dropdown-item" onClick={async () => { await logout(); setUser(null); }}>Cerrar sesión</button></li>
+                                <li><button className="dropdown-item" onClick={async () => { await logout(); }}>Cerrar sesión</button></li>
                             </ul>
                         </div>
               </>
@@ -132,22 +121,20 @@ const Navbar = () => {
       onClose={() => setShowAuth(false)}
       onOpenRegister={() => setShowRegister(true)}
       onSuccess={async (name) => { 
-                const u = await getCurrentUser();
-                setUser(u);
-                setWelcomeName(name); 
-                setShowWelcome(true); 
-                setShowAuth(false); }}
+        await refreshUser();
+        setWelcomeName(name); 
+        setShowWelcome(true); 
+        setShowAuth(false); }}
         />
         <RegisterModal
             show={showRegister}
       onClose={() => setShowRegister(false)}
       onBackToLogin={() => setShowAuth(true)}
-      onSuccess={async (name) => { 
-                const u = await getCurrentUser();
-                setUser(u);
-                setWelcomeName(name); 
-                setShowWelcome(true); 
-                setShowAuth(false); }}
+    onSuccess={async (name) => { 
+        await refreshUser();
+        setWelcomeName(name); 
+        setShowWelcome(true); 
+        setShowAuth(false); }}
         />
 
     <WelcomeModal show={showWelcome} onClose={() => setShowWelcome(false)} userName={welcomeName}/>

@@ -1,8 +1,8 @@
 import "../styles/NotFoundPage.css"
 import 'bootstrap/dist/css/bootstrap.min.css'
 import "../styles/Navbar.css"
-import { useState, useEffect, useRef } from "react"
-import { getCurrentUser, logout, type User } from '../utils/session';
+import { useState, useEffect } from "react"
+import { useUser } from '../hooks/useUser';
 import { CircleUserRound, House, Map, Notebook, Star } from "lucide-react";
 import AuthModal from "./AuthModal";
 import RegisterModal from "./RegisterModal";
@@ -17,18 +17,9 @@ function NavbarHomePage() {
     const [showRegister, setShowRegister] = useState(false);
     const [showWelcome, setShowWelcome] = useState(false);
     const [welcomeName, setWelcomeName] = useState('');
-    const [user, setUser] = useState<User | null>(null);
+    const { user, refreshUser, logout } = useUser();
     const [width, setWidth] = useState(window.innerWidth)
-
-    const mountedRef = useRef(true);
-    useEffect(() => {
-        (async () => {
-        const u = await getCurrentUser();
-        if (mountedRef.current) setUser(u);
-        })();
-
-        return () => { mountedRef.current = false; };
-    }, []);
+    // user is provided from UserProvider; no local getCurrentUser needed here
 
     useEffect(() => {
         const handleResize = () => setWidth(window.innerWidth)
@@ -58,7 +49,7 @@ function NavbarHomePage() {
                             {user.nombre ?? user.gmail}
                         </button>
                         <ul className="dropdown-menu dropdown-menu-end">
-                            <li><button className="dropdown-item" onClick={async () => { await logout(); setUser(null); }}>Cerrar sesión</button></li>
+                            <li><button className="dropdown-item" onClick={async () => { await logout(); }}>Cerrar sesión</button></li>
                         </ul>
                     </div>
                 ) : (
@@ -95,7 +86,7 @@ function NavbarHomePage() {
                                 {user.nombre ?? user.gmail ?? 'Usuario'}
                             </button>
                             <ul className="dropdown-menu dropdown-menu-end">
-                                <li><button className="dropdown-item" onClick={async () => { await logout(); setUser(null); }}>Cerrar sesión</button></li>
+                                <li><button className="dropdown-item" onClick={async () => { await logout(); }}>Cerrar sesión</button></li>
                             </ul>
                         </div>
                     </>
@@ -113,9 +104,8 @@ function NavbarHomePage() {
             show={showAuth}
             onClose={() => setShowAuth(false)}
             onOpenRegister={() => setShowRegister(true)}
-            onSuccess={async (name) => { 
-                const u = await getCurrentUser();
-                setUser(u);
+                onSuccess={async (name) => { 
+                await refreshUser();
                 setWelcomeName(name); 
                 setShowWelcome(true); 
                 setShowAuth(false); 
@@ -126,8 +116,7 @@ function NavbarHomePage() {
             onClose={() => setShowRegister(false)}
             onBackToLogin={() => setShowAuth(true)}
             onSuccess={async (name) => { 
-                const u = await getCurrentUser();
-                setUser(u);
+                await refreshUser();
                 setWelcomeName(name); 
                 setShowWelcome(true); 
                 setShowRegister(false); }}
