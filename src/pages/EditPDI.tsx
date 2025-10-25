@@ -3,7 +3,7 @@ import Navbar from '../components/Navbar';
 import { useParams, useNavigate } from 'react-router-dom';
 import PantallaDeCarga from '../components/PantallaDeCarga';
 import ListadoDeTags from '../components/ListadoDeTags';
-import ListadoEventos from '../components/ListadoEventos';
+import ListadoEventosEditable from '../components/ListadoEventosEditable';
 import FormField from '../components/forms/FormField';
 import FormSelect from '../components/forms/FormSelect';
 import TagsSelector from '../components/forms/TagsSelector';
@@ -61,7 +61,7 @@ const EditPDI = () => {
           calle: data.calle,
           altura: data.altura,
           privado: data.privado,
-          tags: data.tags.map((t) => t.id),
+          tags: data.tags.map((t) => t.id), // IDs para TagsSelector
           usuario: data.usuario,
           localidad: data.localidad,
         });
@@ -98,7 +98,7 @@ const EditPDI = () => {
         calle: form.calle,
         altura: Number(form.altura),
         privado: Boolean(form.privado),
-        tags: form.tags,
+        tags: form.tags, // mantener array de IDs
         usuario: Number(form.usuario),
         localidad: Number(form.localidad),
         imagen: imagenUrl,
@@ -110,6 +110,7 @@ const EditPDI = () => {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(updatedPDI),
+          credentials: 'include',
         }
       );
 
@@ -235,7 +236,7 @@ const EditPDI = () => {
 
         <ListadoDeTags />
         <div className="listadoEventos">
-          <ListadoEventos pdiId={pdiId!} />
+          <ListadoEventosEditable pdiId={pdiId!} />
         </div>
       </div>
     </div>

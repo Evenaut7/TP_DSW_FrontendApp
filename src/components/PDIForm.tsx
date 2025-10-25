@@ -8,9 +8,22 @@ import FormSelect from './forms/FormSelect';
 interface Props {
   onSubmit: (data: any) => void;
   loading: boolean;
+  form?: any;
+  handleChange?: (e: React.ChangeEvent<any>) => void;
 }
 
-const PDIForm = ({ onSubmit, loading }: Props) => {
+const PDIForm = ({
+  onSubmit,
+  loading,
+  form: externalForm,
+  handleChange: externalHandleChange,
+}: Props) => {
+  // Si no vienen props, usa el hook interno (modo "crear")
+  const internal = usePDIForm();
+  const form = externalForm ?? internal.form;
+  const handleChange = externalHandleChange ?? internal.handleChange;
+
+  // Datos dinámicos (tags, usuarios, localidades)
   const { data: tags } = useFetch<any[]>('http://localhost:3000/api/tags');
   const { data: usuarios } = useFetch<any[]>(
     'http://localhost:3000/api/usuarios'
@@ -18,7 +31,6 @@ const PDIForm = ({ onSubmit, loading }: Props) => {
   const { data: localidades } = useFetch<any[]>(
     'http://localhost:3000/api/localidades'
   );
-  const { form, handleChange } = usePDIForm();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,6 +46,7 @@ const PDIForm = ({ onSubmit, loading }: Props) => {
         onChange={handleChange}
         required
       />
+
       <FormField
         label="Descripción"
         name="descripcion"
@@ -42,13 +55,16 @@ const PDIForm = ({ onSubmit, loading }: Props) => {
         onChange={handleChange}
         required
       />
+
       <FormField
         label="Imagen"
         name="imagen"
         type="file"
         onChange={handleChange}
-        required
+        // si estás en modo edición, no forzamos el campo como requerido
+        required={externalForm ? false : true}
       />
+
       <FormField
         label="Calle"
         name="calle"
@@ -56,6 +72,7 @@ const PDIForm = ({ onSubmit, loading }: Props) => {
         onChange={handleChange}
         required
       />
+
       <FormField
         label="Altura"
         name="altura"
@@ -83,6 +100,7 @@ const PDIForm = ({ onSubmit, loading }: Props) => {
         options={usuarios ?? []}
         onChange={handleChange}
       />
+
       <FormSelect
         label="Localidad"
         name="localidad"
@@ -90,14 +108,19 @@ const PDIForm = ({ onSubmit, loading }: Props) => {
         options={localidades ?? []}
         onChange={handleChange}
       />
+
       <TagsSelector
         tags={tags ?? []}
         selected={form.tags}
         onChange={handleChange}
       />
 
-      <button disabled={loading} type="submit" className="btn btn-primary">
-        {loading ? 'Guardando...' : 'Crear Punto de Interés'}
+      <button disabled={loading} type="submit" className="btn btn-primary mt-3">
+        {loading
+          ? 'Guardando...'
+          : externalForm
+          ? 'Guardar Cambios'
+          : 'Crear Punto de Interés'}
       </button>
     </form>
   );
