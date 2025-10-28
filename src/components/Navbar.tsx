@@ -58,6 +58,7 @@ const Navbar = () => {
                   {user.nombre ?? user.gmail }
                 </button>
                 <ul className="dropdown-menu dropdown-menu-end">
+                  <li><Link className="dropdown-item" to="/perfil">Perfil</Link></li>
                   <li><button className="dropdown-item" onClick={async () => { await logout(); }}>Cerrar sesión</button></li>
                 </ul>
               </div>
@@ -97,6 +98,7 @@ const Navbar = () => {
                                 {user.nombre ?? user.gmail ?? 'Usuario'}
                             </button>
                             <ul className="dropdown-menu dropdown-menu-end">
+                                <li><Link className="dropdown-item" to="/perfil">Perfil</Link></li>
                                 <li><button className="dropdown-item" onClick={async () => { await logout(); }}>Cerrar sesión</button></li>
                             </ul>
                         </div>

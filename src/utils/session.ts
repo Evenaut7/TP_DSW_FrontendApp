@@ -2,6 +2,7 @@ export type User = {
     id?: number;
     nombre?: string;
     gmail?: string;
+    cuit?: string;
     localidad?: number;
     provincia?: number;
     puntosDeInteres?: number[];
@@ -35,5 +36,41 @@ export async function logout(): Promise<boolean> {
         return res.ok;
     } catch {
         return false;
+    }
+}
+
+export type UpdateUserData = {
+    nombre?: string;
+    gmail?: string;
+    cuit?: string;
+    localidad?: number;
+    provincia?: number;
+};
+
+export async function updateUser(userId: number, data: UpdateUserData): Promise<{ success: boolean; error?: string }> {
+    try {
+        // Validar email
+        if (data.gmail) {
+            const emailRegex = /^[^\s@]+@[^\s@]+mail\.com$/;
+            if (!emailRegex.test(data.gmail)) {
+                return { success: false, error: 'El email debe tener formato válido y terminar en mail.com' };
+            }
+        }
+
+        const res = await fetch(`http://localhost:3000/api/usuarios/${userId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify(data),
+        });
+
+        if (!res.ok) {
+            const errorData = await res.json().catch(() => null);
+            return { success: false, error: errorData?.message || 'Error al actualizar perfil' };
+        }
+
+        return { success: true };
+    } catch {
+        return { success: false, error: 'Error de conexión al actualizar perfil' };
     }
 }
