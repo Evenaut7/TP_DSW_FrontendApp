@@ -1,3 +1,4 @@
+/* ========== NAVBAR PRINCIPAL (Desktop) ========== */
 .navbar {
   background-color: #2D9CDB;
   display: grid;
@@ -6,21 +7,6 @@
   padding: 12px 20px;
   padding-left: 18px;
   padding-right: 18px;
-  border-radius: 10px;
-  margin: 8px 8px 0px 8px;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
-}
-
-.navHomePage
-{
-  background-color: #2D9CDB;
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr; 
-  justify-items: center;
-  align-items: center;
-  justify-content: space-around;
-  grid-gap: 12px; 
-  padding: 10px 12px; 
   border-radius: 10px;
   margin: 8px 8px 0px 8px;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
@@ -39,6 +25,12 @@
   color: #ffc107;
 }
 
+.navRight {
+  display: flex;
+  align-items: center;
+  justify-content: right;
+}
+
 .navLetters {
   display: flex;
   align-items: center;
@@ -53,46 +45,22 @@
   color: #ffc107;
 }
 
-.navRight {
-  display: flex;
+/* ========== NAVBAR HOME PAGE (Desktop) ========== */
+.navHomePage {
+  background-color: #2D9CDB;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr; 
+  justify-items: center;
   align-items: center;
-  justify-content: right;
+  justify-content: space-around;
+  grid-gap: 12px; 
+  padding: 10px 12px; 
+  border-radius: 10px;
+  margin: 8px 8px 0px 8px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
 }
 
-.profileImage {
-  border: none;
-  /* decoration: none; */
-  background-color: transparent;
-  padding: 1px 0px 1px 0px;
-}
-
-.user-button {
-  background: inherit; /* take navbar background */
-  color: inherit; /* take navbar text color */
-  border: none;
-  padding: 4px 8px;
-}
-.user-button.profileImage {
-  background: transparent;
-  padding: 1px 0px;
-}
-/* Force white text on desktop navbars where other links are white */
-.navbar .user-button,
-.navHomePage .user-button {
-  color: #ffffff;
-}
-
-/* Make user-button match nav link typography */
-.user-button {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-size: large;
-  font-family: 'poppins';
-  font-weight: 600;
-  text-decoration: none;
-}
-
+/* ========== BOTTOM NAVBAR (Mobile) ========== */
 .bottom-navbar {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr; 
@@ -109,45 +77,7 @@
   z-index: 1;
 }
 
-/* .bottom-navbar-HomePage {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr; 
-  justify-items: center;
-  justify-content: space-around;
-  background-color: #333;
-  color: rgb(255, 255, 255);
-  padding: 15px 0 8px 0;
-  text-align: center;
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  z-index: 1;
-} */
-
-/* bottom user button inherits bottom navbar styles */
-.bottom-user-button {
-  background: inherit;
-  color: inherit;
-  border: none;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 14px;
-  font-family: 'poppins';
-}
-.bottom-navbar .bottom-user-button,
-.bottom-navbar-HomePage .bottom-user-button {
-  color: #ffffff;
-}
-.bottom-user-dropdown { display: inline-block; }
-.bottom-user-label { font-weight: 600; }
-
 .bottom-navbar a {
-  text-decoration: none;
-  color: white;
-}
-.bottom-navbar-HomePage a {
   text-decoration: none;
   color: white;
 }
@@ -159,50 +89,58 @@
   text-align: center;
 }
 
-.modal-backdrop.show {
-  backdrop-filter: blur(25px);
-  background-color: rgba(0, 0, 0, 0.074); /* leve oscurecido */
-}
-.modal-body > * {
-  margin-bottom: 1rem; 
-}
-.modal-footer {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-}
-
-/* Ensure dropdown buttons visually match the .navLetters links */
+/* ========== DROPDOWN STYLES (Normalización) ========== */
+/* Normalizar dropdown buttons en navbar principal */
 .navbar .dropdown-toggle.navLetters,
 .navbar .dropdown-toggle.navLetters:focus,
 .navbar .dropdown-toggle.navLetters:hover {
-  padding: 0;                 /* remove extra button padding */
+  padding: 0;
   margin: 0;
-  font-size: large;           /* match .navLetters */
-  line-height: 1;            /* prevent vertical jump */
+  font-size: large;
+  line-height: 1;
   display: inline-flex;
-  align-items: center;       /* align icon and text */
-  gap: 5px;                 /* same gap as .navLetters */
+  align-items: center;
+  gap: 5px;
   background: transparent;
   border: none;
   box-shadow: none;
-  color: inherit;
+  color: #ffffff;
   text-decoration: none;
+  font-weight: 600;
 }
 
-/* Make the dropdown caret smaller and closer to the text */
-.navbar .dropdown-toggle.navLetters::after {
-  margin-left: 0.25rem;
-  vertical-align: baseline;
-  font-size: 0.85em;
+/* Normalizar dropdown buttons en navHomePage */
+.navHomePage .dropdown-toggle,
+.navHomePage .dropdown-toggle.navLetters,
+.navHomePage .dropdown > .btn,
+.navHomePage .dropdown > .btn-link {
+  padding: 0;
+  margin: 0;
+  font-size: large;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  color: #ffffff !important;
+  text-decoration: none;
+  font-weight: 600;
 }
 
-/* Also normalize mobile bottom navbar dropdown button */
+.navHomePage .dropdown-toggle:hover,
+.navHomePage .btn-link.dropdown-toggle:hover {
+  color: #ffc107 !important;
+}
+
+/* Normalizar dropdown buttons en bottom navbar (mobile) */
 .bottom-navbar .dropdown-toggle,
 .bottom-navbar .dropdown-toggle:focus,
 .bottom-navbar .dropdown-toggle:hover {
   padding: 0;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
+  line-height: 1;
   display: flex;
   align-items: center;
   gap: 0.35rem;
@@ -211,9 +149,42 @@
   color: inherit;
 }
 
-/* In case .btn-link adds extra left/right spacing, override it for dropdowns inside navbar */
-.navbar .dropdown > .btn,
 .bottom-navbar .dropdown > .btn {
   padding: 0;
+}
+
+/* Caret (flecha dropdown) */
+.navbar .dropdown-toggle.navLetters::after,
+.navHomePage .dropdown-toggle::after,
+.bottom-navbar .dropdown-toggle::after {
+  margin-left: 0.25rem;
+  vertical-align: baseline;
+  font-size: 0.85em;
+  display: inline-block;
+  transition: transform 200ms ease;
+  transform-origin: 50% 40%;
+}
+
+/* Animación: rotar caret cuando dropdown está abierto */
+.navbar .dropdown.show > .dropdown-toggle.navLetters::after,
+.navHomePage .dropdown.show > .dropdown-toggle::after,
+.bottom-navbar .dropdown.show > .dropdown-toggle::after {
+  transform: rotate(180deg);
+}
+
+/* ========== MODAL STYLES ========== */
+.modal-backdrop.show {
+  backdrop-filter: blur(25px);
+  background-color: rgba(0, 0, 0, 0.074);
+}
+
+.modal-body > * {
+  margin-bottom: 1rem; 
+}
+
+.modal-footer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
 

@@ -34,9 +34,6 @@ function AuthModal({ show, onClose, onOpenRegister, onSuccess }: AuthModalProps)
         }
 
         const data = await res.json();
-        if (data.token) {
-            localStorage.setItem('token', data.token);
-        }
         
         const userName = (data.user && data.user.nombre) || data.nombre || data.gmail;
         onClose();

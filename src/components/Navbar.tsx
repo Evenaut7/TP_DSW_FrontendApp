@@ -54,15 +54,11 @@ const Navbar = () => {
             </Link>
             {user ? (
               <div className="dropdown">
-                <button className="btn btn-link dropdown-toggle navLetters" data-bs-toggle="dropdown" aria-expanded="false">
+                <button className="fw-semibold dropdown-toggle navLetters" data-bs-toggle="dropdown" aria-expanded="false">
                   {user.nombre ?? user.gmail }
                 </button>
                 <ul className="dropdown-menu dropdown-menu-end">
-                  <li>
-                    <button className="dropdown-item" onClick={async () => { await logout(); }}>
-                      Cerrar sesión
-                    </button>
-                  </li>
+                  <li><button className="dropdown-item" onClick={async () => { await logout(); }}>Cerrar sesión</button></li>
                 </ul>
               </div>
             ) : (

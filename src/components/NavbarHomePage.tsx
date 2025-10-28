@@ -8,7 +8,6 @@ import AuthModal from "./AuthModal";
 import RegisterModal from "./RegisterModal";
 import WelcomeModal from "./WelcomeModal";
 import { Link } from "react-router-dom";
-// imports removed: UserBotton, BottomUserBoton not used here
 
 
 
@@ -19,7 +18,6 @@ function NavbarHomePage() {
     const [welcomeName, setWelcomeName] = useState('');
     const { user, refreshUser, logout } = useUser();
     const [width, setWidth] = useState(window.innerWidth)
-    // user is provided from UserProvider; no local getCurrentUser needed here
 
     useEffect(() => {
         const handleResize = () => setWidth(window.innerWidth)
