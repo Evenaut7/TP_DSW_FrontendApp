@@ -13,6 +13,7 @@ interface Localidad {
   id: number;
   nombre: string;
   codUta: string;
+  descripcion: string;
   latitud: number;
   longitud: number;
   imagen: string;
@@ -63,7 +64,7 @@ const Localidad = () => {
               </div>
             </div>
             <div className="descriptionLocalidades">
-              <p>Detalles de la localidad</p>
+              <p>{localidad.descripcion}</p>
             </div>
           </div>
           <div className="imageContainer">

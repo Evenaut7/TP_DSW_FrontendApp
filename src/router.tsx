@@ -7,6 +7,7 @@ import CreatePuntoDeInteres from './pages/CreatePDI.tsx';
 import ProvinciaPage from './pages/CRUDProvincia.tsx';
 import CRUDLocalidadPage from './pages/CRUDLocalidad.tsx';
 import EditPDI from './pages/EditPDI.tsx';
+import EditLocalidad from './pages/editLocalidad.tsx';
 
 export const router = createBrowserRouter([
   { path: '*', element: <NotFoundPage /> },
@@ -17,4 +18,5 @@ export const router = createBrowserRouter([
   { path: '/provincias', element: <ProvinciaPage /> },
   { path: '/CRUDlocalidad/:id', element: <CRUDLocalidadPage /> },
   { path: '/EditPDI/:id', element: <EditPDI /> },
+  { path: '/editLocalidad/:id', element: <EditLocalidad /> },
 ]);

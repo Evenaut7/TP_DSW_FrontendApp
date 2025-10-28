@@ -47,7 +47,7 @@ const ListadoLocalidadesModal: React.FC<Props> = ({
 
   const handleEditar = (id: number) => {
     onHide();
-    navigate(`/CRUDlocalidad/${id}`);
+    navigate(`/editLocalidad/${id}`);
   };
 
   const handleCrear = () => {
