@@ -3,7 +3,7 @@ export type User = {
     nombre?: string;
     gmail?: string;
     cuit?: string;
-    localidad?: number;
+    localidad?: number | { id: number; nombre: string };
     provincia?: number;
     puntosDeInteres?: number[];
     favoritos?: number[];

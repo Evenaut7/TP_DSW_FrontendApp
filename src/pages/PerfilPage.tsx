@@ -12,7 +12,7 @@ import '../styles/PerfilPage.css';
 
 function PerfilPage() {
     const { user, refreshUser } = useUser();
-    const { provincias, getLocalidadesByProvincia, loading: loadingUbicaciones } = useProvinciasLocalidades();
+    const { provincias, localidades, getLocalidadesByProvincia, loading: loadingUbicaciones } = useProvinciasLocalidades();
     
     const [nombre, setNombre] = useState('');
     const [gmail, setGmail] = useState('');
@@ -34,31 +34,20 @@ function PerfilPage() {
             
             // Si el usuario tiene localidad, buscar su provincia
             if (user.localidad && user.localidad !== null) {
-                setLocalidadId(user.localidad);
+                // user.localidad es un objeto, necesitamos su ID
+                const localidadDelUsuario = typeof user.localidad === 'object'
+                    ? user.localidad.id // Si es objeto, extraer el ID
+                    : user.localidad;              // Si ya es número, usarlo directamente
                 
-                // Buscar la localidad para obtener su provincia
-                const todasLasLocalidades = provincias.flatMap(prov => 
-                    getLocalidadesByProvincia(prov.id)
-                );
-                const localidadEncontrada = todasLasLocalidades.find(loc => loc.id === user.localidad);
+                const localidadEncontrada = localidades.find(loc => loc.id === localidadDelUsuario);
                 
                 if (localidadEncontrada) {
                     setProvinciaId(localidadEncontrada.provincia);
-                } else if (user.provincia) {
-                    // Fallback: usar la provincia del usuario si no encontramos la localidad
-                    setProvinciaId(user.provincia);
+                    setLocalidadId(localidadEncontrada.id);
                 }
-            } else if (user.provincia) {
-                // Si tiene provincia pero no localidad
-                setProvinciaId(user.provincia);
-                setLocalidadId(0);
-            } else {
-                // No tiene ni provincia ni localidad
-                setProvinciaId(0);
-                setLocalidadId(0);
-            }
+            } 
         }
-    }, [user, loadingUbicaciones, provincias, getLocalidadesByProvincia]);
+    }, [user, loadingUbicaciones, localidades]);
 
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
