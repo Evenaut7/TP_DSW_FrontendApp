@@ -99,6 +99,7 @@ function PerfilPage() {
 
     return (
         <>
+        <div className="background">
             <Navbar />
             <div className="perfil-container">
                 <div className="perfil-card">
@@ -193,6 +194,7 @@ function PerfilPage() {
                 message={resultMessage}
                 onClose={() => setShowResult(false)}
             />
+        </div>
         </>
     );
 }
