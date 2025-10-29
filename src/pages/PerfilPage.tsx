@@ -16,8 +16,8 @@ function PerfilPage() {
     const [nombre, setNombre] = useState('');
     const [gmail, setGmail] = useState('');
     const [cuit, setCuit] = useState('');
-    const [provinciaId, setProvinciaId] = useState<number | undefined>(undefined);
-    const [localidadId, setLocalidadId] = useState<number | undefined>(undefined);
+    const [provinciaId, setProvinciaId] = useState<number>(0);
+    const [localidadId, setLocalidadId] = useState<number>(0);
     
     const [showConfirm, setShowConfirm] = useState(false);
     const [showResult, setShowResult] = useState(false);
@@ -31,8 +31,8 @@ function PerfilPage() {
             setNombre(user.nombre || '');
             setGmail(user.gmail || '');
             setCuit(user.cuit || '');
-            setProvinciaId(user.provincia);
-            setLocalidadId(user.localidad);
+            setProvinciaId(user.provincia || 0);
+            setLocalidadId(user.localidad || 0);
         }
     }, [user]);
 
@@ -57,8 +57,8 @@ function PerfilPage() {
             nombre,
             gmail,
             cuit,
-            provincia: provinciaId,
-            localidad: localidadId,
+            provincia: provinciaId === 0 ? undefined : provinciaId,
+            localidad: localidadId === 0 ? undefined : localidadId,
         });
 
         setSaving(false);
@@ -66,7 +66,7 @@ function PerfilPage() {
         if (result.success) {
             setResultSuccess(true);
             setResultMessage('Perfil actualizado correctamente');
-            await refreshUser(); // Actualizar contexto
+            await refreshUser(); 
         } else {
             setResultSuccess(false);
             setResultMessage(result.error || 'Error al actualizar perfil');
@@ -76,9 +76,14 @@ function PerfilPage() {
     };
 
     const handleProvinciaChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const newProvinciaId = parseInt(e.target.value);
+        const newProvinciaId = parseInt(e.target.value) || 0;
         setProvinciaId(newProvinciaId);
-        setLocalidadId(undefined); // Reset localidad cuando cambia provincia
+        setLocalidadId(0); // Reset localidad cuando cambia provincia
+    };
+
+    const handleLocalidadChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const newLocalidadId = parseInt(e.target.value) || 0;
+        setLocalidadId(newLocalidadId);
     };
 
     if (!user) {
@@ -99,39 +104,48 @@ function PerfilPage() {
                 <div className="perfil-card">
                     <h2 className="perfil-title">Editar Perfil</h2>
                     <form onSubmit={handleSubmit}>
-                        <InputLabel
-                            label="Nombre"
-                            type="text"
-                            value={nombre}
-                            onChange={(e) => setNombre(e.target.value)}
-                            required
-                        />
+                        <div className="form-group">
+                            <label htmlFor="input-nombre">Nombre</label>
+                            <InputLabel
+                                label="Nombre"
+                                type="text"
+                                value={nombre}
+                                onChange={(e) => setNombre(e.target.value)}
+                                required
+                            />
+                        </div>
                         
-                        <InputLabel
-                            label="Email"
-                            type="email"
-                            value={gmail}
-                            onChange={(e) => setGmail(e.target.value)}
-                            required
-                        />
+                        <div className="form-group">
+                            <label htmlFor="input-email">Email</label>
+                            <InputLabel
+                                label="Email"
+                                type="email"
+                                value={gmail}
+                                onChange={(e) => setGmail(e.target.value)}
+                                required
+                            />
+                        </div>
 
-                        <InputLabel
-                            label="CUIT"
-                            type="text"
-                            value={cuit}
-                            onChange={(e) => setCuit(e.target.value)}
-                        />
+                        <div className="form-group">
+                            <label htmlFor="input-cuit">CUIT</label>
+                            <InputLabel
+                                label="CUIT"
+                                type="text"
+                                value={cuit}
+                                onChange={(e) => setCuit(e.target.value)}
+                            />
+                        </div>
 
                         <div className="form-group">
                             <label htmlFor="provincia">Provincia</label>
                             <select
                                 id="provincia"
                                 className="form-select"
-                                value={provinciaId || ''}
+                                value={provinciaId}
                                 onChange={handleProvinciaChange}
                                 disabled={loadingUbicaciones}
                             >
-                                <option value="">Seleccionar provincia</option>
+                                <option value={0}>Seleccionar provincia</option>
                                 {provincias.map((prov) => (
                                     <option key={prov.id} value={prov.id}>
                                         {prov.nombre}
@@ -145,12 +159,12 @@ function PerfilPage() {
                             <select
                                 id="localidad"
                                 className="form-select"
-                                value={localidadId || ''}
-                                onChange={(e) => setLocalidadId(parseInt(e.target.value))}
-                                disabled={!provinciaId || loadingUbicaciones}
+                                value={localidadId}
+                                onChange={handleLocalidadChange}
+                                disabled={provinciaId === 0 || loadingUbicaciones}
                             >
-                                <option value="">Seleccionar localidad</option>
-                                {getLocalidadesByProvincia(provinciaId).map((loc) => (
+                                <option value={0}>Seleccionar localidad</option>
+                                {getLocalidadesByProvincia(provinciaId === 0 ? undefined : provinciaId).map((loc) => (
                                     <option key={loc.id} value={loc.id}>
                                         {loc.nombre}
                                     </option>

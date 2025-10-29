@@ -23,13 +23,12 @@ export function useProvinciasLocalidades() {
             try {
                 setLoading(true);
                 
-                // Fetch provincias
                 const resProvincias = await fetch('http://localhost:3000/api/provincias');
                 if (!resProvincias.ok) throw new Error('Error al cargar provincias');
                 const dataProvincias = await resProvincias.json();
                 const provinciasData = dataProvincias.data || [];
                 
-                // Fetch localidades
+
                 const resLocalidades = await fetch('http://localhost:3000/api/localidades');
                 if (!resLocalidades.ok) throw new Error('Error al cargar localidades');
                 const dataLocalidades = await resLocalidades.json();
