@@ -3,6 +3,7 @@ export type User = {
     nombre?: string;
     gmail?: string;
     cuit?: string;
+    tipo?: "creador" | "usuario" | "admin";
     localidad?: number | { id: number; nombre: string };
     provincia?: number;
     puntosDeInteres?: number[];
