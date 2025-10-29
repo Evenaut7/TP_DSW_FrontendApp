@@ -12,7 +12,7 @@ import '../styles/PerfilPage.css';
 
 function PerfilPage() {
     const { user, refreshUser } = useUser();
-    const { provincias, localidades, getLocalidadesByProvincia, loading: loadingUbicaciones } = useProvinciasLocalidades();
+    const { provincias, getLocalidadesByProvincia, loading: loadingUbicaciones } = useProvinciasLocalidades();
     
     const [nombre, setNombre] = useState('');
     const [gmail, setGmail] = useState('');
@@ -32,22 +32,17 @@ function PerfilPage() {
             setGmail(user.gmail || '');
             setCuit(user.cuit || '');
             
-            // Si el usuario tiene localidad, buscar su provincia
-            if (user.localidad && user.localidad !== null) {
-                // user.localidad es un objeto, necesitamos su ID
-                const localidadDelUsuario = typeof user.localidad === 'object'
-                    ? user.localidad.id // Si es objeto, extraer el ID
-                    : user.localidad;              // Si ya es número, usarlo directamente
-                
-                const localidadEncontrada = localidades.find(loc => loc.id === localidadDelUsuario);
-                
-                if (localidadEncontrada) {
-                    setProvinciaId(localidadEncontrada.provincia);
-                    setLocalidadId(localidadEncontrada.id);
-                }
-            } 
+            if (user.localidad) {
+                const localidadDelUsuario = user.localidad.id;
+                const provinciaDelUsuario = user.localidad.provincia.id;
+                setLocalidadId(localidadDelUsuario);
+                setProvinciaId(provinciaDelUsuario);
+            } else {
+                setProvinciaId(0);
+                setLocalidadId(0);
+            }
         }
-    }, [user, loadingUbicaciones, localidades]);
+    }, [user, loadingUbicaciones]);
 
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
@@ -70,7 +65,6 @@ function PerfilPage() {
             nombre,
             gmail,
             cuit,
-            provincia: provinciaId === 0 ? undefined : provinciaId,
             localidad: localidadId === 0 ? undefined : localidadId,
         });
 

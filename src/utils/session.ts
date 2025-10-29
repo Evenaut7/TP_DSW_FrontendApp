@@ -1,14 +1,26 @@
+export type Localidad = {
+    id: number;
+    nombre: string;
+    latitud?: number;
+    longitud?: number;
+    imagen?: string;
+    descripcion?: string;
+    provincia: {
+        id: number;
+        nombre: string;
+    };
+};
+
 export type User = {
     id?: number;
     nombre?: string;
     gmail?: string;
     cuit?: string;
     tipo?: "creador" | "usuario" | "admin";
-    localidad?: number | { id: number; nombre: string };
-    provincia?: number;
+    localidad?: Localidad | null;
     puntosDeInteres?: number[];
     favoritos?: number[];
-    agendaPDI?: number
+    agendaPDI?: number[];
 } | null;
 
 export async function getCurrentUser(): Promise<User> {
@@ -45,7 +57,6 @@ export type UpdateUserData = {
     gmail?: string;
     cuit?: string;
     localidad?: number;
-    provincia?: number;
 };
 
 export async function updateUser(userId: number, data: UpdateUserData): Promise<{ success: boolean; error?: string }> {

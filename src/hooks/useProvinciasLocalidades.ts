@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 export type Localidad = {
     id: number;
     nombre: string;
-    provincia: number;
+    provincia: number | { id: number; nombre: string };
 };
 
 export type Provincia = {
@@ -49,7 +49,14 @@ export function useProvinciasLocalidades() {
 
     const getLocalidadesByProvincia = (provinciaId: number | undefined): Localidad[] => {
         if (!provinciaId) return [];
-        return localidades.filter(loc => loc.provincia === provinciaId);
+        return localidades.filter(loc => {
+            // Si provincia es número, comparar directo
+            if (typeof loc.provincia === 'number') {
+                return loc.provincia === provinciaId;
+            }
+            // Si provincia es objeto, comparar el ID
+            return loc.provincia.id === provinciaId;
+        });
     };
 
     return { provincias, localidades, loading, error, getLocalidadesByProvincia };
