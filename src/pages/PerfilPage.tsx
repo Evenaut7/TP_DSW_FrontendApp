@@ -6,6 +6,7 @@ import { updateUser } from '../utils/session';
 import Navbar from '../components/Navbar';
 import ConfirmModal from '../components/ConfirmModal';
 import ResultModal from '../components/ResultModal';
+import RedirectModal from '../components/RedirectModal';
 import InputLabel from '../components/InputLabel';
 import '../styles/PerfilPage.css';
 
@@ -25,16 +26,39 @@ function PerfilPage() {
     const [resultMessage, setResultMessage] = useState('');
     const [saving, setSaving] = useState(false);
 
-    // Cargar datos del usuario al montar
     useEffect(() => {
-        if (user) {
+        if (user && !loadingUbicaciones) {
             setNombre(user.nombre || '');
             setGmail(user.gmail || '');
             setCuit(user.cuit || '');
-            setProvinciaId(user.provincia || 0);
-            setLocalidadId(user.localidad || 0);
+            
+            // Si el usuario tiene localidad, buscar su provincia
+            if (user.localidad && user.localidad !== null) {
+                setLocalidadId(user.localidad);
+                
+                // Buscar la localidad para obtener su provincia
+                const todasLasLocalidades = provincias.flatMap(prov => 
+                    getLocalidadesByProvincia(prov.id)
+                );
+                const localidadEncontrada = todasLasLocalidades.find(loc => loc.id === user.localidad);
+                
+                if (localidadEncontrada) {
+                    setProvinciaId(localidadEncontrada.provincia);
+                } else if (user.provincia) {
+                    // Fallback: usar la provincia del usuario si no encontramos la localidad
+                    setProvinciaId(user.provincia);
+                }
+            } else if (user.provincia) {
+                // Si tiene provincia pero no localidad
+                setProvinciaId(user.provincia);
+                setLocalidadId(0);
+            } else {
+                // No tiene ni provincia ni localidad
+                setProvinciaId(0);
+                setLocalidadId(0);
+            }
         }
-    }, [user]);
+    }, [user, loadingUbicaciones, provincias, getLocalidadesByProvincia]);
 
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
@@ -78,7 +102,7 @@ function PerfilPage() {
     const handleProvinciaChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const newProvinciaId = parseInt(e.target.value) || 0;
         setProvinciaId(newProvinciaId);
-        setLocalidadId(0); // Reset localidad cuando cambia provincia
+        setLocalidadId(0); 
     };
 
     const handleLocalidadChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -89,9 +113,9 @@ function PerfilPage() {
     if (!user) {
         return (
             <>
-                <Navbar />
-                <div className="perfil-container">
-                    <p className="text-center">Debes iniciar sesión para ver tu perfil</p>
+                <div className="background">
+                    <Navbar />
+                    <RedirectModal show={true} />
                 </div>
             </>
         );
