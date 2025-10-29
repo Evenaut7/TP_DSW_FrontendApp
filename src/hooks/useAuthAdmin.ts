@@ -23,7 +23,7 @@ export function useAuthAdmin() {
           setError('No tenés permisos para acceder a esta página');
         } else {
           // Usuario no logueado
-          navigate('/login');
+          navigate('/'); //redirije al home, deberia redirigir al login
         }
       } catch (err) {
         console.error(err);

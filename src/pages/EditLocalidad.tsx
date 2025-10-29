@@ -7,6 +7,7 @@ import FormField from '../components/forms/FormField.tsx';
 import FormSelect from '../components/forms/FormSelect.tsx';
 import '../styles/Localidad.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { useAuthAdmin } from '../hooks/useAuthAdmin.ts';
 
 interface Provincia {
   id: number;
@@ -38,14 +39,16 @@ export default function EditLocalidad() {
   const localidadId = id ? parseInt(id, 10) : null;
   const navigate = useNavigate();
 
+  const { isAdmin, loading, error } = useAuthAdmin();
+
   const [localidad, setLocalidad] = useState<Localidad | null>(null);
   const originalRef = useRef<Localidad | null>(null);
   const [provincias, setProvincias] = useState<Provincia[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loadingLocalidad, setLoading] = useState(true);
   const [imagenFile, setImagenFile] = useState<File | null>(null);
   const [guardando, setGuardando] = useState(false);
   const [mensaje, setMensaje] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [errorLocalidad, setError] = useState<string | null>(null);
 
   // Cargar localidad + provincias
   useEffect(() => {
@@ -97,11 +100,12 @@ export default function EditLocalidad() {
     fetchAll();
   }, [localidadId]);
 
-  if (loading) return <PantallaDeCarga mensaje="Cargando localidad..." />;
-  if (error)
+  if (loadingLocalidad)
+    return <PantallaDeCarga mensaje="Cargando localidad..." />;
+  if (errorLocalidad)
     return (
       <div className="container mt-4">
-        <p className="text-danger">Error: {error}</p>
+        <p className="text-danger">Error: {errorLocalidad}</p>
       </div>
     );
   if (!localidad)
@@ -217,21 +221,21 @@ export default function EditLocalidad() {
       setGuardando(false);
     }
   };
+  if (loading) return <p className="text-center mt-4">Cargando...</p>;
+  if (error) return <p className="text-center mt-4 text-danger">{error}</p>;
+  if (isAdmin === false)
+    return (
+      <p className="text-center mt-4 text-warning">
+        No podés acceder a esta página
+      </p>
+    );
 
   return (
     <div className="backgroundLocalidad">
       <Navbar />
 
-      <div className="container divLocalidades py-4">
-        <div
-          className="topDivLocalidades"
-          style={{
-            border: '2px solid #e6f0ff',
-            padding: 12,
-            borderRadius: 8,
-            background: '#fbfdff',
-          }}
-        >
+      <div className=" divLocalidades py-4">
+        <div className="topDivLocalidades">
           <div className="leftTopDivLocalidades" style={{ flex: 1 }}>
             <div className="titleLocalidades">
               <h3 style={{ margin: 0 }}>
@@ -343,8 +347,10 @@ export default function EditLocalidad() {
                 {mensaje && (
                   <div className="alert alert-success mb-0 ms-2">{mensaje}</div>
                 )}
-                {error && (
-                  <div className="alert alert-danger mb-0 ms-2">{error}</div>
+                {errorLocalidad && (
+                  <div className="alert alert-danger mb-0 ms-2">
+                    {errorLocalidad}
+                  </div>
                 )}
               </div>
             </form>
