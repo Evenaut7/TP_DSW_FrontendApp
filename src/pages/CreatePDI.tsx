@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import Navbar from '../components/Navbar';
 import PDIForm from '../components/PDIForm';
+import '../styles/PDIPage.css';
 
 const CreatePDI = () => {
   const [loading, setLoading] = useState(false);
@@ -37,11 +38,13 @@ const CreatePDI = () => {
 
   return (
     <>
+    <div className='backgroundPDI'>
       <Navbar />
-      <div className="container mt-4">
-        <h2>Crear Punto de Interés</h2>
+      <div className="create-pdi-container">
+        <h2 className="create-pdi-title">Crear Punto de Interés</h2>
         <PDIForm onSubmit={handleSubmit} loading={loading} />
       </div>
+    </div>
     </>
   );
 };
