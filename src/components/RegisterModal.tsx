@@ -2,6 +2,7 @@ import { useState, type FormEvent } from 'react';
 import Modal from 'react-bootstrap/Modal';
 import InputLabel from './InputLabel';
 import BotonCeleste from './BotonCeleste';
+import { login } from '../utils/session';
 
 type RegisterModalProps = {
     show: boolean;
@@ -24,27 +25,37 @@ function RegisterModal({ show, onClose, onBackToLogin, onSuccess }: RegisterModa
         setLoading(true);
         const tipo = creator ? 'creador' : 'usuario';   
         try {
-        const res = await fetch('http://localhost:3000/api/usuarios/register', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ nombre: usuario, tipo, gmail, password }),
-        });
+            // 1. Registro
+            const res = await fetch('http://localhost:3000/api/usuarios/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ nombre: usuario, tipo, gmail, password }),
+            });
 
-        if (!res.ok) {
+            if (!res.ok) {
+                const data = await res.json().catch(() => null);
+                throw new Error(data?.message ?? `Error ${res.status}`);
+            }
+
             const data = await res.json().catch(() => null);
-            throw new Error(data?.message ?? `Error ${res.status}`);
-        }
+            const registeredName = data?.nombre || usuario;
 
-        const data = await res.json().catch(() => null);
-        // En registro exitoso: cerrar modal y mostrar welcome
-        const registeredName = data?.nombre || usuario;
-        onClose();
-        if (onSuccess) onSuccess(registeredName);
+            const loginResult = await login(gmail, password);
+            
+            if (!loginResult.success) {
+                setError('Registro exitoso, pero hubo un error al iniciar sesión. Por favor, inicia sesión manualmente.');
+                return;
+            }
+
+
+            onClose();
+            if (onSuccess) onSuccess(registeredName);
+            
         } catch (err: unknown) {
-        if (err instanceof Error) setError(err.message);
-        else setError('Error desconocido');
+            if (err instanceof Error) setError(err.message);
+            else setError('Error desconocido');
         } finally {
-        setLoading(false);
+            setLoading(false);
         }
     };
 

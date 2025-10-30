@@ -34,6 +34,13 @@ export type PDI = {
     }[];
 };
 
+export type UpdateUserData = {
+    nombre?: string;
+    gmail?: string;
+    cuit?: string;
+    localidad?: number;
+};
+
 export type User = {
     id?: number;
     nombre?: string;
@@ -75,12 +82,25 @@ export async function logout(): Promise<boolean> {
     }
 }
 
-export type UpdateUserData = {
-    nombre?: string;
-    gmail?: string;
-    cuit?: string;
-    localidad?: number;
-};
+export async function login(gmail: string, password: string): Promise<{ success: boolean; error?: string }> {
+    try {
+        const res = await fetch('http://localhost:3000/api/usuarios/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ gmail, password }),
+        });
+
+        if (!res.ok) {
+            const errorData = await res.json().catch(() => null);
+            return { success: false, error: errorData?.message || 'Error al iniciar sesión' };
+        }
+
+        return { success: true };
+    } catch {
+        return { success: false, error: 'Error de conexión al iniciar sesión' };
+    }
+}
 
 export async function updateUser(userId: number, data: UpdateUserData): Promise<{ success: boolean; error?: string }> {
     try {

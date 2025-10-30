@@ -2,6 +2,7 @@ import { useState, type FormEvent } from 'react';
 import Modal from 'react-bootstrap/Modal';
 import InputLabel from './InputLabel';
 import BotonCeleste from './BotonCeleste';
+import { login } from '../utils/session';
 
 type AuthModalProps = {
     show: boolean;
@@ -20,29 +21,34 @@ function AuthModal({ show, onClose, onOpenRegister, onSuccess }: AuthModalProps)
         e.preventDefault();
         setError(null);
         setLoading(true);
-        try {
-        const res = await fetch('http://localhost:3000/api/usuarios/login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ gmail, password }),
-            credentials: 'include'
-        });
-
-        if (!res.ok) {
-            const data = await res.json().catch(() => null);
-            throw new Error(data?.message ?? `Error ${res.status}`);
-        }
-
-        const data = await res.json();
         
-        const userName = (data.user && data.user.nombre) || data.nombre || data.gmail;
-        onClose();
-        if (onSuccess) onSuccess(userName);
+        try {
+            const result = await login(gmail, password);
+            
+            if (result.success) {
+                // Login exitoso: obtener datos del usuario para el mensaje de bienvenida
+                const res = await fetch('http://localhost:3000/api/usuarios/currentUser', {
+                    credentials: 'include',
+                });
+                
+                if (res.ok) {
+                    const data = await res.json();
+                    const userName = data?.data?.nombre || gmail;
+                    onClose();
+                    if (onSuccess) onSuccess(userName);
+                } else {
+                    // Login exitoso pero no se pudo obtener el usuario
+                    onClose();
+                    if (onSuccess) onSuccess(gmail);
+                }
+            } else {
+                setError(result.error || 'Error al iniciar sesión');
+            }
         } catch (err: unknown) {
             if (err instanceof Error) setError(err.message);
             else setError('Error desconocido');
         } finally {
-        setLoading(false);
+            setLoading(false);
         }
     };
 
