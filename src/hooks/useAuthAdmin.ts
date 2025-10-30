@@ -1,15 +1,25 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useUser } from './useUser';
 
 export function useAuthAdmin() {
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null); // null = sin saber aún
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const { user } = useUser();
 
   useEffect(() => {
     const checkAdmin = async () => {
+      // Si no hay usuario, no es admin
+      if (!user) {
+        setIsAdmin(false);
+        setLoading(false);
+        return;
+      }
+
       try {
+        setLoading(true);
         const res = await fetch('http://localhost:3000/api/usuarios/is-admin', {
           credentials: 'include', // envía cookie de sesión
         });
@@ -34,7 +44,7 @@ export function useAuthAdmin() {
     };
 
     checkAdmin();
-  }, [navigate]);
+  }, [navigate, user]); // Ahora depende del user
 
   return { loading, isAdmin, error };
 }

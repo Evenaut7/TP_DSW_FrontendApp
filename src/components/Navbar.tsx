@@ -4,10 +4,11 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import "../styles/Navbar.css"
 import { useState, useEffect } from "react"
 import { useUser } from '../hooks/useUser';
+import { useAuthAdmin } from '../hooks/useAuthAdmin';
 import AuthModal from "./AuthModal.tsx"
 import RegisterModal from "./RegisterModal.tsx"
 import WelcomeModal from "./WelcomeModal";
-import { House, Map, Notebook,  Star, CircleUserRound } from "lucide-react";
+import { House, Map, Notebook,  Star, CircleUserRound, Settings } from "lucide-react";
 
 
 
@@ -18,6 +19,7 @@ const Navbar = () => {
   const [showWelcome, setShowWelcome] = useState(false);
   const [welcomeName, setWelcomeName] = useState('');
   const { user, refreshUser, logout } = useUser();
+  const { isAdmin } = useAuthAdmin();
 
   useEffect(() => {
     const handleResize = () => setWidth(window.innerWidth)
@@ -53,15 +55,30 @@ const Navbar = () => {
               <Star />
             </Link>
             {user ? (
-              <div className="dropdown">
-                <button className="fw-semibold dropdown-toggle navLetters" data-bs-toggle="dropdown" aria-expanded="false">
-                  {user.nombre ?? user.gmail }
-                </button>
-                <ul className="dropdown-menu dropdown-menu-end">
-                  <li><Link className="dropdown-item" to="/perfil">Perfil</Link></li>
-                  <li><button className="dropdown-item" onClick={async () => { await logout(); }}>Cerrar sesión</button></li>
-                </ul>
-              </div>
+              <>
+                {isAdmin && (
+                  <div className="dropdown">
+                    <button className="fw-semibold dropdown-toggle navLetters" data-bs-toggle="dropdown" aria-expanded="false">
+                      <Settings />
+                      Gestión
+                    </button>
+                    <ul className="dropdown-menu dropdown-menu-end">
+                      <li><Link className="dropdown-item" to="/provincias">Gestión provincias</Link></li>
+                      <li><Link className="dropdown-item" to="/tags">Gestión tags</Link></li>
+                      <li><button className="dropdown-item" disabled>Gestión PDI (próximamente)</button></li>
+                    </ul>
+                  </div>
+                )}
+                <div className="dropdown">
+                  <button className="fw-semibold dropdown-toggle navLetters" data-bs-toggle="dropdown" aria-expanded="false">
+                    {user.nombre ?? user.gmail }
+                  </button>
+                  <ul className="dropdown-menu dropdown-menu-end">
+                    <li><Link className="dropdown-item" to="/perfil">Perfil</Link></li>
+                    <li><button className="dropdown-item" onClick={async () => { await logout(); }}>Cerrar sesión</button></li>
+                  </ul>
+                </div>
+              </>
             ) : (
               <Link className="fw-semibold navLetters" to="#" onClick={() => setShowAuth(true)}>
                 <CircleUserRound />
@@ -89,6 +106,21 @@ const Navbar = () => {
             <Star />
             <Link to={"/favoritos"}>Favoritos</Link>
           </div>
+          {user && isAdmin && (
+            <div>
+              <Settings />
+              <div className="dropdown">
+                <button className="btn btn-link dropdown-toggle navLetters" data-bs-toggle="dropdown">
+                  Gestión
+                </button>
+                <ul className="dropdown-menu dropdown-menu-end">
+                  <li><Link className="dropdown-item" to="/provincias">Gestión provincias</Link></li>
+                  <li><Link className="dropdown-item" to="/tags">Gestión tags</Link></li>
+                  <li><button className="dropdown-item" disabled>Gestión PDI (próximamente)</button></li>
+                </ul>
+              </div>
+            </div>
+          )}
           <div>
             {user ? (
               <>

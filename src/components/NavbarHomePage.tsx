@@ -3,7 +3,8 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import "../styles/Navbar.css"
 import { useState, useEffect } from "react"
 import { useUser } from '../hooks/useUser';
-import { CircleUserRound, House, Map, Notebook, Star } from "lucide-react";
+import { useAuthAdmin } from '../hooks/useAuthAdmin';
+import { CircleUserRound, House, Map, Notebook, Star, Settings } from "lucide-react";
 import AuthModal from "./AuthModal";
 import RegisterModal from "./RegisterModal";
 import WelcomeModal from "./WelcomeModal";
@@ -17,6 +18,7 @@ function NavbarHomePage() {
     const [showWelcome, setShowWelcome] = useState(false);
     const [welcomeName, setWelcomeName] = useState('');
     const { user, refreshUser, logout } = useUser();
+    const { isAdmin } = useAuthAdmin();
     const [width, setWidth] = useState(window.innerWidth)
 
     useEffect(() => {
@@ -41,9 +43,23 @@ function NavbarHomePage() {
                 <Link className="fw-semibold navLetters" to={"/favoritos"}>
                 <i className="bi bi-star-fill"> Favoritos</i>
                 </Link>
+                {user && isAdmin && (
+                    <div className="dropdown">
+                        <button className="btn btn-link dropdown-toggle navLetters" data-bs-toggle="dropdown">
+                            <Settings />
+                            Gestión
+                        </button>
+                        <ul className="dropdown-menu dropdown-menu-end">
+                            <li><Link className="dropdown-item" to="/provincias">Gestión provincias</Link></li>
+                            <li><Link className="dropdown-item" to="/tags">Gestión tags</Link></li>
+                            <li><button className="dropdown-item" disabled>Gestión PDI (próximamente)</button></li>
+                        </ul>
+                    </div>
+                )}
                 {user ? (
                     <div className="dropdown">
                         <button className="btn btn-link dropdown-toggle navLetters" data-bs-toggle="dropdown">
+                            <CircleUserRound />
                             {user.nombre ?? user.gmail}
                         </button>
                         <ul className="dropdown-menu dropdown-menu-end">
@@ -76,13 +92,28 @@ function NavbarHomePage() {
                 <Star />
                 <Link to="/favoritos">Favoritos</Link>
             </div>
+            {user && isAdmin && (
+                <div>
+                    <Settings />
+                    <div className="dropdown">
+                        <button className="btn btn-link dropdown-toggle navLetters" data-bs-toggle="dropdown">
+                            Gestión
+                        </button>
+                        <ul className="dropdown-menu dropdown-menu-end">
+                            <li><Link className="dropdown-item" to="/provincias">Gestión provincias</Link></li>
+                            <li><Link className="dropdown-item" to="/tags">Gestión tags</Link></li>
+                            <li><button className="dropdown-item" disabled>Gestión PDI (próximamente)</button></li>
+                        </ul>
+                    </div>
+                </div>
+            )}
             <div>
                 {user ? (
                     <>
                         <CircleUserRound />
                         <div className="dropdown">
                             <button className="btn btn-link dropdown-toggle navLetters" data-bs-toggle="dropdown">
-                                {user.nombre ?? user.gmail ?? 'Usuario'}
+                                {user.nombre ?? user.gmail }
                             </button>
                             <ul className="dropdown-menu dropdown-menu-end">
                                 <li><Link className="dropdown-item" to="/perfil">Perfil</Link></li>

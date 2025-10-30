@@ -1,9 +1,10 @@
 /* ========== NAVBAR PRINCIPAL (Desktop) ========== */
 .navbar {
   background-color: #2D9CDB;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-gap: 12px; 
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px; 
   padding: 12px 20px;
   padding-left: 18px;
   padding-right: 18px;
@@ -48,12 +49,10 @@
 /* ========== NAVBAR HOME PAGE (Desktop) ========== */
 .navHomePage {
   background-color: #2D9CDB;
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr; 
-  justify-items: center;
-  align-items: center;
+  display: flex;
   justify-content: space-around;
-  grid-gap: 12px; 
+  align-items: center;
+  gap: 12px; 
   padding: 10px 12px; 
   border-radius: 10px;
   margin: 8px 8px 0px 8px;
@@ -62,13 +61,13 @@
 
 /* ========== BOTTOM NAVBAR (Mobile) ========== */
 .bottom-navbar {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr; 
-  justify-items: center;
+  display: flex;
   justify-content: space-around;
+  align-items: center;
+  gap: 8px;
   background-color: #333;
   color: rgb(255, 255, 255);
-  padding: 15px 0 8px 0;
+  padding: 15px 8px 8px 8px;
   text-align: center;
   position: fixed;
   bottom: 0;

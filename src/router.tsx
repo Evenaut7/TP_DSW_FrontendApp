@@ -10,12 +10,14 @@ import EditPDI from './pages/EditPDI.tsx';
 import EditLocalidad from './pages/EditLocalidad.tsx';
 import PerfilPage from './pages/PerfilPage.tsx';
 import FavoritosPage from './pages/FavoritosPage.tsx';
+import TagsPage from './pages/TagsPage.tsx';
 
 export const router = createBrowserRouter([
   { path: '*', element: <NotFoundPage /> },
   { path: '/', element: <HomePage /> },
   { path: '/perfil', element: <PerfilPage /> },
   { path: '/favoritos', element: <FavoritosPage /> },
+  { path: '/tags', element: <TagsPage /> },
   { path: '/localidad/:id', element: <Localidad /> },
   { path: '/pdi/:id', element: <PDIPage /> },
   { path: '/CreatePDI', element: <CreatePuntoDeInteres /> },
