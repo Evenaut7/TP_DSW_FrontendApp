@@ -11,8 +11,8 @@ export function useAuthAdmin() {
 
   useEffect(() => {
     const checkAdmin = async () => {
-      // Si no hay usuario, no es admin
-      if (!user) {
+      
+      if (!user) {  // Si no hay usuario, no es admin
         setIsAdmin(false);
         setLoading(false);
         return;

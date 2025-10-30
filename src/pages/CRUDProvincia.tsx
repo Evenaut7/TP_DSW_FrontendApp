@@ -1,15 +1,19 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import BotonCeleste from '../components/BotonCeleste';
 import FormField from '../components/forms/FormField';
 import Navbar from '../components/Navbar';
 import { useProvinciaCRUD } from '../hooks/useProvinciaCRUD';
 import type { Provincia } from '../hooks/useProvinciaCRUD';
-import { Modal, Button } from 'react-bootstrap';
+import { Modal } from 'react-bootstrap';
 import ListadoLocalidadesModal from '../components/ListadoLocalidadesModale.tsx';
 import { useAuthAdmin } from '../hooks/useAuthAdmin';
+import RedirectModal from '../components/RedirectModal';
+import { useUser } from '../hooks/useUser';
 
 function CRUDProvincia() {
   const { isAdmin, loading } = useAuthAdmin();
+  const { user } = useUser();
+  const [showRedirect, setShowRedirect] = useState(false);
   const provinciasHook = useProvinciaCRUD();
 
   const {
@@ -41,9 +45,23 @@ function CRUDProvincia() {
     setShowLocalidadesModal(true);
   };
 
+  // Detectar cuando el usuario cierra sesión o deja de ser admin
+  useEffect(() => {
+    if (!loading && (!user || isAdmin === false)) {
+      setShowRedirect(true);
+    }
+  }, [user, isAdmin, loading]);
+
   if (loading) return <p>Cargando...</p>;
-  if (error) return <p style={{ color: 'red' }}>{error}</p>;
-  if (isAdmin === false) return <p>No podés acceder a esta página</p>;
+
+  if (!user || isAdmin === false || showRedirect) {
+    return (
+      <>
+        <Navbar />
+        <RedirectModal show={true} />
+      </>
+    );
+  }
 
   return (
     <>

@@ -5,10 +5,12 @@ import { useTagCRUD, type TipoTag } from '../hooks/useTagCRUD';
 import { useAuthAdmin } from '../hooks/useAuthAdmin';
 import RedirectModal from '../components/RedirectModal.tsx';
 import { useUser } from '../hooks/useUser';
+import { useState, useEffect } from 'react';
 
 function TagsPage() {
     const { isAdmin, loading } = useAuthAdmin();
     const { user } = useUser();
+    const [showRedirect, setShowRedirect] = useState(false);
     const {
         tags,
         editingId,
@@ -32,18 +34,20 @@ function TagsPage() {
 
     const tiposDisponibles: TipoTag[] = ['Evento', 'Punto de Interés', 'Actividad'];
 
-
+    // Detectar cuando el usuario cierra sesión o deja de ser admin
+    useEffect(() => {
+        if (!loading && (!user || isAdmin === false)) {
+            setShowRedirect(true);
+        }
+    }, [user, isAdmin, loading]);
 
     if (loading) return <p>Cargando...</p>;
-    if (error && isAdmin === false) return <p>No podés acceder a esta página</p>;
 
-    if (!user) {
+    if (!user || isAdmin === false || showRedirect) {
         return (
             <>
-                <div className="background">
-                    <Navbar />
-                    <RedirectModal show={true} />
-                </div>
+                <Navbar />
+                <RedirectModal show={true} />
             </>
         );
     }
