@@ -1,6 +1,5 @@
 import Navbar from '../components/Navbar';
 import BotonCeleste from '../components/BotonCeleste';
-import FormField from '../components/forms/FormField';
 import { useTagCRUD, type TipoTag } from '../hooks/useTagCRUD';
 import { useAuthAdmin } from '../hooks/useAuthAdmin';
 import RedirectModal from '../components/RedirectModal.tsx';
@@ -83,9 +82,9 @@ function TagsPage() {
                     <td style={{ width: '50px' }}>{tag.id}</td>
                     <td style={{ width: '250px' }}>
                     {editingId === tag.id ? (
-                        <FormField
-                        name={`nombre-${tag.id}`}
-                        label=""
+                        <input
+                        type="text"
+                        className="form-control"
                         value={editNombre}
                         onChange={(e) => setEditNombre(e.target.value)}
                         required
@@ -147,13 +146,14 @@ function TagsPage() {
                     </div>
                     ) : (
                     <div className="d-flex gap-2 align-items-center">
-                        <FormField
-                        name="nuevo-nombre"
-                        label=""
-                        type="Nombre del tag"
+                        <input
+                        type="text"
+                        className="form-control"
+                        placeholder="Nombre del tag"
                         value={nuevoNombre}
                         onChange={(e) => setNuevoNombre(e.target.value)}
                         required
+                        style={{ maxWidth: '250px' }}
                         />
                         <select
                         className="form-select"
