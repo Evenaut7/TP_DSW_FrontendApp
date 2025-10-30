@@ -1,41 +1,41 @@
-@media (max-width: 768px) {
-  .contenedor-localidades {
-  /* GRID */
+.contenedor-localidades {
   display: grid;
-  grid-template-columns: repeat(autofill, minmax(1, 1fr));
+  grid-template-columns: repeat(3, 1fr); 
   gap: 20px;
   padding: 20px;
 }
-  .col{
-    height: clamp(100px, 20vh, 130px);
-    /* width: 25%; */
-  }
-}
-@media (min-width: 769px) {
+
+@media (max-width: 992px) {
   .contenedor-localidades {
-    /* GRID */
-    display: grid;
-    grid-template-columns: repeat(autofill, minmax(4, 1fr));
-    gap: 20px;
-    padding: 20px;
-  }
-  .col{
-    height: clamp(100px, 20vh, 130px);
-    /* width: 25%; */
+    grid-template-columns: repeat(2, 1fr);
   }
 }
+
+@media (max-width: 600px) {
+  .contenedor-localidades {
+    grid-template-columns: 1fr;
+  }
+}
+
+.col {
+  height: clamp(150px, 20vh, 200px);
+}
+
 .localidadCard {
-  box-shadow: 1px 1px 6px rgba(0,0,0,0.4); 
+  position: relative;
+  box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.4);
   display: flex;
   justify-content: center;
   align-items: center;
   transition: transform 0.25s ease;
-  height: 200px;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 10px;
 }
 
 .localidadCard:hover {
-  transform: scale(1.02);
-  text-shadow: 4px 4px rgba(0,0,0,0.75);
+  transform: scale(1.03);
+  text-shadow: 4px 4px rgba(0, 0, 0, 0.75);
 }
 
 .card-img {
@@ -45,10 +45,10 @@
 }
 
 .cardTitle {
-  position: absolute; 
-  color: white; 
-  text-shadow: 2px 2px rgba(0,0,0,0.7);
-  border-radius: 25px; 
-  padding: 10px; 
+  position: absolute;
+  color: white;
+  text-shadow: 2px 2px rgba(0, 0, 0, 0.7);
+  border-radius: 25px;
+  padding: 10px;
   font-size: 3vmax;
 }

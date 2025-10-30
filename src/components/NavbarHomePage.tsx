@@ -35,19 +35,18 @@ function NavbarHomePage() {
         {width > 950 ? (
             <nav className="navHomePage">
                 <Link className="fw-semibold navLetters" to={"/map"}>
-                <i className="bi bi-geo-alt"> Mapa</i>
+                    Mapa <Map /> 
                 </Link>
                 <Link className="fw-semibold navLetters" to={"/agenda"}>
-                <i className="bi bi-calendar-week"> Agenda</i> 
+                    Agenda <Notebook/>
                 </Link>
                 <Link className="fw-semibold navLetters" to={"/favoritos"}>
-                <i className="bi bi-star-fill"> Favoritos</i>
+                    Favoritos <Star/> 
                 </Link>
                 {user && isAdmin && (
                     <div className="dropdown">
                         <button className="btn btn-link dropdown-toggle navLetters" data-bs-toggle="dropdown">
-                            Gestión
-                            <Settings />
+                            Gestión <Settings />
                         </button>
                         <ul className="dropdown-menu dropdown-menu-end">
                             <li><Link className="dropdown-item" to="/provincias">Gestión provincias</Link></li>
@@ -59,8 +58,7 @@ function NavbarHomePage() {
                 {user ? (
                     <div className="dropdown">
                         <button className="btn btn-link dropdown-toggle navLetters" data-bs-toggle="dropdown">
-                            {user.nombre ?? user.gmail}
-                            <CircleUserRound />
+                            {user.nombre ?? user.gmail} <CircleUserRound /> 
                         </button>
                         <ul className="dropdown-menu dropdown-menu-end">
                             <li><Link className="dropdown-item" to="/perfil">Perfil</Link></li>

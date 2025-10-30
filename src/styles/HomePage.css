@@ -9,7 +9,7 @@
   place-items: center;
   box-shadow: 0 0 8px 3px rgba(0, 0, 0, 0.3);
   z-index: -1;
-  margin: 0 0 30px 0;
+  margin: 0 0 10px 0;
 } 
 
 .homeTitleDiv{
@@ -19,8 +19,8 @@
 }
 
 .homeTitle{
-  color:#413933;
-  text-shadow: 2px 3px blanchedalmond;
+  color:#2D9CDB;
+  text-shadow: 2px 3px rgb(255, 255, 255);
   font-size: 500%;
   font-weight: 1000;
   font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif
@@ -37,7 +37,7 @@
   height: 38px;
   padding: 15px;
   outline: none;
-  border-color: #63554a;
+  border-color: #003554;
   border-radius: 20px;
   border-width: 2px;
   border-style: solid;
@@ -46,7 +46,7 @@
 }
 
 .searchBoxHome::placeholder {
-  color: #63554a;
+  color: #00000049;
 }
 
 @media (max-width: 768px){

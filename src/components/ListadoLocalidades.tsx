@@ -26,7 +26,7 @@ const ListadoLocalidades = () => {
             {localidades?.map(localidad => (
                 <div key={localidad.id} className="col">
                     <Link to={`/localidad/${localidad.id}`}> 
-                        <div className="localidadCard card h-100 ">
+                        <div className="localidadCard">
                         <img src={`http://localhost:3000/public/${localidad.imagen}`} className="card-img" />
                         <h5 className="cardTitle">{localidad.nombre}</h5>
                         </div>
