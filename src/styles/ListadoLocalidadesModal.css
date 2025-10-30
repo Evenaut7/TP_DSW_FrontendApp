@@ -1,0 +1,37 @@
+.localidad-card {
+  border-radius: 14px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+}
+
+.localidad-img {
+  height: 160px;
+  object-fit: cover;
+  border-top-left-radius: 14px;
+  border-top-right-radius: 14px;
+}
+
+.icon-group {
+  display: flex;
+  align-items: center;
+}
+
+.icon-action {
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.icon-action:hover {
+  transform: scale(1.1);
+}
+
+.add-localidad-card {
+  border-radius: 14px;
+  background: #f8f9fa;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.add-localidad-card:hover {
+  background: #e9ecef;
+}
