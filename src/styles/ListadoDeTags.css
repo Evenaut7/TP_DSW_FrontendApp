@@ -4,7 +4,7 @@
 }
 
 .tagButton {
-  background-color: #F2C94C;
+  background-color: #f2c94c;
   border-radius: 1px;
   border-color: 1px;
   margin: 0 3px 0 0;
@@ -21,4 +21,10 @@
 
 .tagButton:hover {
   background-color: rgb(255, 128, 0);
+}
+
+.tagButton.selected {
+  background-color: rgb(255, 128, 0);
+  color: white;
+  transform: scale(1.02);
 }
