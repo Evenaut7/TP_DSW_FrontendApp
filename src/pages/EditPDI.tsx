@@ -11,6 +11,7 @@ import { useFetch } from '../reducers/UseFetch';
 import { usePDIForm } from '../hooks/usePDIForm';
 import '../styles/PDIPage.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { useAuthAdmin } from '../hooks/useAuthAdmin';
 
 interface PDI {
   id: number;
@@ -31,6 +32,8 @@ const EditPDI = () => {
   const navigate = useNavigate();
   const pdiId = id ? parseInt(id) : null;
 
+  const { isAdmin, loading, error } = useAuthAdmin();
+
   const { form, setForm, handleChange } = usePDIForm();
   const { data: usuarios } = useFetch<any[]>(
     'http://localhost:3000/api/usuarios'
@@ -40,7 +43,7 @@ const EditPDI = () => {
   );
   const { data: tags } = useFetch<any[]>('http://localhost:3000/api/tags');
 
-  const [loading, setLoading] = useState(false);
+  const [loadingPDI, setLoading] = useState(false);
   const [cargandoPDI, setCargandoPDI] = useState(true);
   const [pdiOriginal, setPdiOriginal] = useState<PDI | null>(null);
 
@@ -128,6 +131,14 @@ const EditPDI = () => {
   };
 
   if (cargandoPDI) return <PantallaDeCarga mensaje="Cargando PDI..." />;
+  if (loading) return <p className="text-center mt-4">Cargando...</p>;
+  if (error) return <p className="text-center mt-4 text-danger">{error}</p>;
+  if (isAdmin === false)
+    return (
+      <p className="text-center mt-4 text-warning">
+        No podés acceder a esta página
+      </p>
+    );
 
   return (
     <div className="backgroundPDI">
@@ -222,11 +233,11 @@ const EditPDI = () => {
           />
 
           <button
-            disabled={loading}
+            disabled={loadingPDI}
             type="submit"
             className="btn btn-primary mt-3"
           >
-            {loading ? 'Guardando...' : 'Actualizar PDI'}
+            {loadingPDI ? 'Guardando...' : 'Actualizar PDI'}
           </button>
         </form>
 
