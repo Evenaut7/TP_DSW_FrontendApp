@@ -11,6 +11,29 @@ export type Localidad = {
     };
 };
 
+export type PDI = {
+    id: number;
+    nombre: string;
+    descripcion: string;
+    imagen: string;
+    calle: string;
+    altura: number;
+    latitud?: number;
+    longitud?: number;
+    privado?: boolean;
+    localidad: {
+        id: number;
+        nombre: string;
+    };
+    eventos?: {
+        id: number;
+        titulo: string;
+        descripcion: string;
+        horaDesde: string;
+        horaHasta: string;
+    }[];
+};
+
 export type User = {
     id?: number;
     nombre?: string;
@@ -19,7 +42,7 @@ export type User = {
     tipo?: "creador" | "usuario" | "admin";
     localidad?: Localidad | null;
     puntosDeInteres?: number[];
-    favoritos?: number[];
+    favoritos?: PDI[];
     agendaPDI?: number[];
 } | null;
 
@@ -84,5 +107,45 @@ export async function updateUser(userId: number, data: UpdateUserData): Promise<
         return { success: true };
     } catch {
         return { success: false, error: 'Error de conexión al actualizar perfil' };
+    }
+}
+
+export async function addFavorito(pdiId: number): Promise<{ success: boolean; error?: string }> {
+    try {
+        const res = await fetch('http://localhost:3000/api/puntosDeInteres/favorito', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ id: pdiId }),
+        });
+
+        if (!res.ok) {
+            const errorData = await res.json().catch(() => null);
+            return { success: false, error: errorData?.message || 'Error al agregar favorito' };
+        }
+
+        return { success: true };
+    } catch {
+        return { success: false, error: 'Error de conexión al agregar favorito' };
+    }
+}
+
+export async function removeFavorito(pdiId: number): Promise<{ success: boolean; error?: string }> {
+    try {
+        const res = await fetch('http://localhost:3000/api/puntosDeInteres/favorito', {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ id: pdiId }),
+        });
+
+        if (!res.ok) {
+            const errorData = await res.json().catch(() => null);
+            return { success: false, error: errorData?.message || 'Error al quitar favorito' };
+        }
+
+        return { success: true };
+    } catch {
+        return { success: false, error: 'Error de conexión al quitar favorito' };
     }
 }

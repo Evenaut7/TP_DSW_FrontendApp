@@ -2,6 +2,10 @@ import Navbar from '../components/Navbar.tsx';
 import Estrellas from '../components/Estrellas.tsx';
 import { useParams } from 'react-router-dom';
 import { useFetchById } from '../reducers/UseFetchByID.ts';
+import { useUser } from '../hooks/useUser.ts';
+import { addFavorito, removeFavorito } from '../utils/session.ts';
+import { useState, useEffect } from 'react';
+import ResultModal from '../components/ResultModal.tsx';
 import '../styles/PDIPage.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import PantallaDeCarga from '../components/PantallaDeCarga.tsx';
@@ -31,12 +35,54 @@ interface PDI {
 const PDIPage = () => {
   const { id } = useParams<{ id: string }>();
   const pdiId = id ? parseInt(id) : null;
+  const { user, refreshUser } = useUser();
+  const [loadingFavorito, setLoadingFavorito] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const {
     data: pdi,
     loading,
     error,
   } = useFetchById<PDI>('http://localhost:3000/api/puntosDeInteres', pdiId);
+
+  // Estado local para el favorito
+  const [localEsFavorito, setLocalEsFavorito] = useState(false);
+
+  // Actualizar el useEffect para sincronizar
+  useEffect(() => {
+    if (user && pdiId) {
+      setLocalEsFavorito(user.favoritos?.some(fav => fav.id === pdiId) || false);
+    }
+  }, [user, pdiId]);
+
+  const handleToggleFavorito = async () => {
+    if (!pdiId || !user) return;
+    
+    setLoadingFavorito(true);
+    
+    if (localEsFavorito) {
+      const result = await removeFavorito(pdiId);
+      if (result.success) {
+        await refreshUser();
+        setLocalEsFavorito(false); // Actualización optimista
+      } else {
+        setErrorMessage(result.error || 'Error al quitar de favoritos');
+        setShowErrorModal(true);
+      }
+    } else {
+      const result = await addFavorito(pdiId);
+      if (result.success) {
+        await refreshUser();
+        setLocalEsFavorito(true); // Actualización optimista
+      } else {
+        setErrorMessage(result.error || 'Error al agregar a favoritos');
+        setShowErrorModal(true);
+      }
+    }
+    
+    setLoadingFavorito(false);
+  };
 
   if (loading) return <PantallaDeCarga mensaje={'PDI'} />;
   if (error) return <p>Error: {error}</p>;
@@ -74,8 +120,13 @@ const PDIPage = () => {
           {/* Botones */}
           <div className="d-flex gap-3">
             <button className="btn btn-primary">Conocer historias</button>
-            <button className="btn btn-outline-warning favoriteBtn">
-              <i className="bi bi-star"></i> Agregar a favoritos
+            <button 
+              className={`btn ${localEsFavorito ? 'btn-warning' : 'btn-outline-warning'} favoriteBtn`}
+              onClick={handleToggleFavorito}
+              disabled={loadingFavorito || !user}
+            >
+              <i className={`bi ${localEsFavorito ? 'bi-star-fill' : 'bi-star'}`}></i>{' '}
+              {localEsFavorito ? 'En favoritos' : 'Agregar a favoritos'}
             </button>
           </div>
         </div>
@@ -90,6 +141,13 @@ const PDIPage = () => {
           <ListadoEventos pdiId={pdi.id} />
         </div>
       </div>
+
+      <ResultModal
+        show={showErrorModal}
+        success={false}
+        message={errorMessage}
+        onClose={() => setShowErrorModal(false)}
+      />
     </div>
   );
 };
