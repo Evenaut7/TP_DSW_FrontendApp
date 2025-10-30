@@ -171,6 +171,38 @@
   transform: rotate(180deg);
 }
 
+/* ========== DROPDOWN MENU STYLES ========== */
+/* Asegurar que los dropdown-menu tengan el texto visible */
+.dropdown-menu {
+  background-color: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 0.25rem;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.175);
+}
+
+.dropdown-item {
+  color: #212529 !important;
+  padding: 0.5rem 1rem;
+  text-decoration: none;
+  display: block;
+  width: 100%;
+  text-align: left;
+  background-color: transparent;
+  border: 0;
+}
+
+.dropdown-item:hover,
+.dropdown-item:focus {
+  color: #1e2125 !important;
+  background-color: #f8f9fa;
+}
+
+.dropdown-item:disabled {
+  color: #6c757d !important;
+  pointer-events: none;
+  background-color: transparent;
+}
+
 /* ========== MODAL STYLES ========== */
 .modal-backdrop.show {
   backdrop-filter: blur(25px);

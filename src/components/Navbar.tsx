@@ -32,7 +32,7 @@ const Navbar = () => {
 
   return (
     <>
-      {width > 768 ? (
+      {width > 950 ? (
         <nav className="navbar">
           <div>
             <Link to={"/"}>
@@ -59,8 +59,8 @@ const Navbar = () => {
                 {isAdmin && (
                   <div className="dropdown">
                     <button className="fw-semibold dropdown-toggle navLetters" data-bs-toggle="dropdown" aria-expanded="false">
-                      <Settings />
                       Gestión
+                      <Settings />
                     </button>
                     <ul className="dropdown-menu dropdown-menu-end">
                       <li><Link className="dropdown-item" to="/provincias">Gestión provincias</Link></li>
@@ -72,6 +72,7 @@ const Navbar = () => {
                 <div className="dropdown">
                   <button className="fw-semibold dropdown-toggle navLetters" data-bs-toggle="dropdown" aria-expanded="false">
                     {user.nombre ?? user.gmail }
+                    <CircleUserRound />
                   </button>
                   <ul className="dropdown-menu dropdown-menu-end">
                     <li><Link className="dropdown-item" to="/perfil">Perfil</Link></li>
@@ -81,8 +82,8 @@ const Navbar = () => {
               </>
             ) : (
               <Link className="fw-semibold navLetters" to="#" onClick={() => setShowAuth(true)}>
-                <CircleUserRound />
                 Usuario
+                <CircleUserRound />
               </Link>
             )}
 
@@ -108,9 +109,9 @@ const Navbar = () => {
           </div>
           {user && isAdmin && (
             <div>
-              <Settings />
               <div className="dropdown">
-                <button className="btn btn-link dropdown-toggle navLetters" data-bs-toggle="dropdown">
+                <button className="btn btn-link dropdown-toggle navLetters" data-bs-toggle="dropdown" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: 0 }}>
+                  <Settings />
                   Gestión
                 </button>
                 <ul className="dropdown-menu dropdown-menu-end">
@@ -123,18 +124,16 @@ const Navbar = () => {
           )}
           <div>
             {user ? (
-              <>
-                <CircleUserRound />
-                        <div className="dropdown">
-                            <button className="btn btn-link dropdown-toggle navLetters" data-bs-toggle="dropdown">
-                                {user.nombre ?? user.gmail ?? 'Usuario'}
-                            </button>
-                            <ul className="dropdown-menu dropdown-menu-end">
-                                <li><Link className="dropdown-item" to="/perfil">Perfil</Link></li>
-                                <li><button className="dropdown-item" onClick={async () => { await logout(); }}>Cerrar sesión</button></li>
-                            </ul>
-                        </div>
-              </>
+              <div className="dropdown">
+                <button className="btn btn-link dropdown-toggle navLetters" data-bs-toggle="dropdown" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: 0 }}>
+                  <CircleUserRound />
+                  {user.nombre ?? user.gmail ?? 'Usuario'}
+                </button>
+                <ul className="dropdown-menu dropdown-menu-end">
+                  <li><Link className="dropdown-item" to="/perfil">Perfil</Link></li>
+                  <li><button className="dropdown-item" onClick={async () => { await logout(); }}>Cerrar sesión</button></li>
+                </ul>
+              </div>
             ) : (
               <>
                 <CircleUserRound />

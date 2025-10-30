@@ -32,7 +32,7 @@ function NavbarHomePage() {
 
     return (
         <>
-        {width > 768 ? (
+        {width > 950 ? (
             <nav className="navHomePage">
                 <Link className="fw-semibold navLetters" to={"/map"}>
                 <i className="bi bi-geo-alt"> Mapa</i>
@@ -46,8 +46,8 @@ function NavbarHomePage() {
                 {user && isAdmin && (
                     <div className="dropdown">
                         <button className="btn btn-link dropdown-toggle navLetters" data-bs-toggle="dropdown">
-                            <Settings />
                             Gestión
+                            <Settings />
                         </button>
                         <ul className="dropdown-menu dropdown-menu-end">
                             <li><Link className="dropdown-item" to="/provincias">Gestión provincias</Link></li>
@@ -59,8 +59,8 @@ function NavbarHomePage() {
                 {user ? (
                     <div className="dropdown">
                         <button className="btn btn-link dropdown-toggle navLetters" data-bs-toggle="dropdown">
-                            <CircleUserRound />
                             {user.nombre ?? user.gmail}
+                            <CircleUserRound />
                         </button>
                         <ul className="dropdown-menu dropdown-menu-end">
                             <li><Link className="dropdown-item" to="/perfil">Perfil</Link></li>
@@ -69,8 +69,8 @@ function NavbarHomePage() {
                     </div>
                 ) : (
                     <Link className="fw-semibold navLetters" to="#" onClick={() => setShowAuth(true)}>
-                        <CircleUserRound />
                         Usuario
+                        <CircleUserRound />
                     </Link>
                 )}
             </nav>
@@ -94,9 +94,9 @@ function NavbarHomePage() {
             </div>
             {user && isAdmin && (
                 <div>
-                    <Settings />
                     <div className="dropdown">
-                        <button className="btn btn-link dropdown-toggle navLetters" data-bs-toggle="dropdown">
+                        <button className="btn btn-link dropdown-toggle navLetters" data-bs-toggle="dropdown" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: 0 }}>
+                            <Settings />
                             Gestión
                         </button>
                         <ul className="dropdown-menu dropdown-menu-end">
@@ -109,18 +109,16 @@ function NavbarHomePage() {
             )}
             <div>
                 {user ? (
-                    <>
-                        <CircleUserRound />
-                        <div className="dropdown">
-                            <button className="btn btn-link dropdown-toggle navLetters" data-bs-toggle="dropdown">
-                                {user.nombre ?? user.gmail }
-                            </button>
-                            <ul className="dropdown-menu dropdown-menu-end">
-                                <li><Link className="dropdown-item" to="/perfil">Perfil</Link></li>
-                                <li><button className="dropdown-item" onClick={async () => { await logout(); }}>Cerrar sesión</button></li>
-                            </ul>
-                        </div>
-                    </>
+                    <div className="dropdown">
+                        <button className="btn btn-link dropdown-toggle navLetters" data-bs-toggle="dropdown" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: 0 }}>
+                            <CircleUserRound />
+                            {user.nombre ?? user.gmail }
+                        </button>
+                        <ul className="dropdown-menu dropdown-menu-end">
+                            <li><Link className="dropdown-item" to="/perfil">Perfil</Link></li>
+                            <li><button className="dropdown-item" onClick={async () => { await logout(); }}>Cerrar sesión</button></li>
+                        </ul>
+                    </div>
                 ) : (
                     <>
                         <CircleUserRound />
