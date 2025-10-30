@@ -1,12 +1,8 @@
 import { useState, useEffect } from 'react';
+import type { Tag, TipoTag } from '../types';
+import * as api from '../utils/api';
 
-export type TipoTag = 'Evento' | 'Punto de Interés' | 'Actividad';
-
-export type Tag = {
-    id?: number;
-    nombre: string;
-    tipo: TipoTag;
-    };
+export type { Tag, TipoTag };
 
 export function useTagCRUD() {
     const [tags, setTags] = useState<Tag[]>([]);
@@ -19,17 +15,11 @@ export function useTagCRUD() {
     const [error, setError] = useState<string | null>(null);
 
     const fetchTags = async () => {
-        try {
-        const res = await fetch('http://localhost:3000/api/tags');
-        const data = await res.json();
-        if (!res.ok) {
-            setError(data?.message || `Error ${res.status}`);
-            return;
-        }
-        setTags(data.data || []);
-        } catch (err) {
-        console.error(err);
-        setError('Error al cargar tags');
+        const response = await api.getTags();
+        if (response.success && response.data) {
+            setTags(response.data as Tag[]);
+        } else {
+            setError(response.error || 'Error al cargar tags');
         }
     };
 
@@ -53,33 +43,23 @@ export function useTagCRUD() {
 
     const handleUpdate = async (id: number) => {
         if (!editNombre.trim()) {
-        setError('El nombre no puede estar vacío');
-        return;
-        }
-        if (!editTipo) {
-        setError('Debe seleccionar un tipo');
-        return;
-        }
-        try {
-        const res = await fetch(`http://localhost:3000/api/tags/${id}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ nombre: editNombre, tipo: editTipo }),
-            credentials: 'include',
-        });
-        const data = await res.json();
-        if (!res.ok) {
-            setError(data?.message || `Error ${res.status}`);
+            setError('El nombre no puede estar vacío');
             return;
         }
-        setEditingId(null);
-        setEditNombre('');
-        setEditTipo('Evento');
-        setError(null);
-        fetchTags();
-        } catch (err) {
-        console.error(err);
-        setError('Error al actualizar tag');
+        if (!editTipo) {
+            setError('Debe seleccionar un tipo');
+            return;
+        }
+        
+        const response = await api.updateTag(id, { nombre: editNombre, tipo: editTipo });
+        if (response.success) {
+            setEditingId(null);
+            setEditNombre('');
+            setEditTipo('Evento');
+            setError(null);
+            fetchTags();
+        } else {
+            setError(response.error || 'Error al actualizar tag');
         }
     };
 
@@ -87,63 +67,37 @@ export function useTagCRUD() {
     const handleDelete = async (id?: number, nombre?: string) => {
         if (!id) return;
         if (!window.confirm(`¿Estás seguro que querés eliminar el tag "${nombre}"?`))
-        return;
-
-        try {
-        const res = await fetch(`http://localhost:3000/api/tags/${id}`, {
-            method: 'DELETE',
-            credentials: 'include',
-        });
-
-        const data = await res.json();
-
-        if (!res.ok) {
-            setError(data?.message || 'No se pudo eliminar el tag');
             return;
-        }
 
-        setError(null);
-        fetchTags();
-        } catch (err) {
-        console.error(err);
-        setError('Error al eliminar tag');
+        const response = await api.deleteTag(id);
+        if (response.success) {
+            setError(null);
+            fetchTags();
+        } else {
+            setError(response.error || 'Error al eliminar tag');
         }
     };
 
-  // Agregar nueva
+    // Agregar nueva
     const handleCreate = async () => {
         if (!nuevoNombre.trim()) {
-        setError('El nombre no puede estar vacío');
-        return;
+            setError('El nombre no puede estar vacío');
+            return;
         }
         if (!nuevoTipo) {
-        setError('Debe seleccionar un tipo');
-        return;
-        }
-
-        try {
-        const res = await fetch('http://localhost:3000/api/tags', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ nombre: nuevoNombre, tipo: nuevoTipo }),
-            credentials: 'include',
-        });
-
-        const data = await res.json();
-
-        if (!res.ok) {
-            setError(data?.message || 'No se pudo agregar el tag');
+            setError('Debe seleccionar un tipo');
             return;
         }
 
-        setNuevoNombre('');
-        setNuevoTipo('Evento');
-        setAddingNew(false);
-        setError(null);
-        fetchTags();
-        } catch (err) {
-        console.error(err);
-        setError('Error al agregar tag');
+        const response = await api.createTag({ nombre: nuevoNombre, tipo: nuevoTipo });
+        if (response.success) {
+            setNuevoNombre('');
+            setNuevoTipo('Evento');
+            setAddingNew(false);
+            setError(null);
+            fetchTags();
+        } else {
+            setError(response.error || 'Error al agregar tag');
         }
     };
 

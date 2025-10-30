@@ -1,10 +1,8 @@
 import { useState, useEffect } from 'react';
+import type { Provincia } from '../types';
+import * as api from '../utils/api';
 
-export type Provincia = {
-  id?: number;
-  nombre: string;
-  localidades?: { id?: number; nombre: string }[];
-};
+export type { Provincia };
 
 export function useProvinciaCRUD() {
   const [provincias, setProvincias] = useState<Provincia[]>([]);
@@ -15,19 +13,11 @@ export function useProvinciaCRUD() {
   const [error, setError] = useState<string | null>(null);
 
   const fetchProvincias = async () => {
-    try {
-      const res = await fetch('http://localhost:3000/api/provincias', {
-        credentials: 'include',
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        setError(data?.message || `Error ${res.status}`);
-        return;
-      }
-      setProvincias(data.data || []);
-    } catch (err) {
-      console.error(err);
-      setError('Error al cargar provincias');
+    const response = await api.getProvincias();
+    if (response.success && response.data) {
+      setProvincias(response.data as Provincia[]);
+    } else {
+      setError(response.error || 'Error al cargar provincias');
     }
   };
 
@@ -52,25 +42,15 @@ export function useProvinciaCRUD() {
       setError('El nombre no puede estar vacío');
       return;
     }
-    try {
-      const res = await fetch(`http://localhost:3000/api/provincias/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nombre: editNombre }),
-        credentials: 'include',
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        setError(data?.message || `Error ${res.status}`);
-        return;
-      }
+    
+    const response = await api.updateProvincia(id, { nombre: editNombre });
+    if (response.success) {
       setEditingId(null);
       setEditNombre('');
       setError(null);
       fetchProvincias();
-    } catch (err) {
-      console.error(err);
-      setError('Error al actualizar provincia');
+    } else {
+      setError(response.error || 'Error al actualizar provincia');
     }
   };
 
@@ -80,24 +60,12 @@ export function useProvinciaCRUD() {
     if (!window.confirm('¿Estás seguro que querés eliminar esta provincia?'))
       return;
 
-    try {
-      const res = await fetch(`http://localhost:3000/api/provincias/${id}`, {
-        method: 'DELETE',
-        credentials: 'include',
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        setError(data?.message || 'No se pudo eliminar. Revisa dependencias.');
-        return;
-      }
-
+    const response = await api.deleteProvincia(id);
+    if (response.success) {
       setError(null);
       fetchProvincias();
-    } catch (err) {
-      console.error(err);
-      setError('Error al eliminar provincia');
+    } else {
+      setError(response.error || 'No se pudo eliminar. Revisa dependencias.');
     }
   };
 
@@ -108,28 +76,14 @@ export function useProvinciaCRUD() {
       return;
     }
 
-    try {
-      const res = await fetch('http://localhost:3000/api/provincias', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nombre: nuevoNombre }),
-        credentials: 'include',
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        setError(data?.message || 'No se pudo agregar la provincia');
-        return;
-      }
-
+    const response = await api.createProvincia({ nombre: nuevoNombre });
+    if (response.success) {
       setNuevoNombre('');
       setAddingNew(false);
       setError(null);
       fetchProvincias();
-    } catch (err) {
-      console.error(err);
-      setError('Error al agregar provincia');
+    } else {
+      setError(response.error || 'Error al agregar provincia');
     }
   };
 

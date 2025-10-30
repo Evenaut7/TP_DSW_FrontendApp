@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from './useUser';
+import { checkIsAdmin } from '../utils/api';
 
 export function useAuthAdmin() {
   const [loading, setLoading] = useState(true);
@@ -20,15 +21,13 @@ export function useAuthAdmin() {
 
       try {
         setLoading(true);
-        const res = await fetch('http://localhost:3000/api/usuarios/is-admin', {
-          credentials: 'include', // envía cookie de sesión
-        });
-        const data = await res.json();
+        const response = await checkIsAdmin();
 
-        if (res.ok && data.isAdmin) {
-          setIsAdmin(true);
+        if (response.success && response.data) {
+          // @ts-expect-error - data puede tener isAdmin
+          setIsAdmin(response.data.isAdmin === true);
           setError(null);
-        } else if (res.status === 401 && data.message === 'User is not admin') {
+        } else if (response.error === 'User is not admin') {
           setIsAdmin(false);
           setError('No tenés permisos para acceder a esta página');
         } else {
