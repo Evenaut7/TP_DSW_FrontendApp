@@ -46,7 +46,7 @@ async function apiFetch<T = unknown>(
         const url = endpoint.startsWith('http') ? endpoint : `${API_BASE_URL}${endpoint}`;
         const res = await fetch(url, config);
 
-    // Intentar parsear respuesta JSON
+
     const data = await res.json().catch(() => null);
 
     if (!res.ok) {
