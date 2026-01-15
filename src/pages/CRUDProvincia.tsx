@@ -125,7 +125,15 @@ function CRUDProvincia() {
                           <BotonCeleste type="button" texto="🗑️" />
                         </div>
                         <div onClick={() => handleShowLocalidades(prov)}>
-                          <BotonCeleste type="button" texto="📌 Localidades" />
+                          <BotonCeleste
+                            type="button"
+                            texto={'📌'}
+                            children={
+                              <span className="d-none d-md-inline ms-1">
+                                Localidades
+                              </span>
+                            }
+                          />
                         </div>
                       </>
                     )}

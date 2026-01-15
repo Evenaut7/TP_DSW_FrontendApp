@@ -4,9 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import PantallaDeCarga from '../components/PantallaDeCarga';
 import ListadoDeTags from '../components/ListadoDeTags';
 import ListadoEventosEditable from '../components/ListadoEventosEditable';
-import FormField from '../components/forms/FormField';
-import FormSelect from '../components/forms/FormSelect';
-import TagsSelector from '../components/forms/TagsSelector';
+import PDIFormEdit from '../components/forms/PDIFormEdit';
 import { useFetch } from '../reducers/UseFetch';
 import { usePDIForm } from '../hooks/usePDIForm';
 import '../styles/PDIPage.css';
@@ -159,87 +157,15 @@ const EditPDI = () => {
           </div>
         </div>
 
-        <form
-          className="descriptionPDI bg-light p-4 rounded"
+        <PDIFormEdit
+          form={form}
+          onChange={handleChange}
           onSubmit={handleSubmit}
-        >
-          <FormField
-            label="Nombre"
-            name="nombre"
-            value={form.nombre}
-            onChange={handleChange}
-            required
-          />
-          <FormField
-            label="Descripción"
-            name="descripcion"
-            value={form.descripcion}
-            onChange={handleChange}
-            as="textarea"
-            required
-          />
-          <FormField
-            label="Imagen"
-            name="imagen"
-            type="file"
-            onChange={handleChange}
-          />
-          <FormField
-            label="Calle"
-            name="calle"
-            value={form.calle}
-            onChange={handleChange}
-            required
-          />
-          <FormField
-            label="Altura"
-            name="altura"
-            type="number"
-            value={form.altura}
-            onChange={handleChange}
-            required
-          />
-
-          <div className="mb-3 form-check">
-            <input
-              type="checkbox"
-              name="privado"
-              className="form-check-input"
-              checked={form.privado}
-              onChange={handleChange}
-            />
-            <label className="form-check-label">Privado</label>
-          </div>
-
-          <FormSelect
-            label="Usuario"
-            name="usuario"
-            value={form.usuario}
-            options={usuarios ?? []}
-            onChange={handleChange}
-          />
-          <FormSelect
-            label="Localidad"
-            name="localidad"
-            value={form.localidad}
-            options={localidades ?? []}
-            onChange={handleChange}
-          />
-
-          <TagsSelector
-            tags={tags ?? []}
-            selected={form.tags}
-            onChange={handleChange}
-          />
-
-          <button
-            disabled={loadingPDI}
-            type="submit"
-            className="btn btn-primary mt-3"
-          >
-            {loadingPDI ? 'Guardando...' : 'Actualizar PDI'}
-          </button>
-        </form>
+          loading={loadingPDI}
+          usuarios={usuarios ?? []}
+          localidades={localidades ?? []}
+          tags={tags ?? []}
+        />
 
         <div className="proximosEventosBanner mt-4">
           <h3>Próximos eventos</h3>
