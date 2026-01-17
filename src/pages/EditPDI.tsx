@@ -4,7 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import PantallaDeCarga from '../components/PantallaDeCarga';
 import ListadoDeTags from '../components/ListadoDeTags';
 import ListadoEventosEditable from '../components/ListadoEventosEditable';
-import PDIFormEdit from '../components/forms/PDIFormEdit';
+import PDIFormEdit from '../components/forms/PDIForm';
 import { useFetch } from '../reducers/UseFetch';
 import { usePDIForm } from '../hooks/usePDIForm';
 import '../styles/PDIPage.css';

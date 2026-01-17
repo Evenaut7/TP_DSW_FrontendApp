@@ -13,7 +13,7 @@ type PDIFormEditProps = {
   onSubmit: (e: React.FormEvent) => void;
 };
 
-function PDIFormEdit({
+function PDIForm({
   form,
   usuarios,
   localidades,
@@ -96,4 +96,4 @@ function PDIFormEdit({
   );
 }
 
-export default PDIFormEdit;
+export default PDIForm;
