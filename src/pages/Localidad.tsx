@@ -8,6 +8,8 @@ import { useState, useEffect } from 'react';
 import PantallaDeCarga from '../components/PantallaDeCarga.tsx';
 import ListadoDeTags from '../components/ListadoDeTags.tsx';
 import ListadoPDI from '../components/ListadoPDI.tsx';
+import { useBusquedaPDI } from '../hooks/useBusquedaPDI.ts';
+import ListadoPDISkeleton from '../components/ListadoPDISkeleton.tsx';
 
 interface PDI {
   id: number;
@@ -47,46 +49,17 @@ const Localidad = () => {
     localidadId
   );
 
-  const [pdis, setPdis] = useState<PDI[]>([]);
   const [tagsSeleccionados, setTagsSeleccionados] = useState<number[]>([]);
   const [busqueda, setBusqueda] = useState('');
 
-  // Al cargar la localidad, mostramos todos los PDIs
-  useEffect(() => {
-    if (localidad?.puntosDeInteres) {
-      setPdis(localidad.puntosDeInteres);
-    }
-  }, [localidad]);
+  const pdisIniciales = localidad?.puntosDeInteres ?? [];
 
-  const handleBuscar = async () => {
-    if (!localidadId) return;
-
-    const body = {
-      localidad: localidadId,
-      tags: tagsSeleccionados,
-      busqueda: busqueda.trim(),
-    };
-
-    try {
-      const res = await fetch(
-        'http://localhost:3000/api/puntosDeInteres/filtro',
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(body),
-        }
-      );
-      const json = await res.json();
-      if (json.data && Array.isArray(json.data)) {
-        setPdis(json.data);
-      } else {
-        setPdis([]);
-      }
-    } catch (err) {
-      console.error('Error al filtrar PDIs:', err);
-      setPdis([]);
-    }
-  };
+  const { pdis, loadingPDIs } = useBusquedaPDI({
+    localidadId,
+    busqueda,
+    tags: tagsSeleccionados,
+    pdisIniciales,
+  });
 
   if (loading) return <PantallaDeCarga mensaje="Localidad" />;
   if (error) return <p>Error: {error}</p>;
@@ -126,9 +99,6 @@ const Localidad = () => {
             value={busqueda}
             onChange={(e) => setBusqueda(e.target.value)}
           />
-          <button className="btn btn-primary" onClick={handleBuscar}>
-            Buscar
-          </button>
         </div>
 
         {/* Tags seleccionables */}
@@ -136,7 +106,7 @@ const Localidad = () => {
 
         {/* Listado de PDIs filtrados */}
         <div className="listadoPDI">
-          <ListadoPDI pdis={pdis} />
+          {loadingPDIs ? <ListadoPDISkeleton /> : <ListadoPDI pdis={pdis} />}
         </div>
       </div>
     </div>
