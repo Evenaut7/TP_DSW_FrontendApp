@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 import { useFetchById } from '../reducers/UseFetchByID.ts';
 import { useUser } from '../hooks/useUser.ts';
 import { addFavorito, removeFavorito } from '../utils/session.ts';
+import { API_BASE_URL } from '../utils/api';
 import { useState, useEffect } from 'react';
 import ResultModal from '../components/ResultModal.tsx';
 import '../styles/PDIPage.css';
@@ -44,7 +45,7 @@ const PDIPage = () => {
     data: pdi,
     loading,
     error,
-  } = useFetchById<PDI>('http://localhost:3000/api/puntosDeInteres', pdiId);
+  } = useFetchById<PDI>(`${API_BASE_URL}/api/puntosDeInteres`, pdiId);
 
   // Estado local para el favorito
   const [localEsFavorito, setLocalEsFavorito] = useState(false);
@@ -96,7 +97,7 @@ const PDIPage = () => {
         {/* Hero con imagen + título */}
         <div className="heroPDI">
           <img
-            src={`http://localhost:3000/public/${pdi.imagen}`}
+            src={`${API_BASE_URL}/public/${pdi.imagen}`}
             alt={pdi.nombre}
             className="heroImage"
           />

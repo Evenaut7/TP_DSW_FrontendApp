@@ -3,6 +3,7 @@ import Modal from 'react-bootstrap/Modal';
 import InputLabel from './InputLabel';
 import BotonCeleste from './BotonCeleste';
 import { login } from '../utils/session';
+import { API_BASE_URL } from '../utils/api';
 
 type AuthModalProps = {
     show: boolean;
@@ -27,7 +28,7 @@ function AuthModal({ show, onClose, onOpenRegister, onSuccess }: AuthModalProps)
             
             if (result.success) {
                 // Login exitoso: obtener datos del usuario para el mensaje de bienvenida
-                const res = await fetch('http://localhost:3000/api/usuarios/currentUser', {
+                const res = await fetch(`${API_BASE_URL}/api/usuarios/currentUser`, {
                     credentials: 'include',
                 });
                 

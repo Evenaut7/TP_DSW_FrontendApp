@@ -7,6 +7,7 @@ import ListadoEventosEditable from '../components/ListadoEventosEditable';
 import PDIFormEdit from '../components/forms/PDIForm';
 import { useFetch } from '../reducers/UseFetch';
 import { usePDIForm } from '../hooks/usePDIForm';
+import { API_BASE_URL } from '../utils/api';
 import '../styles/PDIPage.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useAuthAdmin } from '../hooks/useAuthAdmin';
@@ -34,12 +35,12 @@ const EditPDI = () => {
 
   const { form, setForm, handleChange } = usePDIForm();
   const { data: usuarios } = useFetch<any[]>(
-    'http://localhost:3000/api/usuarios'
+    `${API_BASE_URL}/api/usuarios`
   );
   const { data: localidades } = useFetch<any[]>(
-    'http://localhost:3000/api/localidades'
+    `${API_BASE_URL}/api/localidades`
   );
-  const { data: tags } = useFetch<any[]>('http://localhost:3000/api/tags');
+  const { data: tags } = useFetch<any[]>(`${API_BASE_URL}/api/tags`);
 
   const [loadingPDI, setLoading] = useState(false);
   const [cargandoPDI, setCargandoPDI] = useState(true);
@@ -49,7 +50,7 @@ const EditPDI = () => {
     const fetchPDI = async () => {
       try {
         const res = await fetch(
-          `http://localhost:3000/api/puntosDeInteres/${pdiId}`
+          `${API_BASE_URL}/api/puntosDeInteres/${pdiId}`
         );
         const json = await res.json();
         const data: PDI = json.data;
@@ -85,7 +86,7 @@ const EditPDI = () => {
       if (form.imagen instanceof File) {
         const imagenData = new FormData();
         imagenData.append('imagen', form.imagen);
-        const uploadRes = await fetch('http://localhost:3000/api/imagenes', {
+        const uploadRes = await fetch(`${API_BASE_URL}/api/imagenes`, {
           method: 'POST',
           body: imagenData,
         });
@@ -106,7 +107,7 @@ const EditPDI = () => {
       };
 
       const res = await fetch(
-        `http://localhost:3000/api/puntosDeInteres/${pdiId}`,
+        `${API_BASE_URL}/api/puntosDeInteres/${pdiId}`,
         {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
@@ -147,7 +148,7 @@ const EditPDI = () => {
             src={
               form.imagen
                 ? URL.createObjectURL(form.imagen)
-                : `http://localhost:3000/public/${pdiOriginal?.imagen}`
+                : `${API_BASE_URL}/public/${pdiOriginal?.imagen}`
             }
             alt={form.nombre}
             className="heroImage"

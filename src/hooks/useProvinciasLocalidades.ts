@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { API_BASE_URL } from '../utils/api';
 
 export type Localidad = {
     id: number;
@@ -23,13 +24,13 @@ export function useProvinciasLocalidades() {
             try {
                 setLoading(true);
                 
-                const resProvincias = await fetch('http://localhost:3000/api/provincias');
+                const resProvincias = await fetch(`${API_BASE_URL}/api/provincias`);
                 if (!resProvincias.ok) throw new Error('Error al cargar provincias');
                 const dataProvincias = await resProvincias.json();
                 const provinciasData = dataProvincias.data || [];
                 
 
-                const resLocalidades = await fetch('http://localhost:3000/api/localidades');
+                const resLocalidades = await fetch(`${API_BASE_URL}/api/localidades`);
                 if (!resLocalidades.ok) throw new Error('Error al cargar localidades');
                 const dataLocalidades = await resLocalidades.json();
                 const localidadesData = dataLocalidades.data || [];

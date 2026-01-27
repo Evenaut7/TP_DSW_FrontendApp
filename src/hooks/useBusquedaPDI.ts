@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { API_BASE_URL } from '../utils/api';
 
 interface PDI {
   id: number;
@@ -40,7 +41,7 @@ export function useBusquedaPDI({
     const timeout = setTimeout(async () => {
       try {
         const res = await fetch(
-          'http://localhost:3000/api/puntosDeInteres/filtro',
+          `${API_BASE_URL}/api/puntosDeInteres/filtro`,
           {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },

@@ -3,6 +3,7 @@ import Modal from 'react-bootstrap/Modal';
 import InputLabel from './InputLabel';
 import BotonCeleste from './BotonCeleste';
 import { login } from '../utils/session';
+import { API_BASE_URL } from '../utils/api';
 
 type RegisterModalProps = {
     show: boolean;
@@ -26,7 +27,7 @@ function RegisterModal({ show, onClose, onBackToLogin, onSuccess }: RegisterModa
         const tipo = creator ? 'creador' : 'usuario';   
         try {
             // 1. Registro
-            const res = await fetch('http://localhost:3000/api/usuarios/register', {
+            const res = await fetch(`${API_BASE_URL}/api/usuarios/register`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ nombre: usuario, tipo, gmail, password }),

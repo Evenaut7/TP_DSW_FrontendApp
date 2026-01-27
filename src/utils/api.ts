@@ -1,6 +1,17 @@
 // Funciones reutilizables para fetch
 
-const API_BASE_URL = 'http://localhost:3000';
+// Leer URL base desde variables de entorno
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
+
+// Validar en desarrollo que la variable esté configurada
+if (import.meta.env.DEV && !import.meta.env.VITE_API_BASE_URL) {
+    console.warn('VITE_API_BASE_URL no está configurado. Usando valor por defecto: http://localhost:3000');
+}
+
+// Log de configuración en desarrollo
+if (import.meta.env.VITE_ENABLE_DEBUG === 'true') {
+    console.log('API Base URL configurada:', API_BASE_URL);
+}
 
 // ==================== TIPOS ====================
 type FetchOptions = {

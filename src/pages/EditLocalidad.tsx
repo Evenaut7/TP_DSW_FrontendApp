@@ -5,6 +5,7 @@ import Estrellas from '../components/Estrellas.tsx';
 import PantallaDeCarga from '../components/PantallaDeCarga.tsx';
 import FormField from '../components/forms/FormField.tsx';
 import FormSelect from '../components/forms/FormSelect.tsx';
+import { API_BASE_URL } from '../utils/api';
 import '../styles/Localidad.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useAuthAdmin } from '../hooks/useAuthAdmin.ts';
@@ -58,10 +59,10 @@ export default function EditLocalidad() {
     const fetchAll = async () => {
       try {
         const [locRes, provRes] = await Promise.all([
-          fetch(`http://localhost:3000/api/localidades/${localidadId}`, {
+          fetch(`${API_BASE_URL}/api/localidades/${localidadId}`, {
             credentials: 'include',
           }),
-          fetch('http://localhost:3000/api/provincias', {
+          fetch(`${API_BASE_URL}/api/provincias`, {
             credentials: 'include',
           }),
         ]);
@@ -171,7 +172,7 @@ export default function EditLocalidad() {
       if (imagenFile instanceof File) {
         const fd = new FormData();
         fd.append('imagen', imagenFile);
-        const uploadRes = await fetch('http://localhost:3000/api/imagenes', {
+        const uploadRes = await fetch(`${API_BASE_URL}/api/imagenes`, {
           method: 'POST',
           body: fd,
           credentials: 'include',
@@ -191,7 +192,7 @@ export default function EditLocalidad() {
       };
 
       const res = await fetch(
-        `http://localhost:3000/api/localidades/${localidadId}`,
+        `${API_BASE_URL}/api/localidades/${localidadId}`,
         {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
@@ -361,7 +362,7 @@ export default function EditLocalidad() {
               src={
                 imagenFile
                   ? URL.createObjectURL(imagenFile)
-                  : `http://localhost:3000/public/${localidad.imagen}`
+                  : `${API_BASE_URL}/public/${localidad.imagen}`
               }
               className="image"
               alt={localidad.nombre}
@@ -392,7 +393,7 @@ export default function EditLocalidad() {
             >
               <div className="card h-100 shadow-sm listado-pdi-card">
                 <img
-                  src={`http://localhost:3000/public/${pdi.imagen}`}
+                  src={`${API_BASE_URL}/public/${pdi.imagen}`}
                   className="card-img-top listado-pdi-img"
                   alt={pdi.nombre}
                 />
@@ -416,7 +417,7 @@ export default function EditLocalidad() {
                           return;
                         try {
                           const res = await fetch(
-                            `http://localhost:3000/api/puntosDeInteres/${pdi.id}`,
+                            `${API_BASE_URL}/api/puntosDeInteres/${pdi.id}`,
                             { method: 'DELETE', credentials: 'include' }
                           );
                           const resJson = await res.json().catch(() => null);

@@ -1,5 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Link } from 'react-router-dom';
+import { API_BASE_URL } from '../utils/api';
 import '../styles/ListadoPDI.css';
 
 interface PDIData {
@@ -29,7 +30,7 @@ const ListadoPDI = ({ pdis }: ListadoPDIProps) => {
             >
               <div className="card h-100 shadow-sm listado-pdi-card">
                 <img
-                  src={`http://localhost:3000/public/${pdi.imagen}`}
+                  src={`${API_BASE_URL}/public/${pdi.imagen}`}
                   className="card-img-top listado-pdi-img"
                   alt={pdi.nombre}
                 />

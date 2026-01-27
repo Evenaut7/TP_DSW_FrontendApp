@@ -6,17 +6,18 @@ import { useAuthAdmin } from '../hooks/useAuthAdmin.ts';
 import { useFetch } from '../reducers/UseFetch.ts';
 import { usePDIForm } from '../hooks/usePDIForm.ts';
 import { useNavigate } from 'react-router-dom';
+import { API_BASE_URL } from '../utils/api';
 
 const CreatePDI = () => {
   const { isAdmin, error } = useAuthAdmin();
 
   const { data: usuarios } = useFetch<any[]>(
-    'http://localhost:3000/api/usuarios'
+    `${API_BASE_URL}/api/usuarios`
   );
   const { data: localidades } = useFetch<any[]>(
-    'http://localhost:3000/api/localidades'
+    `${API_BASE_URL}/api/localidades`
   );
-  const { data: tags } = useFetch<any[]>('http://localhost:3000/api/tags');
+  const { data: tags } = useFetch<any[]>(`${API_BASE_URL}/api/tags`);
 
   const { form, handleChange } = usePDIForm();
 
@@ -36,7 +37,7 @@ const CreatePDI = () => {
       const imagenData = new FormData();
       imagenData.append('imagen', form.imagen);
 
-      const uploadRes = await fetch('http://localhost:3000/api/imagenes', {
+      const uploadRes = await fetch(`${API_BASE_URL}/api/imagenes`, {
         method: 'POST',
         body: imagenData,
       });
@@ -45,7 +46,7 @@ const CreatePDI = () => {
 
       const pdiData = { ...form, imagen: imagenUrl };
 
-      const res = await fetch('http://localhost:3000/api/puntosDeInteres', {
+      const res = await fetch(`${API_BASE_URL}/api/puntosDeInteres`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(pdiData),

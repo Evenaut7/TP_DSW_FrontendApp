@@ -2,9 +2,10 @@ import Navbar from '../components/Navbar.tsx';
 import Estrellas from '../components/Estrellas.tsx';
 import { useParams } from 'react-router-dom';
 import { useFetchById } from '../reducers/UseFetchByID.ts';
+import { API_BASE_URL } from '../utils/api';
 import '../styles/Localidad.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import PantallaDeCarga from '../components/PantallaDeCarga.tsx';
 import ListadoDeTags from '../components/ListadoDeTags.tsx';
 import ListadoPDI from '../components/ListadoPDI.tsx';
@@ -45,7 +46,7 @@ const Localidad = () => {
     loading,
     error,
   } = useFetchById<Localidad>(
-    'http://localhost:3000/api/localidades',
+    `${API_BASE_URL}/api/localidades`,
     localidadId
   );
 
@@ -85,7 +86,7 @@ const Localidad = () => {
           </div>
           <div className="imageContainer">
             <img
-              src={`http://localhost:3000/public/${localidad.imagen}`}
+              src={`${API_BASE_URL}/public/${localidad.imagen}`}
               className="image"
             />
           </div>
