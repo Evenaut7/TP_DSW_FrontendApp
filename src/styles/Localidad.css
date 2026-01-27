@@ -1,11 +1,11 @@
 .backgroundLocalidad {
-  background-image: url("../assets/PDI_imgPrueba/fondo2.png");
+  background-image: url('../assets/PDI_imgPrueba/fondo2.png');
 }
 
-.divLocalidades{
+.divLocalidades {
   margin: 10px 10vw 15px 10vw;
   padding: 15px 15px 0 15px;
-  background-color: #F9FAFB;
+  background-color: #f9fafb;
   border-radius: 10px;
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
 }
@@ -52,15 +52,15 @@
 }
 
 .imageContainer {
-  width: 100%; 
-  height: 300px; 
+  width: 100%;
+  height: 300px;
 }
 
 .image {
   width: 100%;
   height: 100%;
   border-radius: 8px;
-  object-fit: cover; 
+  object-fit: cover;
 }
 
 .pdiSearchboxDiv {
@@ -89,7 +89,7 @@
 
 /* Modifico la propiedad de la componente */
 .tagsDiv {
-  margin: 15px 12px 5px 12px
+  margin: 15px 12px 5px 12px;
 }
 
 @media (max-width: 768px) {

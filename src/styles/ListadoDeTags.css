@@ -1,6 +1,23 @@
 .tagsDiv {
-  overflow-x: auto;
-  white-space: nowrap;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  transition: max-height 0.3s ease;
+}
+
+.tagsWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.tagsDiv.colapsado {
+  flex-wrap: nowrap;
+  overflow: hidden;
+}
+
+.tagsDiv.expandido {
+  flex-wrap: wrap;
 }
 
 .tagButton {
@@ -27,4 +44,21 @@
   background-color: rgb(255, 128, 0);
   color: white;
   transform: scale(1.02);
+}
+
+.verMasBtn {
+  align-self: center;
+  background: transparent;
+  border: none;
+  color: #ff8000;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 4px 8px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.verMasBtn:hover {
+  text-decoration: underline;
 }
