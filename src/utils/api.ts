@@ -1,5 +1,6 @@
 // Funciones reutilizables para fetch
 import { useEffect, useState } from 'react';
+import { showNotification, classifyErrorByStatus, NotificationType } from './notifications';
 
 // Leer URL base desde variables de entorno
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
@@ -62,9 +63,15 @@ async function apiFetch<T = unknown>(
     const data = await res.json().catch(() => null);
 
     if (!res.ok) {
+        const errorMessage = data?.message || `Error: ${res.status} ${res.statusText}`;
+        const errorType = classifyErrorByStatus(res.status);
+        
+        // Mostrar notificación automática
+        showNotification(errorMessage, errorType, res.status);
+        
         return {
             success: false,
-            error: data?.message || `Error: ${res.status} ${res.statusText}`,
+            error: errorMessage,
         };
     }
 
@@ -74,9 +81,17 @@ async function apiFetch<T = unknown>(
         message: data?.message,
         };
     } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Error de conexión';
+        
+        // Mostrar modal de error de red
+        showNotification(
+            'No se pudo conectar con el servidor. Por favor, verifica tu conexión.',
+            NotificationType.NETWORK_ERROR
+        );
+        
         return {
         success: false,
-        error: error instanceof Error ? error.message : 'Error de conexión',
+        error: errorMessage,
         };
     }
 }
