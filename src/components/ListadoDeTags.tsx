@@ -1,5 +1,6 @@
 import '../styles/ListadoDeTags.css';
 import { useState, useEffect } from 'react';
+import { getTags } from '../utils/api';
 
 interface Tag {
   id: number;
@@ -20,10 +21,9 @@ const ListadoDeTags = ({ onTagsChange }: ListadoDeTagsProps) => {
   useEffect(() => {
     const fetchTags = async () => {
       try {
-        const res = await fetch('http://localhost:3000/api/tags');
-        const json = await res.json();
-        if (Array.isArray(json.data)) {
-          setTags(json.data); // ahora sí usamos json.data
+        const response = await getTags();
+        if (response.success && Array.isArray(response.data)) {
+          setTags(response.data);
         } else {
           setTags([]);
         }

@@ -5,9 +5,8 @@ import PantallaDeCarga from '../components/PantallaDeCarga';
 import ListadoDeTags from '../components/ListadoDeTags';
 import ListadoEventosEditable from '../components/ListadoEventosEditable';
 import PDIFormEdit from '../components/forms/PDIForm';
-import { useFetch } from '../reducers/UseFetch';
+import { useApiGet, getPDIById, uploadImage, updatePDI, getImageUrl } from '../utils/api';
 import { usePDIForm } from '../hooks/usePDIForm';
-import { API_BASE_URL } from '../utils/api';
 import '../styles/PDIPage.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useAuthAdmin } from '../hooks/useAuthAdmin';
@@ -34,13 +33,9 @@ const EditPDI = () => {
   const { isAdmin, loading, error } = useAuthAdmin();
 
   const { form, setForm, handleChange } = usePDIForm();
-  const { data: usuarios } = useFetch<any[]>(
-    `${API_BASE_URL}/api/usuarios`
-  );
-  const { data: localidades } = useFetch<any[]>(
-    `${API_BASE_URL}/api/localidades`
-  );
-  const { data: tags } = useFetch<any[]>(`${API_BASE_URL}/api/tags`);
+  const { data: usuarios } = useApiGet<any[]>('/api/usuarios');
+  const { data: localidades } = useApiGet<any[]>('/api/localidades');
+  const { data: tags } = useApiGet<any[]>('/api/tags');
 
   const [loadingPDI, setLoading] = useState(false);
   const [cargandoPDI, setCargandoPDI] = useState(true);
@@ -48,12 +43,15 @@ const EditPDI = () => {
 
   useEffect(() => {
     const fetchPDI = async () => {
+      if (!pdiId) return;
+      
       try {
-        const res = await fetch(
-          `${API_BASE_URL}/api/puntosDeInteres/${pdiId}`
-        );
-        const json = await res.json();
-        const data: PDI = json.data;
+        const response = await getPDIById(pdiId);
+        if (!response.success || !response.data) {
+          throw new Error(response.error || 'Error al cargar PDI');
+        }
+        
+        const data = response.data as PDI;
         setPdiOriginal(data);
 
         setForm({
@@ -68,7 +66,7 @@ const EditPDI = () => {
           localidad: data.localidad,
         });
       } catch (err) {
-        alert('Error cargando el PDI');
+        alert(`Error cargando el PDI: ${err instanceof Error ? err.message : 'Error desconocido'}`);
       } finally {
         setCargandoPDI(false);
       }
@@ -78,20 +76,20 @@ const EditPDI = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!pdiId) return;
+    
     setLoading(true);
 
     try {
       let imagenUrl = pdiOriginal?.imagen || '';
 
+      // Subir nueva imagen si existe
       if (form.imagen instanceof File) {
-        const imagenData = new FormData();
-        imagenData.append('imagen', form.imagen);
-        const uploadRes = await fetch(`${API_BASE_URL}/api/imagenes`, {
-          method: 'POST',
-          body: imagenData,
-        });
-        const uploadJson = await uploadRes.json();
-        imagenUrl = uploadJson.nombreArchivo;
+        const uploadResult = await uploadImage(form.imagen);
+        if (!uploadResult.success || !uploadResult.data) {
+          throw new Error(uploadResult.error || 'Error al subir imagen');
+        }
+        imagenUrl = uploadResult.data.filename;
       }
 
       const updatedPDI = {
@@ -106,24 +104,16 @@ const EditPDI = () => {
         imagen: imagenUrl,
       };
 
-      const res = await fetch(
-        `${API_BASE_URL}/api/puntosDeInteres/${pdiId}`,
-        {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(updatedPDI),
-          credentials: 'include',
-        }
-      );
-
-      const json = await res.json();
-      if (!res.ok)
-        throw new Error(json.message || 'Error al actualizar el PDI');
+      const result = await updatePDI(pdiId, updatedPDI);
+      
+      if (!result.success) {
+        throw new Error(result.error || 'Error al actualizar el PDI');
+      }
 
       alert('✅ PDI actualizado correctamente');
       navigate(`/pdi/${pdiId}`);
     } catch (err) {
-      alert(`❌ No se pudo actualizar el PDI: ${err}`);
+      alert(`❌ No se pudo actualizar el PDI: ${err instanceof Error ? err.message : 'Error desconocido'}`);
     } finally {
       setLoading(false);
     }
@@ -148,7 +138,7 @@ const EditPDI = () => {
             src={
               form.imagen
                 ? URL.createObjectURL(form.imagen)
-                : `${API_BASE_URL}/public/${pdiOriginal?.imagen}`
+                : getImageUrl(pdiOriginal?.imagen || '')
             }
             alt={form.nombre}
             className="heroImage"

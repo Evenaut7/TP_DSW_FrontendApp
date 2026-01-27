@@ -1,8 +1,7 @@
 import Navbar from '../components/Navbar.tsx';
 import Estrellas from '../components/Estrellas.tsx';
 import { useParams } from 'react-router-dom';
-import { useFetchById } from '../reducers/UseFetchByID.ts';
-import { API_BASE_URL } from '../utils/api';
+import { useApiGetById, API_BASE_URL } from '../utils/api';
 import '../styles/Localidad.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useState } from 'react';
@@ -45,8 +44,8 @@ const Localidad = () => {
     data: localidad,
     loading,
     error,
-  } = useFetchById<Localidad>(
-    `${API_BASE_URL}/api/localidades`,
+  } = useApiGetById<Localidad>(
+    '/api/localidades',
     localidadId
   );
 

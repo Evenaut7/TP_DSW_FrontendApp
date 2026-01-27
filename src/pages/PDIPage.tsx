@@ -1,10 +1,8 @@
 import Navbar from '../components/Navbar.tsx';
 import Estrellas from '../components/Estrellas.tsx';
 import { useParams } from 'react-router-dom';
-import { useFetchById } from '../reducers/UseFetchByID.ts';
+import { useApiGetById, addFavorito, removeFavorito, API_BASE_URL } from '../utils/api';
 import { useUser } from '../hooks/useUser.ts';
-import { addFavorito, removeFavorito } from '../utils/session.ts';
-import { API_BASE_URL } from '../utils/api';
 import { useState, useEffect } from 'react';
 import ResultModal from '../components/ResultModal.tsx';
 import '../styles/PDIPage.css';
@@ -45,7 +43,7 @@ const PDIPage = () => {
     data: pdi,
     loading,
     error,
-  } = useFetchById<PDI>(`${API_BASE_URL}/api/puntosDeInteres`, pdiId);
+  } = useApiGetById<PDI>('/api/puntosDeInteres', pdiId);
 
   // Estado local para el favorito
   const [localEsFavorito, setLocalEsFavorito] = useState(false);

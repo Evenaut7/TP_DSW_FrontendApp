@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Row, Col, Modal, Button, Form } from 'react-bootstrap';
-import { useFetchById } from '../reducers/UseFetchByID';
-import { useFetch } from '../reducers/UseFetch';
+import { useApiGetById, useApiGet, createEvento, updateEvento, deleteEvento } from '../utils/api';
 import FormField from './forms/FormField';
 import TagsSelector from './forms/TagsSelector';
 
@@ -29,18 +28,9 @@ type Props = {
 const ESTADOS = ['Disponible', 'Agotado', 'Cancelado'];
 
 const ListadoEventosEditable: React.FC<Props> = ({ pdiId }) => {
-  const fetchResult = useFetchById<{ eventos: Evento[] }>(
-    `http://localhost:3000/api/puntosDeInteres/`,
-    pdiId
-  ) as unknown as {
-    data: { eventos: Evento[] } | null;
-    loading: boolean;
-    error: string | null;
-    reload?: () => void;
-  };
+  const { data, loading, error } = useApiGetById<{ eventos: Evento[] }>('/api/puntosDeInteres', pdiId);
 
-  const { data, loading, error, reload } = fetchResult;
-  const { data: allTags } = useFetch<Tag[]>('http://localhost:3000/api/tags');
+  const { data: allTags } = useApiGet<Tag[]>('/api/tags');
 
   const [showModal, setShowModal] = useState(false);
   const [editEvento, setEditEvento] = useState<Evento | null>(null);
@@ -102,27 +92,19 @@ const ListadoEventosEditable: React.FC<Props> = ({ pdiId }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const method = form.id ? 'PUT' : 'POST';
-      const url = form.id
-        ? `http://localhost:3000/api/eventos/${form.id}`
-        : 'http://localhost:3000/api/eventos';
-
       const body = {
         ...form,
         tags: form.tags.map((t) => (typeof t === 'number' ? t : Number(t))),
         puntoDeInteres: pdiId,
       };
 
-      const res = await fetch(url, {
-        method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-        credentials: 'include',
-      });
+      const result = form.id 
+        ? await updateEvento(form.id, body)
+        : await createEvento(body);
 
-      const json = await res.json().catch(() => null);
-      if (!res.ok)
-        throw new Error(json?.message || 'Error al guardar el evento');
+      if (!result.success) {
+        throw new Error(result.error || 'Error al guardar el evento');
+      }
 
       setShowModal(false);
       setShowSuccess(true);
@@ -138,16 +120,12 @@ const ListadoEventosEditable: React.FC<Props> = ({ pdiId }) => {
   };
 
   const handleDelete = async () => {
-    if (!eventoAEliminar) return;
+    if (!eventoAEliminar || !eventoAEliminar.id) return;
     try {
-      const res = await fetch(
-        `http://localhost:3000/api/eventos/${eventoAEliminar.id}`,
-        {
-          method: 'DELETE',
-          credentials: 'include',
-        }
-      );
-      if (!res.ok) throw new Error('Error al eliminar el evento');
+      const result = await deleteEvento(eventoAEliminar.id);
+      if (!result.success) {
+        throw new Error(result.error || 'Error al eliminar el evento');
+      }
       setShowDeleteModal(false);
       setEventoAEliminar(null);
       window.location.href = `/EditPDI/${pdiId}`;

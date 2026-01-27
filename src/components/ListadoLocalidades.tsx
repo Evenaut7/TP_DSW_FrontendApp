@@ -1,5 +1,4 @@
-import { useFetch } from "../reducers/UseFetch";
-import { API_BASE_URL } from '../utils/api';
+import { useApiGet, API_BASE_URL } from '../utils/api';
 import 'bootstrap/dist/css/bootstrap.min.css'
 import {Link} from "react-router-dom"
 import "../styles/ListadoLocalidades.css"
@@ -17,7 +16,7 @@ interface Localidad {
 }
 
 const ListadoLocalidades = () => {
-    const { data: localidades, loading, error } = useFetch<Localidad[]>(`${API_BASE_URL}/api/localidades`);
+    const { data: localidades, loading, error } = useApiGet<Localidad[]>('/api/localidades');
 
     if (loading) return <p>Cargando localidades...</p>;
     if (error) return <p>Error: {error}</p>;

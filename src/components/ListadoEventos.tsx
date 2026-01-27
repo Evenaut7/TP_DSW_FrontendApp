@@ -1,5 +1,5 @@
 import React from 'react';
-import { useFetchById } from '../reducers/UseFetchByID';
+import { useApiGetById } from '../utils/api';
 import '../styles/ListadoEventos.css';
 import { Row, Col } from 'react-bootstrap';
 
@@ -16,8 +16,8 @@ type ListadoEventosProps = {
 };
 
 const ListadoEventos: React.FC<ListadoEventosProps> = ({ pdiId }) => {
-  const { data, loading, error } = useFetchById<{ eventos: Evento[] }>(
-    `http://localhost:3000/api/puntosDeInteres/`,
+  const { data, loading, error } = useApiGetById<{ eventos: Evento[] }>(
+    '/api/puntosDeInteres',
     pdiId
   );
 

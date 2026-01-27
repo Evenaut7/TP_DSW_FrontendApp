@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Modal, Button } from 'react-bootstrap';
 import FormField from '../components/forms/FormField';
 import BotonCeleste from '../components/BotonCeleste';
+import { uploadImage, createLocalidad } from '../utils/api';
 
 interface CreateLocalidadModalProps {
   show: boolean;
@@ -47,18 +48,17 @@ const CreateLocalidadModal: React.FC<CreateLocalidadModalProps> = ({
     try {
       let imagenUrl = '';
 
+      // Subir imagen si existe
       if (form.imagen) {
-        const imagenData = new FormData();
-        imagenData.append('imagen', form.imagen);
-
-        const uploadRes = await fetch('http://localhost:3000/api/imagenes', {
-          method: 'POST',
-          body: imagenData,
-        });
-        const uploadJson = await uploadRes.json();
-        imagenUrl = uploadJson.nombreArchivo;
+        const uploadResult = await uploadImage(form.imagen);
+        if (uploadResult.success && uploadResult.data) {
+          imagenUrl = uploadResult.data.filename;
+        } else {
+          throw new Error(uploadResult.error || 'Error al subir imagen');
+        }
       }
 
+      // Crear localidad
       const localidadData = {
         nombre: form.nombre,
         latitud: parseFloat(form.latitud) || null,
@@ -68,16 +68,13 @@ const CreateLocalidadModal: React.FC<CreateLocalidadModalProps> = ({
         provincia: provinciaId,
       };
 
-      const res = await fetch('http://localhost:3000/api/localidades', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(localidadData),
-        credentials: 'include',
-      });
+      const result = await createLocalidad(localidadData);
 
-      if (!res.ok) throw new Error('Error al crear la localidad');
+      if (!result.success) {
+        throw new Error(result.error || 'Error al crear la localidad');
+      }
 
-      alert('Localidad creada con éxito ✅');
+      alert('Localidad creada con éxito');
       onHide();
       setForm({
         nombre: '',
@@ -88,7 +85,7 @@ const CreateLocalidadModal: React.FC<CreateLocalidadModalProps> = ({
       });
       if (onLocalidadCreada) onLocalidadCreada();
     } catch (err) {
-      alert('Error al crear la localidad ❌');
+      alert(`Error al crear la localidad: ${err instanceof Error ? err.message : 'Error desconocido'}`);
       console.error(err);
     } finally {
       setLoading(false);

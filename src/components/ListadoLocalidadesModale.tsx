@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Modal, Card, Row, Col } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import CreateLocalidadModal from './CreateLocalidadModal';
+import { getProvinciaById, deleteLocalidad, getImageUrl } from '../utils/api';
 import '../styles/ListadoLocalidadesModal.css';
 
 interface Localidad {
@@ -29,14 +30,13 @@ const ListadoLocalidadesModal: React.FC<Props> = ({
 
   const fetchLocalidades = async () => {
     try {
-      const response = await fetch(
-        `http://localhost:3000/api/provincias/${provinciaId}`
-      );
-      if (response.ok) {
-        const data = await response.json();
-        setLocalidades(data.data.localidades || []);
+      const response = await getProvinciaById(provinciaId);
+      if (response.success && response.data) {
+        // TypeScript: response.data es de tipo unknown, necesitamos hacer type assertion
+        const provincia = response.data as { localidades?: Localidad[] };
+        setLocalidades(provincia.localidades || []);
       } else {
-        console.error('Error al obtener las localidades');
+        console.error('Error al obtener las localidades:', response.error);
       }
     } catch (error) {
       console.error('Error al obtener las localidades:', error);
@@ -56,17 +56,11 @@ const ListadoLocalidadesModal: React.FC<Props> = ({
     if (!window.confirm('¿Seguro que querés eliminar esta localidad?')) return;
 
     try {
-      const response = await fetch(
-        `http://localhost:3000/api/localidades/${id}`,
-        {
-          method: 'DELETE',
-          credentials: 'include',
-        }
-      );
-      if (response.ok) {
+      const response = await deleteLocalidad(id);
+      if (response.success) {
         setLocalidades((prev) => prev.filter((loc) => loc.id !== id));
       } else {
-        console.error('Error al eliminar la localidad');
+        console.error('Error al eliminar la localidad:', response.error);
       }
     } catch (error) {
       console.error('Error al eliminar la localidad:', error);
@@ -112,7 +106,7 @@ const ListadoLocalidadesModal: React.FC<Props> = ({
                   {loc.imagen && (
                     <Card.Img
                       variant="top"
-                      src={`http://localhost:3000/public/${loc.imagen}`}
+                      src={getImageUrl(loc.imagen)}
                       alt={loc.nombre}
                       className="localidad-img"
                     />

@@ -2,7 +2,7 @@ import { useUser } from '../hooks/useUser';
 import Navbar from '../components/Navbar';
 import RedirectModal from '../components/RedirectModal';
 import ListadoPDI from '../components/ListadoPDI';
-import type { PDI } from '../utils/session';
+import type { PDI } from '../types';
 import '../styles/FavoritosPage.css';
 
 function FavoritosPage() {

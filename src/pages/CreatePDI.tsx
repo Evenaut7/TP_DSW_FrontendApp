@@ -3,21 +3,16 @@ import '../styles/PDIPage.css';
 import Navbar from '../components/Navbar.tsx';
 import PDIFormEdit from '../components/forms/PDIForm.tsx';
 import { useAuthAdmin } from '../hooks/useAuthAdmin.ts';
-import { useFetch } from '../reducers/UseFetch.ts';
+import { useApiGet, uploadImage, createPDI } from '../utils/api';
 import { usePDIForm } from '../hooks/usePDIForm.ts';
 import { useNavigate } from 'react-router-dom';
-import { API_BASE_URL } from '../utils/api';
 
 const CreatePDI = () => {
   const { isAdmin, error } = useAuthAdmin();
 
-  const { data: usuarios } = useFetch<any[]>(
-    `${API_BASE_URL}/api/usuarios`
-  );
-  const { data: localidades } = useFetch<any[]>(
-    `${API_BASE_URL}/api/localidades`
-  );
-  const { data: tags } = useFetch<any[]>(`${API_BASE_URL}/api/tags`);
+  const { data: usuarios } = useApiGet<any[]>('/api/usuarios');
+  const { data: localidades } = useApiGet<any[]>('/api/localidades');
+  const { data: tags } = useApiGet<any[]>('/api/tags');
 
   const { form, handleChange } = usePDIForm();
 
@@ -34,31 +29,29 @@ const CreatePDI = () => {
         setLoading(false);
         return;
       }
-      const imagenData = new FormData();
-      imagenData.append('imagen', form.imagen);
 
-      const uploadRes = await fetch(`${API_BASE_URL}/api/imagenes`, {
-        method: 'POST',
-        body: imagenData,
-      });
-      const uploadJson = await uploadRes.json();
-      const imagenUrl = uploadJson.nombreArchivo;
+      // Subir imagen usando función centralizada
+      const uploadResult = await uploadImage(form.imagen);
+      if (!uploadResult.success || !uploadResult.data) {
+        throw new Error(uploadResult.error || 'Error al subir imagen');
+      }
+      const imagenUrl = uploadResult.data.filename;
 
+      // Crear PDI usando función centralizada
       const pdiData = { ...form, imagen: imagenUrl };
+      const result = await createPDI(pdiData);
 
-      const res = await fetch(`${API_BASE_URL}/api/puntosDeInteres`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(pdiData),
-        credentials: 'include',
-      });
+      if (!result.success || !result.data) {
+        throw new Error(result.error || 'Error al crear el PDI');
+      }
 
-      const json = await res.json();
-      const newPdiId = json.data.id;
+      // TypeScript: response.data es de tipo unknown, necesitamos hacer type assertion
+      const newPdi = result.data as { id: number };
+      const newPdiId = newPdi.id;
       alert('PDI creado con éxito');
       navigate(`/pdi/${newPdiId}`);
     } catch (e) {
-      alert('Error al crear el PDI');
+      alert(`Error al crear el PDI: ${e instanceof Error ? e.message : 'Error desconocido'}`);
     } finally {
       setLoading(false);
     }

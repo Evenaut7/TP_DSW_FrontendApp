@@ -1,4 +1,5 @@
 // Funciones reutilizables para fetch
+import { useEffect, useState } from 'react';
 
 // Leer URL base desde variables de entorno
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
@@ -80,6 +81,64 @@ async function apiFetch<T = unknown>(
     }
 }
 
+// ==================== HOOKS PERSONALIZADOS ====================
+
+export function useApiGet<T>(endpoint: string) {
+    const [data, setData] = useState<T | null>(null);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            setLoading(true);
+            const response = await apiGet<T>(endpoint);
+            
+            if (response.success && response.data) {
+                setData(response.data as T);
+                setError(null);
+            } else {
+                setError(response.error || 'Error al obtener datos');
+            }
+            setLoading(false);
+        };
+
+        fetchData();
+    }, [endpoint]);
+
+    return { data, loading, error };
+}
+
+export function useApiGetById<T>(endpoint: string, id: number | null) {
+    const [data, setData] = useState<T | null>(null);
+    const [loading, setLoading] = useState<boolean>(false);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        if (id === null) {
+            setData(null);
+            setLoading(false);
+            return;
+        }
+
+        const fetchData = async () => {
+            setLoading(true);
+            const response = await apiGet<T>(`${endpoint}/${id}`);
+            
+            if (response.success && response.data) {
+                setData(response.data as T);
+                setError(null);
+            } else {
+                setError(response.error || 'Error al obtener el recurso');
+            }
+            setLoading(false);
+        };
+
+        fetchData();
+    }, [endpoint, id]);
+
+    return { data, loading, error };
+}
+
 // ==================== HELPERS ESPECÍFICOS ====================
 
 //Realizar petición GET
@@ -121,85 +180,189 @@ export async function apiDelete<T = unknown>(
 }
 
 // ==================== ENDPOINTS ESPECÍFICOS ====================
-
-// Obtener usuario actual
+// USUARIOS
 export async function getCurrentUser() {
     return apiGet('/api/usuarios/currentUser');
 }
 
-// Login de usuario
+export async function registerUser(data: { nombre: string; tipo: string; gmail: string; password: string }) {
+    return apiPost('/api/usuarios/register', data);
+}
+
+export async function getUsuarios() {
+    return apiGet('/api/usuarios');
+}
+
 export async function loginUser(gmail: string, password: string) {
     return apiPost('/api/usuarios/login', { gmail, password });
 }
 
-// Logout de usuario
 export async function logoutUser() {
     return apiPost('/api/usuarios/logout', {});
 }
 
-// Verificar si es admin
 export async function checkIsAdmin() {
     return apiGet('/api/usuarios/is-admin');
 }
 
-// Actualizar usuario
 export async function updateUser(userId: number, data: unknown) {
     return apiPut(`/api/usuarios/${userId}`, data);
 }
 
-// Agregar favorito
+// FAVORITOS
 export async function addFavorito(pdiId: number) {
     return apiPost('/api/puntosDeInteres/favorito', { id: pdiId });
 }
 
-// Remover favorito
 export async function removeFavorito(pdiId: number) {
     return apiDelete('/api/puntosDeInteres/favorito', { id: pdiId });
 }
 
-// Obtener tags
+// TAGS
 export async function getTags() {
     return apiGet('/api/tags');
 }
 
-// Crear tag
 export async function createTag(tag: unknown) {
     return apiPost('/api/tags', tag);
 }
 
-// Actualizar tag
 export async function updateTag(tagId: number, tag: unknown) {
     return apiPut(`/api/tags/${tagId}`, tag);
 }
 
-// Eliminar tag
 export async function deleteTag(tagId: number) {
     return apiDelete(`/api/tags/${tagId}`);
 }
 
-// Obtener provincias
+// PROVINCIAS
+export async function getProvinciaById(id: number) {
+    return apiGet(`/api/provincias/${id}`);
+}
+
 export async function getProvincias() {
     return apiGet('/api/provincias');
 }
 
-// Crear provincia
 export async function createProvincia(provincia: unknown) {
     return apiPost('/api/provincias', provincia);
 }
-
-// Actualizar provincia
 export async function updateProvincia(provinciaId: number, provincia: unknown) {
     return apiPut(`/api/provincias/${provinciaId}`, provincia);
 }
 
-// Eliminar provincia
 export async function deleteProvincia(provinciaId: number) {
     return apiDelete(`/api/provincias/${provinciaId}`);
 }
 
-// Obtener localidades
+// LOCALIDADES
 export async function getLocalidades() {
     return apiGet('/api/localidades');
+}
+
+export async function getLocalidadById(id: number) {
+    return apiGet(`/api/localidades/${id}`);
+}
+export async function createLocalidad(data: unknown) {
+    return apiPost('/api/localidades', data);
+}
+
+export async function updateLocalidad(id: number, data: unknown) {
+    return apiPut(`/api/localidades/${id}`, data);
+}
+
+export async function deleteLocalidad(id: number) {
+    return apiDelete(`/api/localidades/${id}`);
+}
+
+// PDI
+export async function getPDIById(id: number) {
+    return apiGet(`/api/puntosDeInteres/${id}`);
+}
+
+export async function createPDI(data: unknown) {
+    return apiPost('/api/puntosDeInteres', data);
+}
+
+export async function updatePDI(id: number, data: unknown) {
+    return apiPut(`/api/puntosDeInteres/${id}`, data);
+}
+
+export async function deletePDI(id: number) {
+    return apiDelete(`/api/puntosDeInteres/${id}`);
+}
+
+export async function filterPDIs(filters: { localidad?: number; busqueda?: string; tags?: number[] }) {
+    return apiPost('/api/puntosDeInteres/filtro', filters);
+}
+
+// EVENTOS
+export async function getEventosByPDI(pdiId: number) {
+    return apiGet(`/api/puntosDeInteres/${pdiId}/eventos`);
+}
+
+export async function createEvento(data: unknown) {
+    return apiPost('/api/eventos', data);
+}
+
+export async function updateEvento(id: number, data: unknown) {
+    return apiPut(`/api/eventos/${id}`, data);
+}
+
+export async function deleteEvento(id: number) {
+    return apiDelete(`/api/eventos/${id}`);
+}
+
+// ==================== FUNCIÓN PARA SUBIR IMÁGENES ====================
+
+/*
+ Sube una imagen al servidor
+ @param file - Archivo de imagen a subir
+ @returns Respuesta con el nombre del archivo subido
+*/
+export async function uploadImage(file: File): Promise<ApiResponse<{ filename: string }>> {
+    const formData = new FormData();
+    formData.append('imagen', file);
+
+    try {
+        const url = `${API_BASE_URL}/api/imagenes`;
+        const res = await fetch(url, {
+            method: 'POST',
+            body: formData,
+            credentials: 'include',
+        });
+
+        const data = await res.json().catch(() => null);
+
+        if (!res.ok) {
+            return {
+                success: false,
+                error: data?.message || `Error al subir imagen: ${res.status}`,
+            };
+        }
+
+        return {
+            success: true,
+            data: data?.data || data,
+            message: data?.message,
+        };
+    } catch (error) {
+        return {
+            success: false,
+            error: error instanceof Error ? error.message : 'Error al subir imagen',
+        };
+    }
+}
+
+// ==================== FUNCIÓN PARA OBTENER URL DE IMAGEN ====================
+
+/*
+ Construye la URL completa para una imagen pública
+ @param filename - Nombre del archivo de imagen
+ @returns URL completa de la imagen
+*/
+export function getImageUrl(filename: string): string {
+    return `${API_BASE_URL}/public/${filename}`;
 }
 
 export { API_BASE_URL };

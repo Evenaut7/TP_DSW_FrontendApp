@@ -4,7 +4,7 @@ import ListadoEventos from './components/ListadoEventos'
 function App() {
 
   return (
-    <ListadoEventos/>
+    <ListadoEventos pdiId={1}/>
   )
 }
 

@@ -34,14 +34,10 @@ function CRUDProvincia() {
   } = provinciasHook;
 
   const [showLocalidadesModal, setShowLocalidadesModal] = useState(false);
-  const [localidades, setLocalidades] = useState<
-    { id?: number; nombre: string }[]
-  >([]);
   const [provActual, setProvActual] = useState<Provincia | null>(null);
 
   const handleShowLocalidades = (prov: Provincia) => {
     setProvActual(prov);
-    setLocalidades(prov.localidades || []);
     setShowLocalidadesModal(true);
   };
 
