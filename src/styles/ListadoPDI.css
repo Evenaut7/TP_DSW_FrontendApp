@@ -1,14 +1,40 @@
-.divListadoPDI {
-  display: grid;
-  justify-items: center;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 15px
+.listadoPDIWrapper {
+  display: flex;
+  justify-content: center;
 }
 
+.divListadoPDI {
+  display: grid;
+  gap: 15px;
+}
+
+@media (max-width: 767px) {
+  .divListadoPDI {
+    grid-template-columns: 1fr;
+    max-width: 100%;
+  }
+}
+
+/* Tablet / intermedio */
+@media (min-width: 768px) and (max-width: 1199px) {
+  .divListadoPDI {
+    grid-template-columns: repeat(2, 320px);
+    max-width: calc(2 * 320px + 15px);
+  }
+}
+
+/* Desktop grande REAL */
+@media (min-width: 1200px) {
+  .divListadoPDI {
+    grid-template-columns: repeat(3, 320px);
+    max-width: calc(3 * 320px + 2 * 15px);
+  }
+}
 .listado-pdi-card {
   border-radius: 12px;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   cursor: pointer;
+  height: 100%;
 }
 
 .listado-pdi-card:hover {
@@ -19,6 +45,7 @@
 .listado-pdi-img {
   height: 180px;
   object-fit: cover;
+  width: 100%;
   border-top-left-radius: 12px;
   border-top-right-radius: 12px;
 }

@@ -1,32 +1,3 @@
-// import { useFetch } from '../reducers/UseFetch.ts';
-// import '../styles/ListadoDeTags.css';
-
-// interface Tag {
-//   id: number;
-//   tipo: string;
-//   descripcion: string;
-//   nombre: string;
-// }
-
-// const ListadoDeTags:React.FC = () => {
-
-//   const {
-//   data: tags
-//   } = useFetch<Tag[]>(
-//     'http://localhost:3000/api/tags'
-//   );
-
-//   return(
-//     <div className='tagsDiv'>
-//       {tags?.map((tag) => {
-//         return(<button className='tagButton'>{tag.nombre}</button>)
-//       })}
-//     </div>
-//   )
-
-// }
-
-// export default ListadoDeTags;
 import '../styles/ListadoDeTags.css';
 import { useState, useEffect } from 'react';
 
@@ -43,6 +14,8 @@ interface ListadoDeTagsProps {
 const ListadoDeTags = ({ onTagsChange }: ListadoDeTagsProps) => {
   const [tags, setTags] = useState<Tag[]>([]);
   const [seleccionados, setSeleccionados] = useState<number[]>([]);
+
+  const [expandido, setExpandido] = useState(false);
 
   useEffect(() => {
     const fetchTags = async () => {
@@ -74,23 +47,28 @@ const ListadoDeTags = ({ onTagsChange }: ListadoDeTagsProps) => {
   };
 
   return (
-    <div className="tagsDiv">
-      {tags.length > 0 ? (
-        tags.map((tag) => {
-          const activo = seleccionados.includes(tag.id);
-          return (
-            <button
-              key={tag.id}
-              className={`tagButton ${activo ? 'selected' : ''}`}
-              onClick={() => toggleTag(tag.id)}
-            >
-              {tag.nombre}
-            </button>
-          );
-        })
-      ) : (
-        <p>No hay tags disponibles</p>
-      )}
+    <div className="tagsWrapper">
+      <div className={`tagsDiv ${expandido ? 'expandido' : 'colapsado'}`}>
+        {tags.length > 0 ? (
+          tags.map((tag) => {
+            const activo = seleccionados.includes(tag.id);
+            return (
+              <button
+                key={tag.id}
+                className={`tagButton ${activo ? 'selected' : ''}`}
+                onClick={() => toggleTag(tag.id)}
+              >
+                {tag.nombre}
+              </button>
+            );
+          })
+        ) : (
+          <p>No hay tags disponibles</p>
+        )}
+      </div>
+      <button className="verMasBtn" onClick={() => setExpandido(!expandido)}>
+        {expandido ? 'Ver menos ⌃' : 'Ver más ⌄'}
+      </button>
     </div>
   );
 };
