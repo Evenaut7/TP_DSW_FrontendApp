@@ -1,27 +1,13 @@
-import './index.ts';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import NavbarHomePage from '../components/NavbarHomePage.tsx';
-import ListadoLocalidades from '../components/ListadoLocalidades.tsx';
+import Navbar from '@/components/layout/Navbar/Navbar';
+import HeroSection from '@/components/home/HeroSection';
+import CityGrid from '@/components/home/CityGrid';
 
-const HomePage = () => {
+export default function HomePage() {
   return (
-    <>
-      <div className="homeTopDiv">
-      <NavbarHomePage />
-        <div className="homeTitleDiv">
-          <h1 className="homeTitle text-center">Discover</h1>
-        </div>
-        {/* <div className="searchBoxHomeDiv">
-          <input
-            type="text"
-            className="searchBoxHome"
-            placeholder="Busca Una Localidad"
-          />
-        </div> */}
-      </div>
-        <ListadoLocalidades />
-    </>
+    <div className="min-h-screen bg-white dark:bg-slate-900 transition-colors duration-300">
+      <Navbar />
+      <HeroSection />
+      <CityGrid />
+    </div>
   );
-};
-
-export default HomePage;
+}

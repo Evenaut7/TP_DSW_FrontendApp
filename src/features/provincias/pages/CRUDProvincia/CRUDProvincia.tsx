@@ -1,14 +1,14 @@
 import { useState, useEffect } from 'react';
-import BotonCeleste from '../components/BotonCeleste';
-import FormField from '../components/forms/FormField';
+import BotonCeleste from '@/components/ui/Button/BotonCeleste';
+import FormField from '@/components/forms/FormField/FormField';
 import Navbar from '@/components/layout/Navbar/Navbar';
-import { useProvinciaCRUD } from '../hooks/useProvinciaCRUD';
-import type { Provincia } from '../hooks/useProvinciaCRUD';
+import { useProvinciaCRUD } from '@/features/provincias';
+import type { Provincia } from '@/types';
 import { Modal } from 'react-bootstrap';
-import ListadoLocalidadesModal from '../components/ListadoLocalidadesModale.tsx';
-import { useAuthAdmin } from '../hooks/useAuthAdmin';
-import RedirectModal from '../components/RedirectModal';
-import { useUser } from '../hooks/useUser';
+import ListadoLocalidadesModal from '@/features/localidades/components/ListadoLocalidadesModal/ListadoLocalidadesModal';
+import { useAuthAdmin } from '@/features/auth';
+import RedirectModal from '@/components/modals/RedirectModal/RedirectModal';
+import { useUser } from '@/features/user';
 
 function CRUDProvincia() {
   const { isAdmin, loading } = useAuthAdmin();

@@ -1,15 +1,15 @@
-import Navbar from '../components/Navbar.tsx';
-import Estrellas from '../components/Estrellas.tsx';
+import Navbar from '@/components/layout/Navbar/Navbar';
+import Estrellas from '@/components/ui/Rating/Estrellas';
 import { useParams } from 'react-router-dom';
 import { useApiGetById, addFavorito, removeFavorito, API_BASE_URL } from '@/utils/api';
-import { useUser } from '../hooks/useUser.ts';
+import { useUser } from '@/features/user';
 import { useState, useEffect } from 'react';
-import ResultModal from '../components/ResultModal.tsx';
-import './';
+import ResultModal from '@/components/modals/ResultModal/ResultModal';
+import './PDIPage.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import PantallaDeCarga from '../components/PantallaDeCarga.tsx';
-import ListadoDeTags from '../components/ListadoDeTags.tsx';
-import ListadoEventos from '../components/ListadoEventos.tsx';
+import PantallaDeCarga from '@/components/ui/Loading/PantallaDeCarga';
+import { ListadoDeTags } from '@/features/tags';
+import { ListadoEventos } from '@/features/eventos';
 
 interface PDI {
   id: number;

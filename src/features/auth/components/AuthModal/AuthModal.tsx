@@ -1,8 +1,8 @@
 import { useState, type FormEvent } from 'react';
 import Modal from 'react-bootstrap/Modal';
-import InputLabel from './InputLabel';
-import BotonCeleste from './BotonCeleste';
-import { login } from '../utils/session';
+import InputLabel from '@/components/ui/Input/InputLabel';
+import BotonCeleste from '@/components/ui/Button/BotonCeleste';
+import { login } from '@/utils/session';
 import { API_BASE_URL } from '@/utils/api';
 
 type AuthModalProps = {

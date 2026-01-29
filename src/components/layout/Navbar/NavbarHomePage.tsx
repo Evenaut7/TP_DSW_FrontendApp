@@ -2,12 +2,12 @@ import "../styles/NotFoundPage.css"
 import 'bootstrap/dist/css/bootstrap.min.css'
 import "../styles/Navbar.css"
 import { useState, useEffect } from "react"
-import { useUser } from '../hooks/useUser';
-import { useAuthAdmin } from '../hooks/useAuthAdmin';
+import { useUser } from '@/features/user';
+import { useAuthAdmin } from '@/features/auth';
 import { CircleUserRound, House, Map, Notebook, Star, Settings } from "lucide-react";
-import AuthModal from "./AuthModal";
-import RegisterModal from "./RegisterModal";
-import WelcomeModal from "./WelcomeModal";
+import AuthModal from '@/features/auth';
+import RegisterModal from '@/features/auth';
+import WelcomeModal from '@/features/auth';
 import { Link } from "react-router-dom";
 
 

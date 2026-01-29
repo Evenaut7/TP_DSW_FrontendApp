@@ -1,14 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import Navbar from '../components/Navbar.tsx';
-import Estrellas from '../components/Estrellas.tsx';
-import PantallaDeCarga from '../components/PantallaDeCarga.tsx';
-import FormField from '../components/forms/FormField.tsx';
-import FormSelect from '../components/forms/FormSelect.tsx';
+import Navbar from '@/components/layout/Navbar/Navbar';
+import Estrellas from '@/components/ui/Rating/Estrellas';
+import PantallaDeCarga from '@/components/ui/Loading/PantallaDeCarga';
+import FormField from '@/components/forms/FormField/FormField';
+import FormSelect from '@/components/forms/FormSelect/FormSelect';
 import { API_BASE_URL } from '@/utils/api';
-import './';
+import './EditLocalidad.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { useAuthAdmin } from '../hooks/useAuthAdmin.ts';
+import { useAuthAdmin } from '@/features/auth';
 
 interface Provincia {
   id: number;

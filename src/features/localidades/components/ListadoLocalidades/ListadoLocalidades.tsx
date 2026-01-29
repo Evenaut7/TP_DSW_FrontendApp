@@ -1,7 +1,7 @@
 import { useApiGet, API_BASE_URL } from '@/utils/api';
 import 'bootstrap/dist/css/bootstrap.min.css'
 import {Link} from "react-router-dom"
-import "../styles/ListadoLocalidades.css"
+import "./ListadoLocalidades.css"
 
 interface Localidad {
     id: number;

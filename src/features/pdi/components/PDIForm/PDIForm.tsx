@@ -1,7 +1,7 @@
 import React from 'react';
-import FormField from './FormField';
-import FormSelect from './FormSelect';
-import TagsSelector from './TagsSelector';
+import FormField from '@/components/forms/FormField/FormField';
+import FormSelect from '@/components/forms/FormSelect/FormSelect';
+import TagsSelector from '@/features/tags/components/TagsSelector/TagsSelector';
 
 type PDIFormEditProps = {
   form: any;

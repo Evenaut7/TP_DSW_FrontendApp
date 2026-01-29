@@ -1,15 +1,15 @@
-import Navbar from '../components/Navbar.tsx';
-import Estrellas from '../components/Estrellas.tsx';
+import Navbar from '@/components/layout/Navbar/Navbar';
+import Estrellas from '@/components/ui/Rating/Estrellas';
 import { useParams } from 'react-router-dom';
 import { useApiGetById, API_BASE_URL } from '@/utils/api';
-import './';
+import './Localidad.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useState } from 'react';
-import PantallaDeCarga from '../components/PantallaDeCarga.tsx';
-import ListadoDeTags from '../components/ListadoDeTags.tsx';
-import ListadoPDI from '../components/ListadoPDI.tsx';
-import { useBusquedaPDI } from '../hooks/useBusquedaPDI.ts';
-import ListadoPDISkeleton from '../components/ListadoPDISkeleton.tsx';
+import PantallaDeCarga from '@/components/ui/Loading/PantallaDeCarga';
+import ListadoDeTags from '@/features/tags/components/ListadoDeTags/ListadoDeTags';
+import ListadoPDI from '@/features/pdi/components/ListadoPDI/ListadoPDI';
+import { useBusquedaPDI } from '@/features/pdi/hooks/useBusquedaPDI';
+import ListadoPDISkeleton from '@/features/pdi/components/ListadoPDISkeleton/ListadoPDISkeleton';
 
 interface PDI {
   id: number;

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useApiGetById } from '@/utils/api';
-import './';
+import './ListadoEventos.css';
 import { Row, Col } from 'react-bootstrap';
 
 type Evento = {

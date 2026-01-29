@@ -1,9 +1,9 @@
 import Navbar from '@/components/layout/Navbar/Navbar';
-import BotonCeleste from '../components/BotonCeleste';
-import { useTagCRUD, type TipoTag } from '../hooks/useTagCRUD';
-import { useAuthAdmin } from '../hooks/useAuthAdmin';
-import RedirectModal from '../components/RedirectModal.tsx';
-import { useUser } from '../hooks/useUser';
+import BotonCeleste from '@/components/ui/Button/BotonCeleste';
+import { useTagCRUD, type TipoTag } from '@/features/tags';
+import { useAuthAdmin } from '@/features/auth';
+import RedirectModal from '@/components/modals/RedirectModal/RedirectModal';
+import { useUser } from '@/features/user';
 import { useState, useEffect } from 'react';
 
 function TagsPage() {

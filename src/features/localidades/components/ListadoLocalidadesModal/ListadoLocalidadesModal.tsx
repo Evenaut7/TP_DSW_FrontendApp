@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Modal, Card, Row, Col } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import CreateLocalidadModal from './CreateLocalidadModal';
+import CreateLocalidadModal from '@/features/localidades/components/CreateLocalidadModal/CreateLocalidadModal';
 import { getProvinciaById, deleteLocalidad, getImageUrl } from '@/utils/api';
-import './';
+import './ListadoLocalidadesModal.css';
 
 interface Localidad {
   id: number;

@@ -99,3 +99,13 @@ export type FormFieldProps = {
     required?: boolean;
     placeholder?: string;
 };
+
+export type FormSelectProps = {
+    label: string;
+    name: string;
+    value?: string | number;
+    options: Array<{ id: number; nombre: string }>;
+    onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+    required?: boolean;
+    placeholder?: string;
+};

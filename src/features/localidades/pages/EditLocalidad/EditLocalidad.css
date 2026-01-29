@@ -1,0 +1,9 @@
+/* EditLocalidad.css */
+.edit-localidad-container {
+  padding: 2rem;
+}
+
+.edit-localidad-form {
+  max-width: 800px;
+  margin: 0 auto;
+}

@@ -1,13 +1,12 @@
 import { Link } from "react-router-dom"
-import "../styles/NotFoundPage.css"
+import './Navbar.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
-import "../styles/Navbar.css"
 import { useState, useEffect } from "react"
-import { useUser } from '../hooks/useUser';
-import { useAuthAdmin } from '../hooks/useAuthAdmin';
-import AuthModal from "./AuthModal.tsx"
-import RegisterModal from "./RegisterModal.tsx"
-import WelcomeModal from "./WelcomeModal";
+import { useUser } from '@/features/user';
+import { useAuthAdmin } from '@/features/auth';
+import AuthModal from '@/features/auth/components/AuthModal/AuthModal';
+import RegisterModal from '@/features/auth/components/RegisterModal/RegisterModal';
+import WelcomeModal from '@/features/auth/components/WelcomeModal/WelcomeModal';
 import { House, Map, Notebook,  Star, CircleUserRound, Settings } from "lucide-react";
 
 

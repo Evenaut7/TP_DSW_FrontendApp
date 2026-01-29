@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import Navbar from '@/components/layout/Navbar/Navbar';
 import { useParams, useNavigate } from 'react-router-dom';
-import PantallaDeCarga from '../components/PantallaDeCarga';
-import ListadoDeTags from '../components/ListadoDeTags';
-import ListadoEventosEditable from '../components/ListadoEventosEditable';
-import PDIFormEdit from '../components/forms/PDIForm';
+import PantallaDeCarga from '@/components/ui/Loading/PantallaDeCarga';
+import { ListadoDeTags } from '@/features/tags';
+import { ListadoEventosEditable } from '@/features/eventos';
+import { PDIForm } from '@/features/pdi';
 import { useApiGet, getPDIById, uploadImage, updatePDI, getImageUrl } from '@/utils/api';
-import { usePDIForm } from '../hooks/usePDIForm';
-import './';
+import { usePDIForm } from '@/features/pdi';
+import './EditPDI.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { useAuthAdmin } from '../hooks/useAuthAdmin';
+import { useAuthAdmin } from '@/features/auth';
 
 interface PDI {
   id: number;
@@ -148,7 +148,7 @@ const EditPDI = () => {
           </div>
         </div>
 
-        <PDIFormEdit
+        <PDIForm
           form={form}
           onChange={handleChange}
           onSubmit={handleSubmit}

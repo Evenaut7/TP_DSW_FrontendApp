@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import Navbar from '@/components/layout/Navbar/Navbar';
-import './';
-import notFoundImage from '@/assets/';
+import './NotFoundPage.css';
+import notFoundImage from '@/assets/images/not_found.png';
 
 const NotFoundPage = () => {
     return (

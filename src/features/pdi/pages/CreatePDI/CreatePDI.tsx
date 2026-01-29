@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import './';
-import Navbar from '../components/Navbar.tsx';
-import PDIFormEdit from '../components/forms/PDIForm.tsx';
-import { useAuthAdmin } from '../hooks/useAuthAdmin.ts';
+import './CreatePDI.css';
+import Navbar from '@/components/layout/Navbar/Navbar';
+import { PDIForm } from '@/features/pdi';
+import { useAuthAdmin } from '@/features/auth';
 import { useApiGet, uploadImage, createPDI } from '@/utils/api';
-import { usePDIForm } from '../hooks/usePDIForm.ts';
+import { usePDIForm } from '@/features/pdi';
 import { useNavigate } from 'react-router-dom';
 
 const CreatePDI = () => {
@@ -73,7 +73,7 @@ const CreatePDI = () => {
         <div className="create-pdi-container">
           <h2 className="create-pdi-title">Crear Punto de Interés</h2>
 
-          <PDIFormEdit
+          <PDIForm
             form={form}
             onChange={handleChange}
             onSubmit={handleSubmit}

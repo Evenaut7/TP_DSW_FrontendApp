@@ -9,13 +9,16 @@ import ErrorModalManager from '@/components/modals/ErrorModal/ErrorModal';
 
 import { router } from './router.tsx';
 import { UserProvider } from '@/features/user';
+import { ThemeProvider } from './context/ThemeContext';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <UserProvider>
-      <RouterProvider router={router} />
-      <Toaster position="top-right" />
-      <ErrorModalManager />
-    </UserProvider>
+    <ThemeProvider>
+      <UserProvider>
+        <RouterProvider router={router} />
+        <Toaster position="top-right" />
+        <ErrorModalManager />
+      </UserProvider>
+    </ThemeProvider>
   </StrictMode>
 );

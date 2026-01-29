@@ -1,14 +1,14 @@
 import { useState, useEffect } from 'react';
 import type { FormEvent } from 'react';
-import { useUser } from '../hooks/useUser';
-import { useProvinciasLocalidades } from '../hooks/useProvinciasLocalidades';
-import { updateUser } from '../utils/session';
+import { useUser } from '@/features/user';
+import { useProvinciasLocalidades } from '@/features/localidades';
+import { updateUser } from '@/utils/session';
 import Navbar from '@/components/layout/Navbar/Navbar';
-import ConfirmModal from '../components/ConfirmModal';
-import ResultModal from '../components/ResultModal';
-import RedirectModal from '../components/RedirectModal';
-import InputLabel from '../components/InputLabel';
-import './';
+import ConfirmModal from '@/components/modals/ConfirmModal/ConfirmModal';
+import ResultModal from '@/components/modals/ResultModal/ResultModal';
+import RedirectModal from '@/components/modals/RedirectModal/RedirectModal';
+import InputLabel from '@/components/ui/Input/InputLabel';
+import './PerfilPage.css';
 
 function PerfilPage() {
     const { user, refreshUser } = useUser();

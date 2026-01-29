@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import './';
+import './ErrorModal.css';
 
 interface ErrorModalProps {
   message: string;
@@ -9,11 +8,10 @@ interface ErrorModalProps {
 }
 
 function ErrorModal({ message, statusCode, onClose }: ErrorModalProps) {
-  const navigate = useNavigate();
-
   const handleClose = () => {
     onClose();
-    navigate('/');
+    // Redirigir a home sin usar useNavigate (funciona fuera de Router)
+    window.location.href = '/';
   };
 
   return (

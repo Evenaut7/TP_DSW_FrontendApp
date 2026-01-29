@@ -1,4 +1,4 @@
-import { useUser } from '../../hooks/useUser';
+import { useUser } from '@/features/user';
 import Navbar from '@/components/layout/Navbar/Navbar';
 import RedirectModal from '@/components/modals/RedirectModal/RedirectModal';
 import { ListadoPDI } from '@/features/pdi';

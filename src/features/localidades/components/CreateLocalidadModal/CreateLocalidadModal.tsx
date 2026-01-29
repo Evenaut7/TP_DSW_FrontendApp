@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Modal, Button } from 'react-bootstrap';
-import FormField from '../components/forms/FormField';
-import BotonCeleste from '../components/BotonCeleste';
+import FormField from '@/components/forms/FormField/FormField';
+import BotonCeleste from '@/components/ui/Button/BotonCeleste';
 import { uploadImage, createLocalidad } from '@/utils/api';
 
 interface CreateLocalidadModalProps {

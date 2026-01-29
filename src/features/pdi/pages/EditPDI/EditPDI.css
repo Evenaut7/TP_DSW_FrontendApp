@@ -1,0 +1,9 @@
+/* EditPDI.css */
+.edit-pdi-container {
+  padding: 2rem;
+}
+
+.edit-pdi-form {
+  max-width: 800px;
+  margin: 0 auto;
+}

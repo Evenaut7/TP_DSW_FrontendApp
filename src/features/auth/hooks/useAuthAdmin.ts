@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useUser } from './useUser';
+import { useUser } from '@/features/user';
 import { checkIsAdmin } from '@/utils/api';
 
 export function useAuthAdmin() {

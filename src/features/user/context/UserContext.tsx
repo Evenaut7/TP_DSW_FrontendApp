@@ -1,6 +1,6 @@
 import { createContext, useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
-import { getCurrentUser, logout as apiLogout, type User } from '../utils/session';
+import { getCurrentUser, logout as apiLogout, type User } from '@/utils/session';
 
 type UserContextType = {
     user: User;

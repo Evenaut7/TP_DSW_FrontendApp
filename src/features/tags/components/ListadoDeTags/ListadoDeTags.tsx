@@ -1,4 +1,4 @@
-import './';
+import './ListadoDeTags.css';
 import { useState, useEffect } from 'react';
 import { getTags } from '@/utils/api';
 

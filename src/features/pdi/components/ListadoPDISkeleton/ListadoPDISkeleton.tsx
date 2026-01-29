@@ -1,4 +1,4 @@
-import './';
+import './ListadoPDISkeleton.css';
 
 const ListadoPDISkeleton = () => {
   return (

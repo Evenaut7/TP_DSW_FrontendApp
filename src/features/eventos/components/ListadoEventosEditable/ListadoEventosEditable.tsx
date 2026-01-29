@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Row, Col, Modal, Button, Form } from 'react-bootstrap';
 import { useApiGetById, useApiGet, createEvento, updateEvento, deleteEvento } from '@/utils/api';
-import FormField from './forms/FormField';
-import TagsSelector from './forms/TagsSelector';
+import FormField from '@/components/forms/FormField/FormField';
+import TagsSelector from '@/features/tags/components/TagsSelector/TagsSelector';
 
 type Evento = {
   id?: number;

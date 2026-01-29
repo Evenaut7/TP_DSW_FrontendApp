@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import Navbar from '@/components/layout/Navbar/Navbar';
-import './';
-import workingOnItImage from '@/assets/';
+import './WorkingOnItPage.css';
+import workingOnItImage from '@/assets/images/not_found.png';
 
 const WorkingOnItPage = () => {
     return (
