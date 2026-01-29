@@ -1,19 +1,36 @@
-import {Link} from "react-router-dom"
-import "../styles/NotFoundPage.css"
+import { Link } from 'react-router-dom';
+import Navbar from '../components/Navbar';
+import '../styles/NotFoundPage.css';
+import notFoundImage from '../assets/not_found.png';
 
 const NotFoundPage = () => {
-  return (
-    <div  className="container">
-      <h1>
-        Error 404: Page not Found
-      </h1>
-      <Link to = {"/"}>
-          <div className="d-grid gap-2 d-md-block">
-            <button className="btn btn-danger" type="button">Volver al Inicio</button>
-          </div>
-      </Link>
-    </div>
-  )
-}
+    return (
+        <>
+            <div className="not-found-background">
+                <Navbar />
+                <div className="not-found-container">
+                    <div className="not-found-content">
+                        <img 
+                            src={notFoundImage} 
+                            alt="Página no encontrada" 
+                            className="not-found-image"
+                        />
+                        <h1 className="not-found-title">
+                            Error 404
+                        </h1>
+                        <p className="not-found-message">
+                            ¡Ups! La página que buscas no existe o ha sido movida.
+                        </p>
+                        <Link to="/">
+                            <button className="btn btn-primary not-found-button">
+                                Volver al Inicio
+                            </button>
+                        </Link>
+                    </div>
+                </div>
+            </div>
+        </>
+    );
+};
 
-export default NotFoundPage
+export default NotFoundPage;

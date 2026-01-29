@@ -10,6 +10,7 @@ import EditLocalidad from './pages/EditLocalidad.tsx';
 import PerfilPage from './pages/PerfilPage.tsx';
 import FavoritosPage from './pages/FavoritosPage.tsx';
 import TagsPage from './pages/TagsPage.tsx';
+import WorkingOnItPage from './pages/WorkingOnItPage.tsx';
 
 export const router = createBrowserRouter([
   { path: '*', element: <NotFoundPage /> },
@@ -17,6 +18,7 @@ export const router = createBrowserRouter([
   { path: '/perfil', element: <PerfilPage /> },
   { path: '/favoritos', element: <FavoritosPage /> },
   { path: '/tags', element: <TagsPage /> },
+  { path: '/working-on-it', element: <WorkingOnItPage /> },
   { path: '/localidad/:id', element: <Localidad /> },
   { path: '/pdi/:id', element: <PDIPage /> },
   { path: '/CreatePDI', element: <CreatePuntoDeInteres /> },

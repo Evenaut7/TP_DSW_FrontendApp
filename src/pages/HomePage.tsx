@@ -9,15 +9,15 @@ const HomePage = () => {
       <div className="homeTopDiv">
       <NavbarHomePage />
         <div className="homeTitleDiv">
-          <h1 className="homeTitle text-center">¿Adónde Quisieras Ir?</h1>
+          <h1 className="homeTitle text-center">Discover</h1>
         </div>
-        <div className="searchBoxHomeDiv">
+        {/* <div className="searchBoxHomeDiv">
           <input
             type="text"
             className="searchBoxHome"
             placeholder="Busca Una Localidad"
           />
-        </div>
+        </div> */}
       </div>
         <ListadoLocalidades />
     </>

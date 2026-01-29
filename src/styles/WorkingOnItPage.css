@@ -1,4 +1,4 @@
-.not-found-background {
+.working-on-it-background {
     background-image: url("../assets/PDI_imgPrueba/fondo2.png");
     background-size: cover;
     background-position: center;
@@ -10,7 +10,7 @@
     flex-direction: column;
 }
 
-.not-found-container {
+.working-on-it-container {
     flex: 1;
     display: flex;
     align-items: center;
@@ -18,7 +18,7 @@
     padding: 40px 20px;
 }
 
-.not-found-content {
+.working-on-it-content {
     background-color: #ffffff;
     border-radius: 20px;
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
@@ -28,40 +28,37 @@
     width: 100%;
 }
 
-.not-found-image {
+.working-on-it-image {
     width: 250px;
     height: auto;
     margin-bottom: 30px;
-    animation: shake 1.5s ease-in-out infinite;
+    animation: bounce 2s ease-in-out infinite;
 }
 
-@keyframes shake {
+@keyframes bounce {
     0%, 100% {
-        transform: translateX(0) rotate(0deg);
+        transform: translateY(0);
     }
-    25% {
-        transform: translateX(-10px) rotate(-5deg);
-    }
-    75% {
-        transform: translateX(10px) rotate(5deg);
+    50% {
+        transform: translateY(-20px);
     }
 }
 
-.not-found-title {
+.working-on-it-title {
     color: #2D9CDB;
     font-size: 2.5rem;
     font-weight: 700;
     margin-bottom: 20px;
 }
 
-.not-found-message {
+.working-on-it-message {
     color: #555;
     font-size: 1.2rem;
     margin-bottom: 35px;
     line-height: 1.6;
 }
 
-.not-found-button {
+.working-on-it-button {
     font-size: 1.1rem;
     padding: 12px 40px;
     border-radius: 25px;
@@ -69,27 +66,26 @@
     transition: all 0.3s ease;
 }
 
-.not-found-button:hover {
+.working-on-it-button:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 15px rgba(45, 156, 219, 0.4);
 }
 
 /* Responsive */
 @media (max-width: 767px) {
-    .not-found-content {
+    .working-on-it-content {
         padding: 40px 25px;
     }
     
-    .not-found-image {
+    .working-on-it-image {
         width: 180px;
     }
     
-    .not-found-title {
+    .working-on-it-title {
         font-size: 1.8rem;
     }
     
-    .not-found-message {
+    .working-on-it-message {
         font-size: 1rem;
     }
 }
-
