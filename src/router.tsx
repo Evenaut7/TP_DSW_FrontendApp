@@ -1,16 +1,16 @@
-import NotFoundPage from './pages/NotFoundPage.tsx';
-import HomePage from './pages/HomePage.tsx';
-import Localidad from './pages/Localidad.tsx';
 import { createBrowserRouter } from 'react-router-dom';
-import PDIPage from './pages/PDIPage.tsx';
-import CreatePuntoDeInteres from './pages/CreatePDI.tsx';
-import ProvinciaPage from './pages/CRUDProvincia.tsx';
-import EditPDI from './pages/EditPDI.tsx';
-import EditLocalidad from './pages/EditLocalidad.tsx';
-import PerfilPage from './pages/PerfilPage.tsx';
-import FavoritosPage from './pages/FavoritosPage.tsx';
-import TagsPage from './pages/TagsPage.tsx';
-import WorkingOnItPage from './pages/WorkingOnItPage.tsx';
+
+// Pages
+import NotFoundPage from '@/pages/NotFoundPage/NotFoundPage';
+import WorkingOnItPage from '@/pages/WorkingOnItPage/WorkingOnItPage';
+
+// Features
+import { HomePage } from '@/features/home';
+import { PerfilPage, FavoritosPage } from '@/features/user';
+import { TagsPage } from '@/features/tags';
+import { Localidad, EditLocalidad } from '@/features/localidades';
+import { PDIPage, CreatePDI, EditPDI } from '@/features/pdi';
+import { CRUDProvincia } from '@/features/provincias';
 
 export const router = createBrowserRouter([
   { path: '*', element: <NotFoundPage /> },
@@ -21,8 +21,9 @@ export const router = createBrowserRouter([
   { path: '/working-on-it', element: <WorkingOnItPage /> },
   { path: '/localidad/:id', element: <Localidad /> },
   { path: '/pdi/:id', element: <PDIPage /> },
-  { path: '/CreatePDI', element: <CreatePuntoDeInteres /> },
-  { path: '/provincias', element: <ProvinciaPage /> },
+  { path: '/CreatePDI', element: <CreatePDI /> },
+  { path: '/provincias', element: <CRUDProvincia /> },
   { path: '/EditPDI/:id', element: <EditPDI /> },
   { path: '/editLocalidad/:id', element: <EditLocalidad /> },
 ]);
+

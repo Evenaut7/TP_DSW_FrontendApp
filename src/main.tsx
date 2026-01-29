@@ -5,10 +5,10 @@ import { RouterProvider } from 'react-router-dom';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import { Toaster } from 'react-hot-toast';
-import ErrorModalManager from './components/ErrorModal.tsx';
+import ErrorModalManager from '@/components/modals/ErrorModal/ErrorModal';
 
 import { router } from './router.tsx';
-import { UserProvider } from './context/UserContext';
+import { UserProvider } from '@/features/user';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

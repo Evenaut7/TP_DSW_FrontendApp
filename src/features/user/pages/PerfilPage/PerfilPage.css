@@ -1,0 +1,116 @@
+.background {
+    background-image: url("@/assets/pdi/fondo2.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    min-height: 100vh;
+    width: 100%;
+}
+
+.perfil-container {
+    min-height: calc(100vh - 80px);
+    background-color: transparent; /* Cambiar de #f8f9fa a transparent */
+    padding: 40px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.perfil-card {
+    background-color: white;
+    border-radius: 15px;
+    padding: 40px;
+    max-width: 600px;
+    width: 100%;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.perfil-title {
+    color: #2D9CDB;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    font-size: 2rem;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.perfil-card .form-group {
+    margin-bottom: 20px;
+}
+
+.perfil-card label {
+    display: block;
+    margin-bottom: 8px;
+    color: #333;
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
+}
+
+.perfil-card .form-select {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: 'Poppins', sans-serif;
+    transition: border-color 0.2s;
+}
+
+.perfil-card .form-select:focus {
+    outline: none;
+    border-color: #2D9CDB;
+}
+
+.perfil-card .form-select:disabled {
+    background-color: #f5f5f5;
+    cursor: not-allowed;
+}
+
+.perfil-actions {
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+}
+
+.btn-guardar {
+    background-color: #2D9CDB;
+    color: white;
+    border: none;
+    padding: 14px 40px;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+.btn-guardar:hover:not(:disabled) {
+    background-color: #2589c4;
+    transform: translateY(-2px);
+}
+
+.btn-guardar:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.btn-guardar:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .perfil-container {
+        padding: 20px 10px;
+    }
+
+    .perfil-card {
+        padding: 25px;
+    }
+
+    .perfil-title {
+        font-size: 1.5rem;
+    }
+}

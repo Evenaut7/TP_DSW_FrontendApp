@@ -4,7 +4,7 @@
 
 /* ==================== BACKGROUNDS ==================== */
 .page-background {
-    background-image: url("../assets/PDI_imgPrueba/fondo2.png");
+    background-image: url("@/assets/pdi/fondo2.png");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -14,7 +14,7 @@
 }
 
 .page-background-padded {
-    background-image: url("../assets/PDI_imgPrueba/fondo2.png");
+    background-image: url("@/assets/pdi/fondo2.png");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;

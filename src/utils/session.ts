@@ -1,4 +1,4 @@
-import type { User, UpdateUserData } from '../types';
+import type { User, UpdateUserData } from '@/types';
 import * as api from './api';
 
 export type { User, UpdateUserData };
