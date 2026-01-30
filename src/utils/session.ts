@@ -3,6 +3,8 @@ import * as api from './api';
 
 export type { User, UpdateUserData };
 
+// Obtiene el usuario actualmente autenticado.
+// Usuario actual o null si no está autenticado
 export async function getCurrentUser(): Promise<User> {
     const response = await api.getCurrentUser();
     if (response.success && response.data) {

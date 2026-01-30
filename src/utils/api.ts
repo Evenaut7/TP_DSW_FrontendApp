@@ -17,6 +17,7 @@ type FetchOptions = {
     body?: unknown;
     headers?: Record<string, string>;
     credentials?: RequestCredentials;
+    _retry?: boolean; // Flag interno para evitar loops infinitos de refresh
 };
 
 type ApiResponse<T = unknown> = {
@@ -25,6 +26,35 @@ type ApiResponse<T = unknown> = {
     message?: string;
     error?: string;
 };
+
+// ==================== REFRESH TOKEN ====================
+//true si el refresh fue exitoso, false en caso contrario
+async function refreshToken(): Promise<boolean> {
+    try {
+        const url = `${API_BASE_URL}/api/usuarios/refresh-token`;
+        const res = await fetch(url, {
+            method: 'POST',
+            credentials: 'include', // Importante: incluir cookies
+        });
+        
+        if (res.ok) {
+            if (import.meta.env.VITE_ENABLE_DEBUG === 'true') {
+                console.log('✅ Token refreshed successfully');
+            }
+            return true;
+        }
+        
+        if (import.meta.env.VITE_ENABLE_DEBUG === 'true') {
+            console.warn('❌ Token refresh failed:', res.status);
+        }
+        return false;
+    } catch (error) {
+        if (import.meta.env.VITE_ENABLE_DEBUG === 'true') {
+            console.error('❌ Error refreshing token:', error);
+        }
+        return false;
+    }
+}
 
 // ==================== FUNCIÓN BASE ====================
 async function apiFetch<T = unknown>(
@@ -36,6 +66,7 @@ async function apiFetch<T = unknown>(
         body,
         headers = {},
         credentials = 'include',
+        _retry = false,
     } = options;
 
     const config: RequestInit = {
@@ -60,6 +91,31 @@ async function apiFetch<T = unknown>(
 
     if (!res.ok) {
         const errorMessage = data?.message || `Error: ${res.status} ${res.statusText}`;
+        
+        // ==================== INTERCEPTOR DE 401 ====================
+        // Si recibimos 401 (Unauthorized) y no hemos intentado refrescar el token
+        if (res.status === 401 && !_retry) {
+            if (import.meta.env.VITE_ENABLE_DEBUG === 'true') {
+                console.log('🔄 Received 401, attempting token refresh...');
+            }
+            
+            const refreshed = await refreshToken();
+            
+            if (refreshed) {
+                // Token refrescado exitosamente, reintentar la petición original
+                if (import.meta.env.VITE_ENABLE_DEBUG === 'true') {
+                    console.log('🔄 Retrying original request...');
+                }
+                return apiFetch<T>(endpoint, { ...options, _retry: true });
+            }
+            
+            // Si el refresh falló, el usuario será redirigido al login
+            // por los componentes que manejan errores de autenticación
+            if (import.meta.env.VITE_ENABLE_DEBUG === 'true') {
+                console.warn('❌ Token refresh failed, user needs to login again');
+            }
+        }
+        
         //const errorType = classifyErrorByStatus(res.status);
         
         // Mostrar notificación automática
