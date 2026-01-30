@@ -25,5 +25,6 @@ export const router = createBrowserRouter([
   { path: '/provincias', element: <CRUDProvincia /> },
   { path: '/EditPDI/:id', element: <EditPDI /> },
   { path: '/editLocalidad/:id', element: <EditLocalidad /> },
+  { path: '/map', element: <WorkingOnItPage />}
 ]);
 

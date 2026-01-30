@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom';
 import Navbar from '@/components/layout/Navbar/Navbar';
 import './WorkingOnItPage.css';
-import workingOnItImage from '@/assets/images/not_found.png';
 
 const WorkingOnItPage = () => {
     return (
@@ -10,11 +9,8 @@ const WorkingOnItPage = () => {
                 <Navbar />
                 <div className="working-on-it-container">
                     <div className="working-on-it-content">
-                        <img 
-                            src={workingOnItImage} 
-                            alt="Trabajando en ello" 
-                            className="working-on-it-image"
-                        />
+                        {/* Icono de herramientas */}
+                        <i className="bi bi-tools working-on-it-icon"></i>
                         <h1 className="working-on-it-title">
                             ¡Estamos trabajando en esto!
                         </h1>

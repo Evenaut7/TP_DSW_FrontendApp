@@ -13,7 +13,7 @@ export type NotificationTypeValue = typeof NotificationType[keyof typeof Notific
 
 // ==================== CONFIGURACIÓN ====================
 
-const TOAST_DURATION = 4000; // 4 segundos
+const TOAST_DURATION = 4000;
 
 const toastConfig = {
   duration: TOAST_DURATION,
@@ -22,11 +22,7 @@ const toastConfig = {
 
 // ==================== FUNCIONES DE NOTIFICACIÓN ====================
 
-/**
- * Muestra un error de red/API con modal bloqueante
- * @param message - Mensaje de error
- * @param statusCode - Código de estado HTTP (opcional)
- */
+// Muestra un error de red/API con modal bloqueante
 export function showNetworkError(message: string, statusCode?: number) {
   // El modal se manejará mediante un evento personalizado
   const event = new CustomEvent('show-error-modal', {
@@ -35,10 +31,7 @@ export function showNetworkError(message: string, statusCode?: number) {
   window.dispatchEvent(event);
 }
 
-/**
- * Muestra un error de validación con toast temporal
- * @param message - Mensaje de error
- */
+// Muestra un error de validación con toast temporal
 export function showValidationError(message: string) {
   toast.error(message, {
     ...toastConfig,
@@ -51,10 +44,7 @@ export function showValidationError(message: string) {
   });
 }
 
-/**
- * Muestra un error de autenticación/autorización con toast temporal
- * @param message - Mensaje de error
- */
+// Muestra un error de autenticación/autorización con toast temporal
 export function showAuthError(message: string) {
   toast.error(message, {
     ...toastConfig,
@@ -67,10 +57,7 @@ export function showAuthError(message: string) {
   });
 }
 
-/**
- * Muestra un mensaje de éxito con banner superior
- * @param message - Mensaje de éxito
- */
+// Muestra un mensaje de éxito con banner superior
 export function showSuccess(message: string) {
   toast.success(message, {
     duration: TOAST_DURATION,
@@ -88,12 +75,7 @@ export function showSuccess(message: string) {
   });
 }
 
-/**
- * Muestra notificación según el tipo de error
- * @param message - Mensaje de error
- * @param type - Tipo de notificación
- * @param statusCode - Código de estado HTTP (opcional)
- */
+// Muestra notificación según el tipo de error
 export function showNotification(
   message: string,
   type: NotificationTypeValue,
@@ -115,11 +97,7 @@ export function showNotification(
   }
 }
 
-/**
- * Clasifica el error según el código de estado HTTP
- * @param statusCode - Código de estado HTTP
- * @returns Tipo de notificación
- */
+// Clasifica el error según el código de estado HTTP
 export function classifyErrorByStatus(statusCode?: number): NotificationTypeValue {
   if (!statusCode) return NotificationType.NETWORK_ERROR;
 

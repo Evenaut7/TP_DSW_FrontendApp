@@ -28,19 +28,23 @@
     width: 100%;
 }
 
-.working-on-it-image {
-    width: 250px;
-    height: auto;
+.working-on-it-icon {
+    font-size: 120px;
+    color: #2D9CDB;
     margin-bottom: 30px;
-    animation: bounce 2s ease-in-out infinite;
+    display: block;
+    animation: rotate 3s ease-in-out infinite;
 }
 
-@keyframes bounce {
+@keyframes rotate {
     0%, 100% {
-        transform: translateY(0);
+        transform: rotate(0deg);
     }
-    50% {
-        transform: translateY(-20px);
+    25% {
+        transform: rotate(-15deg);
+    }
+    75% {
+        transform: rotate(15deg);
     }
 }
 
@@ -77,8 +81,8 @@
         padding: 40px 25px;
     }
     
-    .working-on-it-image {
-        width: 180px;
+    .working-on-it-icon {
+        font-size: 80px;
     }
     
     .working-on-it-title {
