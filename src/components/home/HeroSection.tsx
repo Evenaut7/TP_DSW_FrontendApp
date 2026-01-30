@@ -1,12 +1,13 @@
+import hero from '@/assets/images/hero.jfif';
 export default function HeroSection() {
   return (
-    <section className="relative h-[85vh] min-h-[600px] w-full flex items-center justify-center overflow-hidden">
+    <section className="relative h-screen min-h-[600px] w-full flex items-center justify-center overflow-hidden">
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
         <img
           alt="Atmospheric travel landscape"
           className="w-full h-full object-cover"
-          src="https://images.unsplash.com/photo-1589909202802-8f4aadce1849?q=80&w=2070"
+          src= {hero}
         />
         <div className="absolute inset-0 hero-gradient"></div>
       </div>

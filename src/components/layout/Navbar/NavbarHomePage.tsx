@@ -5,9 +5,9 @@ import { useState, useEffect } from "react"
 import { useUser } from '@/features/user';
 import { useAuthAdmin } from '@/features/auth';
 import { CircleUserRound, House, Map, Notebook, Star, Settings } from "lucide-react";
-import AuthModal from '@/features/auth';
-import RegisterModal from '@/features/auth';
-import WelcomeModal from '@/features/auth';
+import AuthModal from '@/features/auth/components/AuthModal/AuthModal';
+import RegisterModal from '@/features/auth/components/RegisterModal/RegisterModal';
+import WelcomeModal from '@/features/auth/components/WelcomeModal/WelcomeModal';
 import { Link } from "react-router-dom";
 
 
