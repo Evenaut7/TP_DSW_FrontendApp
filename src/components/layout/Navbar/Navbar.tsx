@@ -32,7 +32,7 @@ const Navbar = () => {
   return (
     <>
       {width > 950 ? (
-        <nav className="navbar">
+        <nav className="navbar fixed top-6 left-1/2 -translate-x-1/2 z-[100] w-[90%] max-w-[1100px]">
           <div>
             <Link to={"/"}>
               <button className='navTitle'>

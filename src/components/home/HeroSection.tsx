@@ -1,7 +1,7 @@
 import hero from '@/assets/images/hero.jfif';
 export default function HeroSection() {
   return (
-    <section className="relative h-screen min-h-[600px] w-full flex items-center justify-center overflow-hidden">
+    <section className="absolute top-0 left-0 right-0 h-screen min-h-[600px] w-full flex items-center justify-center overflow-hidden">
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
         <img

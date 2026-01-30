@@ -1,27 +1,16 @@
 /* ========== NAVBAR PRINCIPAL (Desktop) ========== */
 .navbar {
   /* Glassmorphism effect - fondo celeste semi-transparente con blur */
-  background: rgba(42, 135, 189, 0.678); /* #2D9CDB con 25% opacidad */
+  background: rgba(42, 135, 189, 0.678);
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
-  
-  /* Posicionamiento absoluto sobre el hero */
-  position: fixed;
-  top: 16px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 1000;
-  
-  /* Ancho más compacto y centrado */
-  width: calc(100% - 64px); /* Más espacio lateral */
-  max-width: 1100px; /* Ancho máximo más compacto */
   
   /* Layout y espaciado */
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 16px; 
-  padding: 10px 20px; /* Padding reducido */
+  padding: 10px 20px;
   
   /* Bordes y sombras para efecto de profundidad */
   border-radius: 16px;
@@ -29,6 +18,8 @@
   box-shadow: 
     0 8px 32px 0 rgba(31, 38, 135, 0.15),
     inset 0 1px 0 0 rgba(255, 255, 255, 0.2);
+  
+  transition: all 0.3s ease;
 }
 
 .navTitle {

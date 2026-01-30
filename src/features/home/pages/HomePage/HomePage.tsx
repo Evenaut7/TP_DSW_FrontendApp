@@ -4,10 +4,12 @@ import CityGrid from '@/components/home/CityGrid';
 
 export default function HomePage() {
   return (
-    <>
+    <div className="relative min-h-screen">
       <Navbar />
       <HeroSection />
-      <CityGrid />
-    </>
+      <div className="relative" style={{ marginTop: '100vh' }}>
+        <CityGrid />
+      </div>
+    </div>
   );
 }
