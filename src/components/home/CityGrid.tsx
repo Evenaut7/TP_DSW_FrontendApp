@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useApiGet } from '../../utils/api';
 import type { Localidad } from '../../types';
 import CityCard from './CityCard';
@@ -6,7 +6,27 @@ import CityCard from './CityCard';
 export default function CityGrid() {
   const { data: localidades, loading, error } = useApiGet<Localidad[]>('/api/localidades');
   const [currentPage, setCurrentPage] = useState(0);
-  const citiesPerPage = 6;
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+  // Responsive cities per page
+  const getCitiesPerPage = () => {
+    if (windowWidth < 768) return 1; // Mobile
+    if (windowWidth < 1024) return 2; // Tablet
+    return 6; // Desktop
+  };
+
+  const citiesPerPage = getCitiesPerPage();
+
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Reset to first page when window size changes
+  useEffect(() => {
+    setCurrentPage(0);
+  }, [citiesPerPage]);
 
   if (loading) {
     return (
@@ -42,37 +62,37 @@ export default function CityGrid() {
   };
 
   return (
-    <section className="max-w-7xl mx-auto px-6 py-24">
+    <section className="max-w-7xl mx-auto px-6 py-12 md:py-24">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 md:mb-16">
         <div className="space-y-4">
-          <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-white">
             Ciudades Destacadas
           </h2>
-          <p className="text-slate-500 dark:text-slate-400 max-w-lg text-lg">
+          <p className="text-slate-500 dark:text-slate-400 max-w-lg text-base md:text-lg">
             Descubre la esencia de Argentina a través de sus ciudades más vibrantes y su cultura única.
           </p>
         </div>
         <div className="flex gap-4">
           <button 
             onClick={handlePrevious}
-            className="p-4 rounded-full border border-slate-200 dark:border-slate-800 hover:border-primary transition-all group"
+            className="p-3 md:p-4 rounded-full border border-slate-200 dark:border-slate-800 hover:border-primary transition-all group"
             aria-label="Anterior"
           >
-            <span className="material-symbols-outlined group-hover:text-primary">west</span>
+            <span className="material-symbols-outlined group-hover:text-primary text-lg md:text-xl">west</span>
           </button>
           <button 
             onClick={handleNext}
-            className="p-4 rounded-full border border-slate-200 dark:border-slate-800 hover:border-primary transition-all group"
+            className="p-3 md:p-4 rounded-full border border-slate-200 dark:border-slate-800 hover:border-primary transition-all group"
             aria-label="Siguiente"
           >
-            <span className="material-symbols-outlined group-hover:text-primary">east</span>
+            <span className="material-symbols-outlined group-hover:text-primary text-lg md:text-xl">east</span>
           </button>
         </div>
       </div>
 
-      {/* Carousel Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 min-h-[600px]">
+      {/* Responsive Carousel Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 min-h-[400px] md:min-h-[600px]">
         {currentCities.map((localidad) => (
           <CityCard
             key={localidad.id}
@@ -84,7 +104,7 @@ export default function CityGrid() {
       </div>
 
       {/* Pagination Dots */}
-      <div className="flex justify-center gap-2 mt-12">
+      <div className="flex justify-center gap-2 mt-8 md:mt-12">
         {Array.from({ length: totalPages }).map((_, index) => (
           <button
             key={index}

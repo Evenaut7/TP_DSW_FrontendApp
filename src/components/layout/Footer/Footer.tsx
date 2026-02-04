@@ -18,7 +18,6 @@ export default function Footer() {
             </p>
           </div>
 
-          {/* Información del proyecto */}
           <div className="space-y-4">
             <h4 className="font-bold text-sm uppercase tracking-wider text-slate-900 dark:text-white">
               Proyecto Académico
@@ -31,7 +30,6 @@ export default function Footer() {
             </p>
           </div>
 
-          {/* Feedback */}
           <div className="space-y-4">
             <h4 className="font-bold text-sm uppercase tracking-wider text-slate-900 dark:text-white">
               Ayúdanos a mejorar
@@ -49,10 +47,9 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Copyright */}
         <div className="border-t border-slate-200 dark:border-slate-800 pt-8 text-center">
           <p className="text-slate-500 dark:text-slate-400 text-xs">
-            © 2024 Discover Argentina - Proyecto Académico UTN. Todos los derechos reservados.
+            © 2025 Discover Argentina - Proyecto Académico UTN. Todos los derechos reservados.
           </p>
         </div>
       </div>

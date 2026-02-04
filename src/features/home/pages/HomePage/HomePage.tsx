@@ -5,10 +5,11 @@ import CityGrid from '@/components/home/CityGrid';
 
 export default function HomePage() {
   return (
-    <div className="relative min-h-screen">
+    <div className="min-h-screen">
       <Navbar />
-      <HeroSection />
-      <div className="relative" style={{ marginTop: '100vh' }}>
+      {/* Navbar floats over content, no padding needed */}
+      <div>
+        <HeroSection />
         <CityGrid />
         <Footer />
       </div>
