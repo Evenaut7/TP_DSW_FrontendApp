@@ -43,11 +43,14 @@ export type PDI = {
 
 
 export type Evento = {
-    id: number;
+    id?: number;
     titulo: string;
     descripcion: string;
     horaDesde: string;
     horaHasta: string;
+    estado?: string;
+    tags?: Array<number | Tag>;
+    puntoDeInteres?: number;
 };
 
 

@@ -1,39 +1,33 @@
 import React, { useEffect, useState } from 'react';
-import { Row, Col, Modal, Button, Form } from 'react-bootstrap';
-import { useApiGetById, useApiGet, createEvento, updateEvento, deleteEvento } from '@/utils/api';
-import FormField from '@/components/forms/FormField/FormField';
-import TagsSelector from '@/features/tags/components/TagsSelector/TagsSelector';
+import { Row, Col, Modal, Button } from 'react-bootstrap';
+import EventCard from '@/features/eventos/components/EventCard/EventCard';
+import {
+  useApiGetById,
+  useApiGet,
+  createEvento,
+  updateEvento,
+  deleteEvento,
+} from '@/utils/api';
+import { getPDIById } from '@/utils/api';
+import EventoForm from './EventoForm.tsx';
 
-type Evento = {
-  id?: number;
-  titulo: string;
-  descripcion: string;
-  horaDesde: string;
-  horaHasta: string;
-  estado: string;
-  tags: any[];
-  puntoDeInteres: number;
-};
-
-type Tag = {
-  id: number;
-  nombre: string;
-  tipo?: string;
-};
+import type { Evento, Tag } from '@/types';
 
 type Props = {
   pdiId: number;
 };
 
-const ESTADOS = ['Disponible', 'Agotado', 'Cancelado'];
-
 const ListadoEventosEditable: React.FC<Props> = ({ pdiId }) => {
-  const { data, loading, error } = useApiGetById<{ eventos: Evento[] }>('/api/puntosDeInteres', pdiId);
+  const { data, loading, error } = useApiGetById<{ eventos: Evento[] }>(
+    '/api/puntosDeInteres',
+    pdiId,
+  );
 
   const { data: allTags } = useApiGet<Tag[]>('/api/tags');
 
   const [showModal, setShowModal] = useState(false);
   const [editEvento, setEditEvento] = useState<Evento | null>(null);
+  const [events, setEvents] = useState<Evento[]>([]);
   const [form, setForm] = useState<Evento>({
     titulo: '',
     descripcion: '',
@@ -54,32 +48,47 @@ const ListadoEventosEditable: React.FC<Props> = ({ pdiId }) => {
         ? editEvento.tags.map((t: any) => (typeof t === 'number' ? t : t.id))
         : [];
 
+      const toDatetimeLocal = (iso?: string) => {
+        if (!iso) return '';
+        const d = new Date(iso);
+        const offsetMs = d.getTimezoneOffset() * 60000;
+        return new Date(d.getTime() - offsetMs).toISOString().slice(0, 16);
+      };
+
       setForm({
         ...editEvento,
-        horaDesde: editEvento.horaDesde
-          ? new Date(editEvento.horaDesde).toISOString().slice(0, 16)
-          : '',
-        horaHasta: editEvento.horaHasta
-          ? new Date(editEvento.horaHasta).toISOString().slice(0, 16)
-          : '',
+        horaDesde: toDatetimeLocal(editEvento.horaDesde),
+        horaHasta: toDatetimeLocal(editEvento.horaHasta),
         tags: normalizedTags,
       });
       setShowModal(true);
     }
   }, [editEvento]);
 
+  // Inicializar/actualizar lista local de eventos cuando cambie la data del hook
+  useEffect(() => {
+    if (data && Array.isArray(data.eventos)) {
+      setEvents(data.eventos);
+    }
+  }, [data]);
+
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    >,
   ) => {
     const { name, value, checked, type } = e.target as HTMLInputElement;
     if (name === 'tags') {
       const id = Number(value);
-      setForm((prev) => ({
-        ...prev,
-        tags: checked ? [...prev.tags, id] : prev.tags.filter((t) => t !== id),
-      }));
+      setForm((prev) => {
+        const prevTags = Array.isArray(prev.tags) ? prev.tags : [];
+        const normalized = checked
+          ? [...prevTags, id]
+          : prevTags.filter(
+              (t: any) => (typeof t === 'number' ? t : t.id) !== id,
+            );
+        return { ...prev, tags: normalized };
+      });
       return;
     }
 
@@ -92,18 +101,46 @@ const ListadoEventosEditable: React.FC<Props> = ({ pdiId }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      const formatDatetimeLocalToSQL = (v?: string) => {
+        if (!v) return undefined;
+        const [date, time] = v.split('T');
+        if (!time) return `${date} 00:00:00`;
+        const timeWithSeconds =
+          time.length === 5 ? `${time}:00` : time.split('.')[0];
+        return `${date} ${timeWithSeconds}`;
+      };
+
       const body = {
-        ...form,
-        tags: form.tags.map((t) => (typeof t === 'number' ? t : Number(t))),
+        titulo: form.titulo,
+        descripcion: form.descripcion,
+        horaDesde: formatDatetimeLocalToSQL(form.horaDesde),
+        horaHasta: formatDatetimeLocalToSQL(form.horaHasta),
+        estado: form.estado,
+        tags: form.tags,
         puntoDeInteres: pdiId,
       };
 
-      const result = form.id 
+      const result = form.id
         ? await updateEvento(form.id, body)
         : await createEvento(body);
 
       if (!result.success) {
         throw new Error(result.error || 'Error al guardar el evento');
+      }
+
+      // Refrescar lista de eventos desde el backend para actualizar la UI inmediatamente
+      try {
+        const refreshed = await getPDIById(pdiId);
+        if (
+          refreshed.success &&
+          refreshed.data &&
+          (refreshed.data as any).eventos
+        ) {
+          setEvents((refreshed.data as any).eventos);
+        }
+      } catch (refreshErr) {
+        // no bloquear el flujo si falla el re-fetch
+        console.warn('No se pudo refrescar eventos tras guardar:', refreshErr);
       }
 
       setShowModal(false);
@@ -116,7 +153,6 @@ const ListadoEventosEditable: React.FC<Props> = ({ pdiId }) => {
   const handleSuccessClose = () => {
     setShowSuccess(false);
     setEditEvento(null);
-    window.location.href = `/EditPDI/${pdiId}`;
   };
 
   const handleDelete = async () => {
@@ -126,9 +162,20 @@ const ListadoEventosEditable: React.FC<Props> = ({ pdiId }) => {
       if (!result.success) {
         throw new Error(result.error || 'Error al eliminar el evento');
       }
+      try {
+        const refreshed = await getPDIById(pdiId);
+        if (
+          refreshed.success &&
+          refreshed.data &&
+          (refreshed.data as any).eventos
+        ) {
+          setEvents((refreshed.data as any).eventos);
+        }
+      } catch (refreshErr) {
+        console.warn('No se pudo refrescar eventos tras eliminar:', refreshErr);
+      }
       setShowDeleteModal(false);
       setEventoAEliminar(null);
-      window.location.href = `/EditPDI/${pdiId}`;
     } catch (err) {
       alert(`❌ No se pudo eliminar el evento: ${err}`);
     }
@@ -147,6 +194,7 @@ const ListadoEventosEditable: React.FC<Props> = ({ pdiId }) => {
             onClick={() => {
               setEditEvento(null);
               setForm({
+                id: undefined,
                 titulo: '',
                 descripcion: '',
                 horaDesde: '',
@@ -167,126 +215,49 @@ const ListadoEventosEditable: React.FC<Props> = ({ pdiId }) => {
           </div>
         </Col>
 
-        {data.eventos.map((evento) => {
-          const fechaObj = new Date(evento.horaDesde);
-          const dia = fechaObj.getDate();
-          const mes = fechaObj.toLocaleString('es-ES', { month: 'short' });
-          const horaInicio = fechaObj.toLocaleTimeString([], {
-            hour: '2-digit',
-            minute: '2-digit',
-          });
-          const horaFin = new Date(evento.horaHasta).toLocaleTimeString([], {
-            hour: '2-digit',
-            minute: '2-digit',
-          });
-
-          return (
-            <Col key={evento.id} xs={12} md={6}>
-              <div className="evento-card">
-                <div className="evento-fecha">
-                  <span className="evento-dia">{dia}</span>
-                  <span className="evento-mes">{mes}</span>
-                </div>
-                <div className="evento-info">
-                  <h3 className="evento-titulo">{evento.titulo}</h3>
-                  <p>{evento.descripcion}</p>
-                  <p>
-                    {horaInicio} - {horaFin}
-                  </p>
-                  <Button
-                    variant="outline-primary"
-                    size="sm"
-                    onClick={() => setEditEvento(evento)}
-                  >
-                    Editar
-                  </Button>
-                  <Button
-                    variant="outline-danger"
-                    size="sm"
-                    className="ms-2"
-                    onClick={() => {
-                      setEventoAEliminar(evento);
-                      setShowDeleteModal(true);
-                    }}
-                  >
-                    Eliminar
-                  </Button>
-                </div>
-              </div>
-            </Col>
-          );
-        })}
+        {events.map((evento) => (
+          <Col key={evento.id} xs={12} md={6}>
+            <EventCard evento={evento}>
+              <Button
+                variant="outline-primary"
+                size="sm"
+                onClick={() => setEditEvento(evento)}
+              >
+                Editar
+              </Button>
+              <Button
+                variant="outline-danger"
+                size="sm"
+                className="ms-2"
+                onClick={() => {
+                  setEventoAEliminar(evento);
+                  setShowDeleteModal(true);
+                }}
+              >
+                Eliminar
+              </Button>
+            </EventCard>
+          </Col>
+        ))}
       </Row>
 
       {/* Modal Crear/Editar */}
       <Modal show={showModal} onHide={() => setShowModal(false)}>
-        <Form onSubmit={handleSubmit}>
-          <Modal.Header closeButton>
-            <Modal.Title>
-              {form.id ? 'Editar Evento' : 'Crear Evento'}
-            </Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <FormField
-              label="Título"
-              name="titulo"
-              value={form.titulo}
-              onChange={handleChange}
-              required
-            />
-            <FormField
-              label="Descripción"
-              name="descripcion"
-              value={form.descripcion}
-              onChange={handleChange}
-              as="textarea"
-              required
-            />
-            <FormField
-              label="Hora desde"
-              name="horaDesde"
-              type="datetime-local"
-              value={form.horaDesde}
-              onChange={handleChange}
-              required
-            />
-            <FormField
-              label="Hora hasta"
-              name="horaHasta"
-              type="datetime-local"
-              value={form.horaHasta}
-              onChange={handleChange}
-              required
-            />
-            <Form.Select
-              name="estado"
-              value={form.estado}
-              onChange={handleChange}
-              className="mb-3"
-              required
-            >
-              {ESTADOS.map((estado) => (
-                <option key={estado} value={estado}>
-                  {estado}
-                </option>
-              ))}
-            </Form.Select>
+        <Modal.Header closeButton>
+          <Modal.Title>
+            {form.id ? 'Editar Evento' : 'Crear Evento'}
+          </Modal.Title>
+        </Modal.Header>
 
-            <TagsSelector
-              tags={Array.isArray(allTags) ? allTags : []}
-              selected={form.tags || []}
-              onChange={handleChange}
-            />
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={() => setShowModal(false)}>
-              Cancelar
-            </Button>
-            <Button variant="primary" type="submit">
-              Guardar
-            </Button>
-          </Modal.Footer>
-        </Form>
+        <Modal.Body>
+          <EventoForm
+            form={form}
+            allTags={Array.isArray(allTags) ? allTags : []}
+            onChange={handleChange}
+            onSubmit={handleSubmit}
+            onCancel={() => setShowModal(false)}
+          />
+        </Modal.Body>
       </Modal>
 
       {/* Modal de éxito */}
