@@ -1,4 +1,6 @@
 import { Link } from 'react-router-dom';
+import { Sun } from 'lucide-react';
+import '@/styles/homepage.css';
 
 export default function Footer() {
   return (
@@ -7,40 +9,37 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
           {/* Logo y descripción */}
           <div className="space-y-4">
-            <div className="flex items-center gap-2">
-              <span className="material-symbols-outlined text-primary text-2xl">explore</span>
-              <span className="text-xl font-black tracking-tighter uppercase text-slate-900 dark:text-white">
+            <div className="logo-discover">
+              <Sun className="w-6 h-6" />
+              <span className="logo-discover-text text-slate-900 dark:text-white">
                 Discover
               </span>
             </div>
-            <p className="text-slate-600 dark:text-slate-400 text-sm">
+            <p className="footer-text">
               Proyecto académico desarrollado por estudiantes de la UTN (Universidad Tecnológica Nacional).
             </p>
           </div>
 
           <div className="space-y-4">
-            <h4 className="font-bold text-sm uppercase tracking-wider text-slate-900 dark:text-white">
+            <h4 className="footer-section-title">
               Proyecto Académico
             </h4>
-            <p className="text-slate-600 dark:text-slate-400 text-sm">
+            <p className="footer-text">
               Desarrollo de Software - UTN
             </p>
-            <p className="text-slate-600 dark:text-slate-400 text-sm">
+            <p className="footer-text">
               Año 2025
             </p>
           </div>
 
           <div className="space-y-4">
-            <h4 className="font-bold text-sm uppercase tracking-wider text-slate-900 dark:text-white">
+            <h4 className="footer-section-title">
               Ayúdanos a mejorar
             </h4>
-            <p className="text-slate-600 dark:text-slate-400 text-sm mb-4">
+            <p className="footer-text mb-4">
               Tu opinión es importante para nosotros
             </p>
-            <Link 
-              to="/working-on-it"
-              className="inline-flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary/90 text-white rounded-lg transition-all text-sm font-semibold"
-            >
+            <Link to="/working-on-it" className="footer-button">
               <span className="material-symbols-outlined text-lg">feedback</span>
               Enviar sugerencia
             </Link>

@@ -8,12 +8,12 @@
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
 
-  /* Layout y espaciado */
+  /* Layout y espaciado - más padding para que no toque los bordes */
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 16px;
-  padding: 16px 16px;
+  padding: 20px 32px;
 
   /* Bordes y sombras para efecto de profundidad */
   border-radius: 16px;
@@ -35,7 +35,17 @@
 }
 
 .navTitle:hover {
-  color: #ffc107;
+  color: #fff347;
+}
+
+/* Logo "Discover" - color personalizable */
+.navLogo {
+  color: #ffffff;
+  transition: color 0.3s ease;
+}
+
+.navLogo:hover {
+  color: #f9d400; /* Amber-600 - puedes cambiar este color a tu gusto */
 }
 
 .navRight {
@@ -56,7 +66,30 @@
 }
 
 .navLetters:hover {
-  color: #ffc107;
+  color: #dda600;
+}
+
+/* Botón de Iniciar Sesión - colores personalizables */
+.loginButton {
+  padding: 10px 24px;
+  font-weight: bold;
+  border-radius: 8px;
+  border: 1px solid rgba(217, 119, 6, 0.3); /* Borde semi-transparente */
+  backdrop-filter: blur(4px);
+  transition: all 0.2s ease;
+  cursor: pointer;
+  
+  /* Gradiente personalizable - cambia estos colores a tu gusto */
+  background: linear-gradient(to bottom right, #dda600, #dda600);
+  color: #ffffff;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.loginButton:hover {
+  /* Gradiente hover personalizable */
+  background: linear-gradient(to bottom right, #dda600, #dda600);
+  box-shadow: 0 4px 12px rgba(217, 119, 6, 0.5);
+  transform: scale(1.02);
 }
 
 /* ========== NAVBAR HOME PAGE (Desktop) ========== */

@@ -8,7 +8,7 @@ import AuthModal from '@/features/auth/components/AuthModal/AuthModal';
 import RegisterModal from '@/features/auth/components/RegisterModal/RegisterModal';
 import WelcomeModal from '@/features/auth/components/WelcomeModal/WelcomeModal';
 import Sidebar from '@/components/layout/Sidebar';
-import { Map, Notebook, Star, CircleUserRound, Settings, Menu } from "lucide-react";
+import { Map, Notebook, Star, CircleUserRound, Settings, Menu, Sun } from "lucide-react";
 
 
 
@@ -39,60 +39,71 @@ const Navbar = () => {
       {width > 950 ? (
         /* Desktop Navbar - Floating glassmorphism */
         <nav className="navbar fixed top-6 left-1/2 -translate-x-1/2 z-[100] w-[90%] max-w-[1100px]">
-          <div>
-            <Link to={"/"}>
-              <button className='navTitle'>
-                ¿QUE HACEMOS?
-              </button>
+          <div className="px-4">
+            <Link to="/" className="flex items-center gap-2 no-underline navLogo">
+              <Sun className="w-6 h-6" />
+              <span className="text-lg font-black tracking-tighter uppercase">
+                Discover
+              </span>
             </Link>
           </div>
-          <div className="navRight gap-3">
-            <Link className="fw-semibold navLetters" to={"/map"}>
-              Mapa
-              <Map />
-            </Link>
-            <Link className="fw-semibold navLetters" to={"/agenda"}>
-              Agenda
-              <Notebook />
-            </Link>
-            <Link className="fw-semibold navLetters" to={"/favoritos"}>
-              Favoritos
-              <Star />
-            </Link>
-            {user ? (
-              <>
-                {isAdmin && (
-                  <div className="dropdown">
-                    <button className="fw-semibold dropdown-toggle navLetters" data-bs-toggle="dropdown" aria-expanded="false">
-                      Gestión
-                      <Settings />
-                    </button>
-                    <ul className="dropdown-menu dropdown-menu-end">
-                      <li><Link className="dropdown-item" to="/provincias">Gestión provincias</Link></li>
-                      <li><Link className="dropdown-item" to="/tags">Gestión tags</Link></li>
-                      <li><button className="dropdown-item" disabled>Gestión PDI (próximamente)</button></li>
-                    </ul>
-                  </div>
-                )}
+          
+          {user ? (
+            /* Authenticated User - Full Navigation */
+            <div className="navRight gap-3">
+              <Link className="fw-semibold navLetters" to={"/map"}>
+                Mapa
+                <Map />
+              </Link>
+              <Link className="fw-semibold navLetters" to={"/agenda"}>
+                Agenda
+                <Notebook />
+              </Link>
+              <Link className="fw-semibold navLetters" to={"/favoritos"}>
+                Favoritos
+                <Star />
+              </Link>
+              {isAdmin && (
                 <div className="dropdown">
                   <button className="fw-semibold dropdown-toggle navLetters" data-bs-toggle="dropdown" aria-expanded="false">
-                    {user.nombre ?? user.gmail }
-                    <CircleUserRound />
+                    Gestión
+                    <Settings />
                   </button>
                   <ul className="dropdown-menu dropdown-menu-end">
-                    <li><Link className="dropdown-item" to="/perfil">Perfil</Link></li>
-                    <li><button className="dropdown-item" onClick={async () => { await logout(); }}>Cerrar sesión</button></li>
+                    <li><Link className="dropdown-item" to="/provincias">Gestión provincias</Link></li>
+                    <li><Link className="dropdown-item" to="/tags">Gestión tags</Link></li>
+                    <li><button className="dropdown-item" disabled>Gestión PDI (próximamente)</button></li>
                   </ul>
                 </div>
-              </>
-            ) : (
-              <Link className="fw-semibold navLetters" to="#" onClick={() => setShowAuth(true)}>
-                Usuario
-                <CircleUserRound />
+              )}
+              <div className="dropdown">
+                <button className="fw-semibold dropdown-toggle navLetters" data-bs-toggle="dropdown" aria-expanded="false">
+                  {user.nombre ?? user.gmail }
+                  <CircleUserRound />
+                </button>
+                <ul className="dropdown-menu dropdown-menu-end">
+                  <li><Link className="dropdown-item" to="/perfil">Perfil</Link></li>
+                  <li><button className="dropdown-item" onClick={async () => { await logout(); }}>Cerrar sesión</button></li>
+                </ul>
+              </div>
+            </div>
+          ) : (
+            /* Non-Authenticated User - Map + Login Button */
+            <div className="navRight gap-3">
+              <Link className="fw-semibold navLetters" to={"/map"}>
+                Mapa
+                <Map />
               </Link>
-            )}
-
-          </div>
+              <div className="px-4">
+                <button
+                  onClick={() => setShowAuth(true)}
+                  className="loginButton"
+                >
+                  Iniciar sesión
+                </button>
+              </div>
+            </div>
+          )}
         </nav>
       ) : (
         /* Mobile Navbar - Matching glassmorphism effect */
@@ -106,9 +117,9 @@ const Navbar = () => {
               <Menu className="w-6 h-6 text-white" />
             </button>
             
-            <Link to="/" className="flex items-center gap-2">
-              <span className="material-symbols-outlined text-white text-xl">explore</span>
-              <span className="text-lg font-black tracking-tighter uppercase text-white">
+            <Link to="/" className="flex items-center gap-2 no-underline navLogo">
+              <Sun className="w-5 h-5" />
+              <span className="text-lg font-black tracking-tighter uppercase">
                 Discover
               </span>
             </Link>
@@ -117,6 +128,13 @@ const Navbar = () => {
           </div>
         </nav>
       )}
+
+      {/* Sidebar */}
+      <Sidebar 
+        isOpen={sidebarOpen} 
+        onClose={() => setSidebarOpen(false)}
+        onOpenAuth={() => setShowAuth(true)}
+      />
 
       {/* Modals */}
       <AuthModal

@@ -1,5 +1,14 @@
 import hero from '@/assets/images/hero.jfif';
-export default function HeroSection() {
+import { useUser } from '@/features/user';
+import '@/styles/homepage.css';
+
+interface HeroSectionProps {
+  onLoginClick?: () => void;
+}
+
+export default function HeroSection({ onLoginClick }: HeroSectionProps) {
+  const { user } = useUser();
+
   return (
     <section className="relative w-full h-[calc(100vh-4rem)] min-h-[500px] md:min-h-[600px] flex items-center justify-center overflow-hidden">
       {/* Background Image */}
@@ -15,13 +24,25 @@ export default function HeroSection() {
       {/* Content */}
       <div className="relative z-10 text-center space-y-6 md:space-y-8 px-6">
         <div className="space-y-2">
-          <h1 className="text-white text-5xl sm:text-6xl md:text-7xl lg:text-9xl font-extrabold tracking-tight drop-shadow-2xl">
+          <h1 className="hero-title text-5xl sm:text-6xl md:text-7xl lg:text-9xl">
             Discover
           </h1>
-          <p className="text-white/90 text-sm sm:text-base md:text-lg lg:text-2xl font-light tracking-[0.2em] uppercase">
+          <p className="hero-subtitle text-sm sm:text-base md:text-lg lg:text-2xl">
             ¿Adónde quisieras ir?
           </p>
         </div>
+
+        {/* CTA Button for Non-Authenticated Users */}
+        {!user && onLoginClick && (
+          <div className="pt-4">
+            <button
+              onClick={onLoginClick}
+              className="loginButton px-8 py-4 text-lg rounded-xl shadow-2xl"
+            >
+              ¡Comienza tu aventura!
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Animated Arrow */}
