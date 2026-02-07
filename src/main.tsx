@@ -6,7 +6,7 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import { Toaster } from 'react-hot-toast';
 import ErrorModalManager from '@/components/modals/ErrorModal/ErrorModal';
-
+import 'maplibre-gl/dist/maplibre-gl.css';
 import { router } from './router.tsx';
 import { UserProvider } from '@/features/user';
 import { ThemeProvider } from './context/ThemeContext';

@@ -1,0 +1,58 @@
+.maplibregl-popup-content {
+  padding: 0;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.18);
+}
+
+/* Card */
+.custom-popup {
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  background: white;
+  min-width: 220px;
+}
+
+/* Header */
+.custom-popup h4 {
+  margin: 0;
+  padding: 14px 16px 6px 16px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #222;
+}
+
+/* Body */
+.custom-popup p {
+  margin: 0;
+  padding: 0 16px;
+  font-size: 13px;
+  color: #555;
+  line-height: 1.4;
+}
+
+/* Location */
+.custom-popup small {
+  display: block;
+  padding: 8px 16px 0 16px;
+  color: #888;
+  font-size: 12px;
+}
+
+/* Footer */
+.custom-popup a {
+  display: block;
+  margin: 14px 16px 16px 16px;
+  padding: 8px 12px;
+  text-align: center;
+  background: #3FB1CE;
+  color: white;
+  border-radius: 8px;
+  font-size: 13px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.custom-popup a:hover {
+  background: #2f95af;
+}

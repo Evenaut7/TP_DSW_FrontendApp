@@ -343,6 +343,10 @@ export async function deleteLocalidad(id: number) {
 }
 
 // PDI
+export async function getPDIs() {
+    return apiGet('/api/puntosDeInteres');
+}
+
 export async function getPDIById(id: number) {
     return apiGet(`/api/puntosDeInteres/${id}`);
 }

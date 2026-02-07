@@ -30,8 +30,8 @@ export type PDI = {
     imagen: string;
     calle: string;
     altura: number;
-    latitud?: number;
-    longitud?: number;
+    lat?: number;
+    lng?: number;
     privado?: boolean;
     localidad: {
     id: number;

@@ -11,6 +11,7 @@ import { TagsPage } from '@/features/tags';
 import { Localidad, EditLocalidad } from '@/features/localidades';
 import { PDIPage, CreatePDI, EditPDI } from '@/features/pdi';
 import { CRUDProvincia } from '@/features/provincias';
+import MapPage from './features/map/mapPage.tsx';
 
 export const router = createBrowserRouter([
   { path: '*', element: <NotFoundPage /> },
@@ -25,6 +26,6 @@ export const router = createBrowserRouter([
   { path: '/provincias', element: <CRUDProvincia /> },
   { path: '/EditPDI/:id', element: <EditPDI /> },
   { path: '/editLocalidad/:id', element: <EditLocalidad /> },
-  { path: '/map', element: <WorkingOnItPage />}
+  { path: '/map', element: <MapPage />}
 ]);
 
