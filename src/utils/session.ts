@@ -29,7 +29,7 @@ export async function login(gmail: string, password: string): Promise<{ success:
 export async function updateUser(userId: number, data: UpdateUserData): Promise<{ success: boolean; error?: string }> {
     // Validar email
     if (data.gmail) {
-        const emailRegex = /^[^\s@]+@[^\s@]+mail\.com$/;
+        const emailRegex = /^[^\s@]+@[^\s@].com$/;
         if (!emailRegex.test(data.gmail)) {
             return { success: false, error: 'El email debe tener formato válido y terminar en mail.com' };
         }

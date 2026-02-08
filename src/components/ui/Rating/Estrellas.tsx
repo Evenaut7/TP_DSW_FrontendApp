@@ -16,7 +16,7 @@ const StarRating: React.FC<StarRatingProps> = ({ rating, reviews, max = 5 }) => 
         {stars.map((isFilled, index) => (
           <Star
             key={index}
-            fill={isFilled ? "#87533b" : "gray"}     
+            fill={isFilled ? "#F6B40E" : "gray"}     
             stroke="none"                         
             className="w-7 h-7"
           />

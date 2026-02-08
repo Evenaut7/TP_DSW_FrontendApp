@@ -18,6 +18,8 @@ interface PDI {
   imagen: string;
   calle: string;
   altura: number;
+  promedio: number;
+  valoraciones: any[]
   localidad: {
     id: number;
     nombre: string;
@@ -107,13 +109,13 @@ const PDIPage = () => {
         <div className="descriptionPDI bg-light p-4 rounded ">
           {/* Dirección */}
           <p className="text-muted mb-3">
-            📍 {pdi.calle} {pdi.altura}
+            📍 {pdi.calle} {pdi.altura} 
           </p>
 
           <p className="mb-3">{pdi.descripcion}</p>
 
           <div className="underDescriptionPDI mb-3">
-            <Estrellas rating={3} reviews={37} />
+            <Estrellas rating={pdi.promedio} reviews={pdi.valoraciones.length} />
           </div>
 
           {/* Botones */}

@@ -4,6 +4,7 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import './MapPage.css';
 import Navbar from '@/components/layout/Navbar/Navbar.tsx';
 import { useApiGet } from '@/utils/api.ts';
+import {API_BASE_URL } from '@/utils/api'
 
 interface PDI {
   id: number;
@@ -12,6 +13,7 @@ interface PDI {
   lng?: number;
   lat?: number;
   color?: string;
+  imagen?: string;
   localidad?: {
     nombre: string;
   };
@@ -60,6 +62,7 @@ export default function MapPage() {
       properties: {
         id: p.id,
         nombre: p.nombre,
+        imagen: p.imagen,
         descripcion: p.descripcion || '',
         localidad: p.localidad?.nombre || '',
         color: p.color || "#3FB1CE"
@@ -106,6 +109,11 @@ export default function MapPage() {
 
       const popupHTML = `
         <div class="custom-popup">
+          <img
+            src=${ API_BASE_URL }/public/${ props.imagen }
+            alt={props.nombre}
+            class="card-image"
+          />
           <h4>${props.nombre}</h4>
           ${props.descripcion ? `<p>${props.descripcion}</p>` : ''}
           ${props.localidad ? `<small>📍 ${props.localidad}</small>` : ''}

@@ -56,3 +56,9 @@
 .custom-popup a:hover {
   background: #2f95af;
 }
+
+.card-image {
+  height: 140px;
+  width: 100%;
+  object-fit: cover;
+}
