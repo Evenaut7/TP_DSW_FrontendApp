@@ -35,8 +35,8 @@ export default function MapPage() {
     map.current = new maplibregl.Map({
       container: mapContainer.current,
       style: `https://api.maptiler.com/maps/streets-v2/style.json?key=${apiKey}`,
-      center: [-60.69, -32.95],
-      zoom: 4
+      center: [-63.51, -37.53],
+      zoom: 0
     });
 
     map.current.on('load', () => setMapLoaded(true));
@@ -145,8 +145,8 @@ export default function MapPage() {
 
       map.current.fitBounds(bounds, {
         padding: 50,
-        maxZoom: 15,
-        duration: 1000
+        maxZoom: 3,
+        duration: 1500
       });
     }
 
