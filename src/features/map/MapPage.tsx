@@ -4,7 +4,7 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import './MapPage.css';
 import Navbar from '@/components/layout/Navbar/Navbar.tsx';
 import { useApiGet } from '@/utils/api.ts';
-import {API_BASE_URL } from '@/utils/api'
+import { API_BASE_URL } from '@/utils/api';
 
 interface PDI {
   id: number;
@@ -24,7 +24,11 @@ export default function MapPage() {
   const map = useRef<maplibregl.Map | null>(null);
   const [mapLoaded, setMapLoaded] = useState(false);
 
-  const { data: pdis, loading, error } = useApiGet<PDI[]>('/api/puntosDeInteres');
+  const {
+    data: pdis,
+    loading,
+    error,
+  } = useApiGet<PDI[]>('/api/puntosDeInteres');
 
   useEffect(() => {
     if (map.current) return;
@@ -36,7 +40,7 @@ export default function MapPage() {
       container: mapContainer.current,
       style: `https://api.maptiler.com/maps/streets-v2/style.json?key=${apiKey}`,
       center: [-63.51, -37.53],
-      zoom: 0
+      zoom: 0,
     });
 
     map.current.on('load', () => setMapLoaded(true));
@@ -54,50 +58,50 @@ export default function MapPage() {
     if (!mapLoaded || !map.current || !pdis) return;
 
     const validPDIs = pdis.filter(
-      p => typeof p.lng === 'number' && typeof p.lat === 'number'
+      (p) => typeof p.lng === 'number' && typeof p.lat === 'number',
     );
 
-    const features = validPDIs.map(p => ({
-      type: "Feature",
+    const features = validPDIs.map((p) => ({
+      type: 'Feature',
       properties: {
         id: p.id,
         nombre: p.nombre,
         imagen: p.imagen,
         descripcion: p.descripcion || '',
         localidad: p.localidad?.nombre || '',
-        color: p.color || "#3FB1CE"
+        color: p.color || '#3FB1CE',
       },
       geometry: {
-        type: "Point",
-        coordinates: [p.lng!, p.lat!]
-      }
+        type: 'Point',
+        coordinates: [p.lng!, p.lat!],
+      },
     }));
 
     const geojson = {
-      type: "FeatureCollection",
-      features
+      type: 'FeatureCollection',
+      features,
     };
 
-    if (map.current.getSource("pdis")) {
-      (map.current.getSource("pdis") as any).setData(geojson);
+    if (map.current.getSource('pdis')) {
+      (map.current.getSource('pdis') as any).setData(geojson);
       return;
     }
 
-    map.current.addSource("pdis", {
-      type: "geojson",
-      data: geojson
+    map.current.addSource('pdis', {
+      type: 'geojson',
+      data: geojson,
     });
 
     map.current.addLayer({
-      id: "pdis-layer",
-      type: "circle",
-      source: "pdis",
+      id: 'pdis-layer',
+      type: 'circle',
+      source: 'pdis',
       paint: {
-        "circle-radius": 8,
-        "circle-color": ["get", "color"],
-        "circle-stroke-width": 2,
-        "circle-stroke-color": "#ffffff"
-      }
+        'circle-radius': 8,
+        'circle-color': ['get', 'color'],
+        'circle-stroke-width': 2,
+        'circle-stroke-color': '#ffffff',
+      },
     });
 
     map.current.on('click', 'pdis-layer', (e) => {
@@ -110,7 +114,7 @@ export default function MapPage() {
       const popupHTML = `
         <div class="custom-popup">
           <img
-            src=${ API_BASE_URL }/public/${ props.imagen }
+            src=${API_BASE_URL}/public/${props.imagen}
             alt={props.nombre}
             class="card-image"
           />
@@ -124,7 +128,7 @@ export default function MapPage() {
       new maplibregl.Popup({
         offset: 20,
         closeButton: false,
-        closeOnClick: true
+        closeOnClick: true,
       })
         .setLngLat(coordinates)
         .setHTML(popupHTML)
@@ -141,15 +145,14 @@ export default function MapPage() {
 
     if (validPDIs.length > 0) {
       const bounds = new maplibregl.LngLatBounds();
-      validPDIs.forEach(p => bounds.extend([p.lng!, p.lat!]));
+      validPDIs.forEach((p) => bounds.extend([p.lng!, p.lat!]));
 
       map.current.fitBounds(bounds, {
         padding: 50,
         maxZoom: 3,
-        duration: 1500
+        duration: 1500,
       });
     }
-
   }, [mapLoaded, pdis]);
 
   return (
@@ -171,10 +174,7 @@ export default function MapPage() {
           </div>
         )}
 
-        <div
-          ref={mapContainer}
-          style={{ width: '100vw', height: '100vh' }}
-        />
+        <div ref={mapContainer} style={{ width: '100vw', height: '100vh' }} />
       </div>
     </>
   );

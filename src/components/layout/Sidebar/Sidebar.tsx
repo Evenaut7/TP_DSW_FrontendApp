@@ -1,5 +1,15 @@
 import { Link } from 'react-router-dom';
-import { X, Map, Notebook, Star, Settings, CircleUserRound, House, Sun } from 'lucide-react';
+import {
+  X,
+  Map,
+  Notebook,
+  Star,
+  Settings,
+  CircleUserRound,
+  House,
+  Sun,
+  Sparkles,
+} from 'lucide-react';
 import { useUser } from '@/features/user';
 import { useAuthAdmin } from '@/features/auth';
 import '@/styles/homepage.css';
@@ -11,7 +21,7 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ isOpen, onClose, onOpenAuth }: SidebarProps) {
-  const { user, logout } = useUser();
+  const { user, loading, logout } = useUser();
   const { isAdmin } = useAuthAdmin();
 
   const handleLinkClick = () => {
@@ -60,15 +70,35 @@ export default function Sidebar({ isOpen, onClose, onOpenAuth }: SidebarProps) {
           {/* Opciones solo para usuarios autenticados */}
           {user && (
             <>
-              <Link to="/agenda" onClick={handleLinkClick} className="sidebar-link">
+              <Link
+                to="/agenda"
+                onClick={handleLinkClick}
+                className="sidebar-link"
+              >
                 <Notebook className="w-5 h-5" />
                 <span className="font-semibold">Agenda</span>
               </Link>
 
-              <Link to="/favoritos" onClick={handleLinkClick} className="sidebar-link">
+              <Link
+                to="/favoritos"
+                onClick={handleLinkClick}
+                className="sidebar-link"
+              >
                 <Star className="w-5 h-5" />
                 <span className="font-semibold">Favoritos</span>
               </Link>
+
+              {/* Creator Panel */}
+              {user.tipo === 'creador' && (
+                <Link
+                  to="/creator"
+                  onClick={handleLinkClick}
+                  className="sidebar-link"
+                >
+                  <Sparkles className="w-5 h-5" />
+                  <span className="font-semibold">Mi Panel Creador</span>
+                </Link>
+              )}
             </>
           )}
 
@@ -79,11 +109,19 @@ export default function Sidebar({ isOpen, onClose, onOpenAuth }: SidebarProps) {
               <div className="px-4 py-2 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
                 Administración
               </div>
-              <Link to="/provincias" onClick={handleLinkClick} className="sidebar-link">
+              <Link
+                to="/provincias"
+                onClick={handleLinkClick}
+                className="sidebar-link"
+              >
                 <Settings className="w-5 h-5" />
                 <span className="font-semibold">Gestión Provincias</span>
               </Link>
-              <Link to="/tags" onClick={handleLinkClick} className="sidebar-link">
+              <Link
+                to="/tags"
+                onClick={handleLinkClick}
+                className="sidebar-link"
+              >
                 <Settings className="w-5 h-5" />
                 <span className="font-semibold">Gestión Tags</span>
               </Link>
@@ -97,7 +135,9 @@ export default function Sidebar({ isOpen, onClose, onOpenAuth }: SidebarProps) {
             <div className="space-y-2">
               <div className="flex items-center gap-3 px-4 py-2 text-slate-700 dark:text-slate-300">
                 <CircleUserRound className="w-5 h-5" />
-                <span className="font-semibold text-sm">{user.nombre ?? user.gmail}</span>
+                <span className="font-semibold text-sm">
+                  {user.nombre ?? user.gmail}
+                </span>
               </div>
               <Link
                 to="/perfil"

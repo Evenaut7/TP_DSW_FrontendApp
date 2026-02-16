@@ -5,11 +5,17 @@ import PantallaDeCarga from '@/components/ui/Loading/PantallaDeCarga';
 import { ListadoDeTags } from '@/features/tags';
 import { ListadoEventosEditable } from '@/features/eventos';
 import { PDIForm } from '@/features/pdi';
-import { useApiGet, getPDIById, uploadImage, updatePDI, getImageUrl } from '@/utils/api';
+import {
+  useApiGet,
+  getPDIById,
+  uploadImage,
+  updatePDI,
+  getImageUrl,
+} from '@/utils/api';
 import { usePDIForm } from '@/features/pdi';
 import './EditPDI.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { useAuthAdmin } from '@/features/auth';
+import { useUser } from '@/features/user';
 
 interface PDI {
   id: number;
@@ -30,7 +36,7 @@ const EditPDI = () => {
   const navigate = useNavigate();
   const pdiId = id ? parseInt(id) : null;
 
-  const { isAdmin, loading, error } = useAuthAdmin();
+  const { user, loading: userLoading } = useUser();
 
   const { form, setForm, handleChange } = usePDIForm();
   const { data: usuarios } = useApiGet<any[]>('/api/usuarios');
@@ -44,13 +50,13 @@ const EditPDI = () => {
   useEffect(() => {
     const fetchPDI = async () => {
       if (!pdiId) return;
-      
+
       try {
         const response = await getPDIById(pdiId);
         if (!response.success || !response.data) {
           throw new Error(response.error || 'Error al cargar PDI');
         }
-        
+
         const data = response.data as PDI;
         setPdiOriginal(data);
 
@@ -66,7 +72,9 @@ const EditPDI = () => {
           localidad: data.localidad,
         });
       } catch (err) {
-        alert(`Error cargando el PDI: ${err instanceof Error ? err.message : 'Error desconocido'}`);
+        alert(
+          `Error cargando el PDI: ${err instanceof Error ? err.message : 'Error desconocido'}`,
+        );
       } finally {
         setCargandoPDI(false);
       }
@@ -77,7 +85,7 @@ const EditPDI = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!pdiId) return;
-    
+
     setLoading(true);
 
     try {
@@ -89,7 +97,8 @@ const EditPDI = () => {
         if (!uploadResult.success || !uploadResult.data) {
           throw new Error(uploadResult.error || 'Error al subir imagen');
         }
-        imagenUrl = uploadResult.data.filename;
+        imagenUrl =
+          uploadResult.data.nombreArchivo || uploadResult.data.filename || '';
       }
 
       const updatedPDI = {
@@ -105,7 +114,7 @@ const EditPDI = () => {
       };
 
       const result = await updatePDI(pdiId, updatedPDI);
-      
+
       if (!result.success) {
         throw new Error(result.error || 'Error al actualizar el PDI');
       }
@@ -113,16 +122,17 @@ const EditPDI = () => {
       alert('✅ PDI actualizado correctamente');
       navigate(`/pdi/${pdiId}`);
     } catch (err) {
-      alert(`❌ No se pudo actualizar el PDI: ${err instanceof Error ? err.message : 'Error desconocido'}`);
+      alert(
+        `❌ No se pudo actualizar el PDI: ${err instanceof Error ? err.message : 'Error desconocido'}`,
+      );
     } finally {
       setLoading(false);
     }
   };
 
   if (cargandoPDI) return <PantallaDeCarga mensaje="Cargando PDI..." />;
-  if (loading) return <p className="text-center mt-4">Cargando...</p>;
-  if (error) return <p className="text-center mt-4 text-danger">{error}</p>;
-  if (isAdmin === false)
+  if (userLoading) return <p className="text-center mt-4">Cargando...</p>;
+  if (!user || (user.tipo !== 'admin' && user.tipo !== 'creador'))
     return (
       <p className="text-center mt-4 text-warning">
         No podés acceder a esta página

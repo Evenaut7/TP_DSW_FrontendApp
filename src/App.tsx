@@ -1,11 +1,7 @@
-import './styles/App.css'
-import ListadoEventos from '@/features/eventos'
+import './styles/App.css';
 
 function App() {
-
-  return (
-    <ListadoEventos pdiId={1}/>
-  )
+  return null;
 }
 
-export default App
+export default App;

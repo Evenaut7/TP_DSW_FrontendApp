@@ -6,4 +6,4 @@ export { default as TagsSelector } from './components/TagsSelector/TagsSelector'
 export { default as TagsPage } from './pages/TagsPage/TagsPage';
 
 // Hooks
-export { useTagCRUD } from './hooks/useTagCRUD';
+export { useTagCRUD, type TipoTag } from './hooks/useTagCRUD';

@@ -35,10 +35,22 @@ const CreatePDI = () => {
       if (!uploadResult.success || !uploadResult.data) {
         throw new Error(uploadResult.error || 'Error al subir imagen');
       }
-      const imagenUrl = uploadResult.data.filename;
+      // El backend puede devolver 'nombreArchivo' o 'filename'
+      const imagenUrl =
+        uploadResult.data.nombreArchivo || uploadResult.data.filename;
+
+      if (!imagenUrl) {
+        throw new Error('No se pudo obtener el nombre de la imagen subida');
+      }
 
       // Crear PDI usando función centralizada
-      const pdiData = { ...form, imagen: imagenUrl };
+      // Aseguramos que los tipos sean correctos para el backend
+      const pdiData = {
+        ...form,
+        imagen: imagenUrl,
+        altura: Number(form.altura),
+        localidad: Number(form.localidad),
+      };
       const result = await createPDI(pdiData);
 
       if (!result.success || !result.data) {
@@ -51,7 +63,9 @@ const CreatePDI = () => {
       alert('PDI creado con éxito');
       navigate(`/pdi/${newPdiId}`);
     } catch (e) {
-      alert(`Error al crear el PDI: ${e instanceof Error ? e.message : 'Error desconocido'}`);
+      alert(
+        `Error al crear el PDI: ${e instanceof Error ? e.message : 'Error desconocido'}`,
+      );
     } finally {
       setLoading(false);
     }

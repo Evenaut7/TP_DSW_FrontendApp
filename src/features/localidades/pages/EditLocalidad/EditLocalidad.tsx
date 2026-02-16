@@ -5,7 +5,9 @@ import Estrellas from '@/components/ui/Rating/Estrellas';
 import PantallaDeCarga from '@/components/ui/Loading/PantallaDeCarga';
 import FormField from '@/components/forms/FormField/FormField';
 import FormSelect from '@/components/forms/FormSelect/FormSelect';
+import PDIListItem from '@/components/PDI/PDIListItem';
 import { API_BASE_URL } from '@/utils/api';
+import type { PDI as PDIType } from '@/types';
 import './EditLocalidad.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useAuthAdmin } from '@/features/auth';
@@ -13,15 +15,6 @@ import { useAuthAdmin } from '@/features/auth';
 interface Provincia {
   id: number;
   nombre: string;
-}
-
-interface PDI {
-  id: number;
-  nombre: string;
-  descripcion: string;
-  imagen: string;
-  calle: string;
-  altura: number;
 }
 
 interface Localidad {
@@ -32,7 +25,7 @@ interface Localidad {
   longitud?: number;
   imagen?: string;
   provincia?: Provincia;
-  puntosDeInteres?: PDI[];
+  puntosDeInteres?: PDIType[];
 }
 
 export default function EditLocalidad() {
@@ -70,13 +63,13 @@ export default function EditLocalidad() {
         if (!locRes.ok) {
           const errJson = await locRes.json().catch(() => null);
           throw new Error(
-            errJson?.message ?? `Error ${locRes.status} al obtener localidad`
+            errJson?.message ?? `Error ${locRes.status} al obtener localidad`,
           );
         }
         if (!provRes.ok) {
           const errJson = await provRes.json().catch(() => null);
           throw new Error(
-            errJson?.message ?? `Error ${provRes.status} al obtener provincias`
+            errJson?.message ?? `Error ${provRes.status} al obtener provincias`,
           );
         }
 
@@ -118,7 +111,7 @@ export default function EditLocalidad() {
 
   // Handlers de inputs
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
     setLocalidad((prev) =>
@@ -132,7 +125,7 @@ export default function EditLocalidad() {
                   : Number(value)
                 : value,
           }
-        : prev
+        : prev,
     );
   };
 
@@ -198,7 +191,7 @@ export default function EditLocalidad() {
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include',
           body: JSON.stringify(payload),
-        }
+        },
       );
 
       const resJson = await res.json().catch(() => null);
@@ -222,6 +215,38 @@ export default function EditLocalidad() {
       setGuardando(false);
     }
   };
+
+  const handleDeletePDI = async (deletedPdi: PDIType) => {
+    if (!confirm(`¿Eliminar el PDI "${deletedPdi.nombre}"?`)) return;
+    try {
+      const res = await fetch(
+        `${API_BASE_URL}/api/puntosDeInteres/${deletedPdi.id}`,
+        {
+          method: 'DELETE',
+          credentials: 'include',
+        },
+      );
+
+      if (!res.ok) {
+        const errJson = await res.json().catch(() => null);
+        throw new Error(errJson?.message ?? 'Error al eliminar PDI');
+      }
+
+      setLocalidad((prev) =>
+        prev
+          ? {
+              ...prev,
+              puntosDeInteres: prev.puntosDeInteres?.filter(
+                (x) => x.id !== deletedPdi.id,
+              ),
+            }
+          : prev,
+      );
+    } catch (err: any) {
+      alert(err.message ?? 'Error al eliminar PDI');
+    }
+  };
+
   if (loading) return <p className="text-center mt-4">Cargando...</p>;
   if (error) return <p className="text-center mt-4 text-danger">{error}</p>;
   if (isAdmin === false)
@@ -384,75 +409,21 @@ export default function EditLocalidad() {
         </div>
 
         {/* Listado de PDI con editar/eliminar */}
-        <div className="divListadoPDI mt-3 d-flex flex-wrap gap-3">
+        <div className="mt-3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {localidad.puntosDeInteres?.map((pdi) => (
-            <div
+            <PDIListItem
               key={pdi.id}
-              className="position-relative"
-              style={{ width: 260 }}
-            >
-              <div className="card h-100 shadow-sm listado-pdi-card">
-                <img
-                  src={`${API_BASE_URL}/public/${pdi.imagen}`}
-                  className="card-img-top listado-pdi-img"
-                  alt={pdi.nombre}
-                />
-                <div className="card-body d-flex flex-column">
-                  <h5 className="card-title">{pdi.nombre}</h5>
-                  <small className="text-muted mb-2">
-                    📍 {pdi.calle} {pdi.altura}
-                  </small>
-                  <p className="card-text flex-grow-1">{pdi.descripcion}</p>
-                  <div className="d-flex justify-content-between mt-auto">
-                    <button
-                      className="btn btn-primary btn-sm"
-                      onClick={() => navigate(`/editPDI/${pdi.id}`)}
-                    >
-                      ✏️ Editar
-                    </button>
-                    <button
-                      className="btn btn-danger btn-sm"
-                      onClick={async () => {
-                        if (!confirm(`¿Eliminar el PDI "${pdi.nombre}"?`))
-                          return;
-                        try {
-                          const res = await fetch(
-                            `${API_BASE_URL}/api/puntosDeInteres/${pdi.id}`,
-                            { method: 'DELETE', credentials: 'include' }
-                          );
-                          const resJson = await res.json().catch(() => null);
-                          console.log(res.status, resJson);
-                          if (!res.ok)
-                            throw new Error(
-                              resJson?.message ?? 'Error al eliminar PDI'
-                            );
-                          setLocalidad((prev) =>
-                            prev
-                              ? {
-                                  ...prev,
-                                  puntosDeInteres: prev.puntosDeInteres?.filter(
-                                    (x) => x.id !== pdi.id
-                                  ),
-                                }
-                              : prev
-                          );
-                        } catch (err: any) {
-                          alert(err.message ?? 'Error inesperado');
-                        }
-                      }}
-                    >
-                      🗑️ Eliminar
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
+              pdi={pdi}
+              onEdit={() => navigate(`/editPDI/${pdi.id}`)}
+              onDelete={handleDeletePDI}
+            />
           ))}
 
           {/* Card para agregar nuevo PDI */}
           <div
             onClick={() => navigate('/CreatePDI')}
-            style={{ width: 260, cursor: 'pointer' }}
+            style={{ cursor: 'pointer' }}
+            className="h-100"
           >
             <div
               className="card h-100 shadow-sm listado-pdi-card d-flex flex-column justify-content-center align-items-center"
