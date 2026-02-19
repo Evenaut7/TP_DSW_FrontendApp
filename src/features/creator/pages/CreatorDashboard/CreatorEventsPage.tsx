@@ -1,5 +1,3 @@
-import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
 import {
   ArrowLeft,
   Plus,
@@ -8,186 +6,57 @@ import {
   Calendar,
   Clock,
   Tag as TagIcon,
-  X,
   Loader2,
-  AlertTriangle,
 } from 'lucide-react';
 import Navbar from '@/components/layout/Navbar/Navbar';
 import RedirectModal from '@/components/modals/RedirectModal/RedirectModal';
-import { useUser } from '@/features/user';
-import {
-  useApiGet,
-  useApiGetById,
-  createEvento,
-  updateEvento,
-  deleteEvento,
-} from '@/utils/api';
-import TagsSelector from '@/features/tags/components/TagsSelector/TagsSelector';
-import type { PDI, Evento, Tag } from '@/types';
-
-interface EventoFormData {
-  id?: number;
-  titulo: string;
-  descripcion: string;
-  horaDesde: string;
-  horaHasta: string;
-  fecha: string;
-  estado: string;
-  tags: number[];
-}
-
-const ESTADOS = ['Disponible', 'Agotado', 'Cancelado'];
+import CreatorEventModal from '@/features/creator/components/CreatorEventModal/CreatorEventModal';
+import DeleteEventConfirmationModal from '@/features/creator/components/CreatorEventModal/DeleteEventConfirmationModal.tsx';
+import { useCreatorEventsPage } from '@/features/creator/hooks/useCreatorEventsPage';
+import type { Evento } from '@/types';
 
 export default function CreatorEventsPage() {
-  const { id } = useParams<{ id: string }>();
-  const pdiId = id ? parseInt(id) : null;
-  const navigate = useNavigate();
-  const { user, loading: userLoading } = useUser();
-
-  // Fetch Data
   const {
-    data: pdiData,
-    loading: loadingPDI,
-    error: errorPDI,
-    refetch,
-  } = useApiGetById<{ eventos: Evento[]; nombre: string; usuario: number }>(
-    '/api/puntosDeInteres',
-    pdiId,
-  );
-  const { data: allTags } = useApiGet<Tag[]>('/api/tags');
+    pdiData,
+    pdiLoading,
+    pdiError,
+    events,
+    allTags,
+    user,
+    navigate,
+    showModal,
+    submitting,
+    editingEvent,
+    eventToDelete,
+    setEventToDelete,
+    handleOpenCreate,
+    handleOpenEdit,
+    handleCloseModal,
+    handleEventSubmit,
+    handleDeleteConfirm,
+  } = useCreatorEventsPage();
 
-  // Local State
-  const [events, setEvents] = useState<Evento[]>([]);
-  const [showModal, setShowModal] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
-  const [eventToDelete, setEventToDelete] = useState<Evento | null>(null);
-
-  // Form State
-  const [form, setForm] = useState<EventoFormData>({
-    titulo: '',
-    descripcion: '',
-    horaDesde: '',
-    horaHasta: '',
-    fecha: new Date().toISOString().split('T')[0],
-    estado: 'Disponible',
-    tags: [],
-  });
-
-  // Sincronizar eventos cuando cargan
-  useEffect(() => {
-    if (pdiData && Array.isArray((pdiData as any).eventos)) {
-      setEvents((pdiData as any).eventos);
-    }
-  }, [pdiData]);
-
-  // Helpers de fecha
-  const formatTime = (isoString: string) => {
+  // Helpers de fecha y hora
+  const formatTime = (isoString?: string) => {
     if (!isoString) return '';
-    const date = new Date(isoString);
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    return new Date(isoString).toLocaleTimeString([], {
+      hour: '2-digit',
+      minute: '2-digit',
+    });
   };
 
-  const formatDate = (isoString: string) => {
+  const formatDate = (isoString?: string) => {
     if (!isoString) return '';
     return new Date(isoString).toLocaleDateString();
   };
 
-  // Handlers
-  const handleOpenCreate = () => {
-    setForm({
-      titulo: '',
-      descripcion: '',
-      horaDesde: '',
-      horaHasta: '',
-      fecha: new Date().toISOString().split('T')[0],
-      estado: 'Disponible',
-      tags: [],
-    });
-    setShowModal(true);
-  };
-
-  const handleOpenEdit = (evento: Evento) => {
-    const fecha = evento.horaDesde
-      ? new Date(evento.horaDesde).toISOString().split('T')[0]
-      : new Date().toISOString().split('T')[0];
-
-    const getTime = (iso?: string) => {
-      if (!iso) return '';
-      const d = new Date(iso);
-      return d.toTimeString().slice(0, 5); // HH:mm
-    };
-
-    setForm({
-      id: evento.id,
-      titulo: evento.titulo,
-      descripcion: evento.descripcion,
-      horaDesde: getTime(evento.horaDesde),
-      horaHasta: getTime(evento.horaHasta),
-      fecha,
-      estado: evento.estado || 'Disponible',
-      tags: Array.isArray(evento.tags)
-        ? evento.tags.map((t: any) => (typeof t === 'number' ? t : t.id))
-        : [],
-    });
-    setShowModal(true);
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!pdiId) return;
-    setSubmitting(true);
-
-    try {
-      // Combinar fecha y hora
-      const formatTimestamp = (timeStr: string) => {
-        return `${form.fecha} ${timeStr}:00`;
-      };
-
-      const payload = {
-        titulo: form.titulo,
-        descripcion: form.descripcion,
-        horaDesde: formatTimestamp(form.horaDesde),
-        horaHasta: formatTimestamp(form.horaHasta),
-        estado: form.estado, // ¡Aquí enviamos el estado corregido!
-        tags: form.tags,
-        puntoDeInteres: pdiId,
-      };
-
-      const result = form.id
-        ? await updateEvento(form.id, payload)
-        : await createEvento(payload);
-
-      if (!result.success) {
-        throw new Error(result.error || 'Error al guardar evento');
-      }
-
-      await refetch();
-      setSubmitting(false);
-      setShowModal(false);
-    } catch (err: any) {
-      alert(err.message);
-      setSubmitting(false);
-    }
-  };
-
-  const handleDelete = async () => {
-    if (!eventToDelete) return;
-    try {
-      const res = await deleteEvento(eventToDelete.id);
-      if (!res.success) throw new Error(res.error);
-      setEvents((prev) => prev.filter((e) => e.id !== eventToDelete.id));
-      setEventToDelete(null);
-    } catch (err: any) {
-      alert(err.message);
-    }
-  };
-
-  if (loadingPDI || userLoading)
+  if (pdiLoading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <Loader2 className="animate-spin w-8 h-8 text-blue-500" />
       </div>
     );
+  }
 
   if (!user) {
     return (
@@ -204,8 +73,11 @@ export default function CreatorEventsPage() {
     );
   }
 
-  if (errorPDI || !pdiData)
-    return <div className="text-center mt-10">Error al cargar PDI</div>;
+  if (pdiError || !pdiData) {
+    return (
+      <div className="text-center mt-10">Error al cargar PDI: {pdiError}</div>
+    );
+  }
 
   // Verificar propiedad del PDI
   if (pdiData.usuario !== user.id) {
@@ -222,8 +94,6 @@ export default function CreatorEventsPage() {
       </div>
     );
   }
-
-  const pdiNombre = (pdiData as any).nombre || 'PDI';
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900 pb-12">
@@ -245,7 +115,7 @@ export default function CreatorEventsPage() {
                 Administrar Eventos
               </h1>
               <p className="text-slate-600 dark:text-slate-400 mt-1">
-                {pdiNombre}
+                {pdiData.nombre}
               </p>
             </div>
             <button
@@ -266,7 +136,7 @@ export default function CreatorEventsPage() {
               <p className="text-slate-500">No hay eventos creados aún.</p>
             </div>
           ) : (
-            events.map((evento) => (
+            events.map((evento: Evento) => (
               <div
                 key={evento.id}
                 className="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 flex flex-col md:flex-row gap-4 justify-between"
@@ -332,187 +202,23 @@ export default function CreatorEventsPage() {
         </div>
       </div>
 
-      {/* Modal Formulario */}
-      {showModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
-          <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
-            <div className="flex justify-between items-center p-6 border-b border-slate-200 dark:border-slate-700 sticky top-0 bg-white dark:bg-slate-800 z-10">
-              <h2 className="text-xl font-bold text-slate-900 dark:text-white">
-                {form.id ? 'Editar Evento' : 'Nuevo Evento'}
-              </h2>
-              <button
-                onClick={() => setShowModal(false)}
-                className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full transition-colors"
-              >
-                <X className="w-5 h-5 text-slate-500" />
-              </button>
-            </div>
+      {/* Modals */}
+      <CreatorEventModal
+        show={showModal}
+        pdi={pdiData}
+        evento={editingEvent}
+        onClose={handleCloseModal}
+        onSubmit={handleEventSubmit}
+        loading={submitting}
+        allTags={allTags || []}
+      />
 
-            <form onSubmit={handleSubmit} className="p-6 space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                  Título
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={form.titulo}
-                  onChange={(e) => setForm({ ...form, titulo: e.target.value })}
-                  className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                  Descripción
-                </label>
-                <textarea
-                  required
-                  rows={3}
-                  value={form.descripcion}
-                  onChange={(e) =>
-                    setForm({ ...form, descripcion: e.target.value })
-                  }
-                  className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none resize-none"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                    Fecha
-                  </label>
-                  <input
-                    type="date"
-                    required
-                    value={form.fecha}
-                    onChange={(e) =>
-                      setForm({ ...form, fecha: e.target.value })
-                    }
-                    className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                    Estado
-                  </label>
-                  <select
-                    value={form.estado}
-                    onChange={(e) =>
-                      setForm({ ...form, estado: e.target.value })
-                    }
-                    className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
-                  >
-                    {ESTADOS.map((st) => (
-                      <option key={st} value={st}>
-                        {st}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                    Hora Inicio
-                  </label>
-                  <input
-                    type="time"
-                    required
-                    value={form.horaDesde}
-                    onChange={(e) =>
-                      setForm({ ...form, horaDesde: e.target.value })
-                    }
-                    className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                    Hora Fin
-                  </label>
-                  <input
-                    type="time"
-                    required
-                    value={form.horaHasta}
-                    onChange={(e) =>
-                      setForm({ ...form, horaHasta: e.target.value })
-                    }
-                    className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                  Etiquetas
-                </label>
-                <TagsSelector
-                  tags={allTags || []}
-                  selected={form.tags}
-                  onChange={(e: any) => {
-                    const val = parseInt(e.target.value);
-                    const checked = e.target.checked;
-                    setForm((prev) => ({
-                      ...prev,
-                      tags: checked
-                        ? [...prev.tags, val]
-                        : prev.tags.filter((t) => t !== val),
-                    }));
-                  }}
-                />
-              </div>
-
-              <div className="flex justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-700">
-                <button
-                  type="button"
-                  onClick={() => setShowModal(false)}
-                  className="px-4 py-2 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg font-medium transition-colors"
-                >
-                  Cancelar
-                </button>
-                <button
-                  type="submit"
-                  disabled={submitting}
-                  className="flex items-center gap-2 px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors disabled:opacity-50"
-                >
-                  {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
-                  Guardar
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* Modal Eliminar */}
       {eventToDelete && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
-          <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl max-w-sm w-full p-6">
-            <div className="flex items-center gap-3 mb-4 text-red-600 dark:text-red-400">
-              <AlertTriangle className="w-8 h-8" />
-              <h3 className="text-lg font-bold">Eliminar Evento</h3>
-            </div>
-            <p className="text-slate-600 dark:text-slate-300 mb-6">
-              ¿Estás seguro que deseas eliminar el evento "
-              <strong>{eventToDelete.titulo}</strong>"?
-            </p>
-            <div className="flex justify-end gap-3">
-              <button
-                onClick={() => setEventToDelete(null)}
-                className="px-4 py-2 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg font-medium"
-              >
-                Cancelar
-              </button>
-              <button
-                onClick={handleDelete}
-                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium"
-              >
-                Eliminar
-              </button>
-            </div>
-          </div>
-        </div>
+        <DeleteEventConfirmationModal
+          evento={eventToDelete}
+          onConfirm={handleDeleteConfirm}
+          onCancel={() => setEventToDelete(null)}
+        />
       )}
     </div>
   );

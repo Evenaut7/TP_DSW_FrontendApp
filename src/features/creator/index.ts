@@ -1,5 +1,5 @@
 // Components
-export { default as CreatorPDIModal } from './components/CreatorPDIModal/CreatorPDIModal';
+export { default as CreatorPDIModal } from './components/CreatorEventModal/CreatorPDIModal';
 export { default as CreatorEventModal } from './components/CreatorEventModal/CreatorEventModal';
 
 // Pages
@@ -10,5 +10,5 @@ export { default as CreatorEventsPage } from './pages/CreatorDashboard/CreatorEv
 export { useCreatorPDI } from './hooks/useCreatorPDI';
 
 // Types
-export type { PDIFormData } from './components/CreatorPDIModal/CreatorPDIModal';
+export type { PDIFormData } from './components/CreatorEventModal/CreatorPDIModal';
 export type { EventoFormData } from './components/CreatorEventModal/CreatorEventModal';

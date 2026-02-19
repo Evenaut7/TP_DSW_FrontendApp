@@ -19,8 +19,11 @@ export interface EventoFormData {
   horaDesde: string;
   horaHasta: string;
   fecha?: string;
+  estado: string;
   tags?: number[];
 }
+
+const ESTADOS = ['Disponible', 'Agotado', 'Cancelado'];
 
 export default function CreatorEventModal({
   show,
@@ -36,6 +39,7 @@ export default function CreatorEventModal({
     descripcion: '',
     horaDesde: '',
     horaHasta: '',
+    estado: 'Disponible',
     fecha: new Date().toISOString().split('T')[0],
     tags: [],
   });
@@ -45,12 +49,24 @@ export default function CreatorEventModal({
   // Inicializar con evento existente
   useEffect(() => {
     if (evento && show) {
+      const fromDate = new Date(evento.horaDesde);
+      const toDate = new Date(evento.horaHasta);
+
+      // Helper to get HH:mm format
+      const toTimeString = (date: Date) => date.toTimeString().slice(0, 5);
+      // Helper to get YYYY-MM-DD format, timezone-safe for inputs
+      const toDateString = (date: Date) =>
+        new Date(date.getTime() - date.getTimezoneOffset() * 60000)
+          .toISOString()
+          .split('T')[0];
+
       setForm({
         titulo: evento.titulo,
         descripcion: evento.descripcion,
-        horaDesde: evento.horaDesde,
-        horaHasta: evento.horaHasta,
-        fecha: new Date().toISOString().split('T')[0],
+        horaDesde: toTimeString(fromDate),
+        horaHasta: toTimeString(toDate),
+        fecha: toDateString(fromDate),
+        estado: evento.estado || 'Disponible',
         tags: Array.isArray(evento.tags)
           ? evento.tags.map((t) => (typeof t === 'number' ? t : t.id || 0))
           : [],
@@ -61,6 +77,7 @@ export default function CreatorEventModal({
         descripcion: '',
         horaDesde: '',
         horaHasta: '',
+        estado: 'Disponible',
         fecha: new Date().toISOString().split('T')[0],
         tags: [],
       });
@@ -68,7 +85,9 @@ export default function CreatorEventModal({
   }, [evento, show]);
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
   ) => {
     const { name, value, type } = e.target;
 
@@ -190,6 +209,26 @@ export default function CreatorEventModal({
             />
           </div>
 
+          {/* Estado */}
+          <div>
+            <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">
+              Estado
+            </label>
+            <select
+              name="estado"
+              value={form.estado}
+              onChange={handleInputChange}
+              disabled={submitting}
+              className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-slate-100 dark:disabled:bg-slate-600"
+            >
+              {ESTADOS.map((estado) => (
+                <option key={estado} value={estado}>
+                  {estado}
+                </option>
+              ))}
+            </select>
+          </div>
+
           {/* Fecha */}
           <div>
             <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">
@@ -240,7 +279,10 @@ export default function CreatorEventModal({
 
           {/* Tags */}
           <TagsSelector
-            tags={allTags}
+            tags={allTags.filter(
+              (tag): tag is Tag & { id: number; nombre: string } =>
+                tag.id != null && typeof tag.nombre === 'string',
+            )}
             selected={form.tags || []}
             onChange={handleInputChange as any}
           />

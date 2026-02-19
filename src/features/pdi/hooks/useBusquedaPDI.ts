@@ -27,6 +27,10 @@ export function useBusquedaPDI({
   // const [pdis, setPdis] = useState<PDI[]>([]);
   const [loadingPDIs, setLoading] = useState(false);
 
+  // Generamos claves estables para evitar bucles infinitos por referencias de arrays
+  const tagsKey = JSON.stringify(tags);
+  const pdisIds = pdisIniciales.map((p) => p.id).join(',');
+
   useEffect(() => {
     if (!localidadId) return;
 
@@ -40,18 +44,15 @@ export function useBusquedaPDI({
 
     const timeout = setTimeout(async () => {
       try {
-        const res = await fetch(
-          `${API_BASE_URL}/api/puntosDeInteres/filtro`,
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              localidad: localidadId,
-              busqueda: busqueda.trim(),
-              tags,
-            }),
-          }
-        );
+        const res = await fetch(`${API_BASE_URL}/api/puntosDeInteres/filtro`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            localidad: localidadId,
+            busqueda: busqueda.trim(),
+            tags,
+          }),
+        });
 
         const json = await res.json();
         setPdis(Array.isArray(json.data) ? json.data : []);
@@ -64,7 +65,7 @@ export function useBusquedaPDI({
     }, 400);
 
     return () => clearTimeout(timeout);
-  }, [localidadId, busqueda, tags, pdisIniciales]);
+  }, [localidadId, busqueda, tagsKey, pdisIds]);
 
   return { pdis, loadingPDIs };
 }
