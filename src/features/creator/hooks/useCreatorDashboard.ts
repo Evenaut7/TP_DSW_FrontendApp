@@ -32,19 +32,21 @@ export function useCreatorDashboard() {
     try {
       let imagenNombre = '';
 
-      // 1. Si es un archivo nuevo, subirlo primero
+      // 1️⃣ Subir imagen si es nueva
       if (data.imagen instanceof File) {
         const uploadRes = await uploadImage(data.imagen);
+
         if (!uploadRes.success || !uploadRes.data) {
           throw new Error(uploadRes.error || 'Error al subir la imagen');
         }
+
         const uploadData = uploadRes.data;
         imagenNombre = uploadData.nombreArchivo || uploadData.filename || '';
       } else if (typeof data.imagen === 'string') {
         imagenNombre = data.imagen;
       }
 
-      // 2. Enviar los datos del PDI como JSON
+      // 2️⃣ Armar payload COMPLETO (ahora con tags)
       const payload = {
         nombre: data.nombre,
         descripcion: data.descripcion,
@@ -54,6 +56,7 @@ export function useCreatorDashboard() {
         privado: Boolean(data.privado),
         imagen: imagenNombre,
         usuario: user.id,
+        tags: data.tags, // 🔥 ESTA ES LA LÍNEA QUE FALTABA
       };
 
       const result = editingPDI
@@ -73,9 +76,11 @@ export function useCreatorDashboard() {
           ? 'PDI actualizado correctamente'
           : 'PDI creado correctamente',
       );
+
       setShowResult(true);
       setEditingPDI(null);
       await refetch();
+
       return true;
     } catch (err) {
       setResultSuccess(false);

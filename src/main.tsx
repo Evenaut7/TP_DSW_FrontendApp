@@ -10,15 +10,14 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import { router } from './router.tsx';
 import { UserProvider } from '@/features/user';
 import { ThemeProvider } from './context/ThemeContext';
+import 'leaflet/dist/leaflet.css';
 
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <ThemeProvider>
-      <UserProvider>
-        <RouterProvider router={router} />
-        <Toaster position="top-right" />
-        <ErrorModalManager />
-      </UserProvider>
-    </ThemeProvider>
-  </StrictMode>
+  <ThemeProvider>
+    <UserProvider>
+      <RouterProvider router={router} />
+      <Toaster position="top-right" />
+      <ErrorModalManager />
+    </UserProvider>
+  </ThemeProvider>,
 );

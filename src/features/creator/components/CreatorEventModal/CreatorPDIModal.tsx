@@ -1,7 +1,427 @@
+// import { useState, useEffect, type FormEvent } from 'react';
+// import { X, Loader2 } from 'lucide-react';
+// import type { PDI, Tag } from '@/types';
+// import { useProvinciasLocalidades } from '@/features/localidades';
+// import { getImageUrl } from '@/utils/api';
+// import MapSelector from '@/components/map/MapSelector';
+// import TagsSelector from '@/features/tags/components/TagsSelector/TagsSelector';
+// import { useGeocoding } from '@/components/map/hooks/useGeocoding';
+// import { useReverseGeocoding } from '@/components/map/hooks/useReverseGeocoding';
+// import { getTags } from '@/utils/api';
+
+// interface CreatorPDIModalProps {
+//   show: boolean;
+//   pdi?: PDI | null;
+//   onClose: () => void;
+//   onSubmit: (data: PDIFormData) => Promise<boolean>;
+//   loading?: boolean;
+// }
+
+// export interface PDIFormData {
+//   nombre: string;
+//   descripcion: string;
+//   imagen?: File | string;
+//   privado: boolean;
+
+//   provincia: number;
+//   localidad: number;
+//   provinciaNombre?: string;
+//   localidadNombre?: string;
+
+//   calle: string;
+//   altura: number;
+
+//   lat?: number;
+//   lng?: number;
+
+//   tags: number[];
+// }
+
+// export default function CreatorPDIModal({
+//   show,
+//   pdi,
+//   onClose,
+//   onSubmit,
+//   loading = false,
+// }: CreatorPDIModalProps) {
+//   const { provincias, getLocalidadesByProvincia } = useProvinciasLocalidades();
+
+//   const [step, setStep] = useState<1 | 2>(1);
+//   const [localidades, setLocalidades] = useState<any[]>([]);
+//   const [imagePreview, setImagePreview] = useState('');
+//   const [submitting, setSubmitting] = useState(false);
+//   const [manualOverride, setManualOverride] = useState(false);
+//   const [allTags, setAllTags] = useState<Tag[]>([]);
+
+//   const initialForm: PDIFormData = {
+//     nombre: '',
+//     descripcion: '',
+//     privado: false,
+//     provincia: 0,
+//     localidad: 0,
+//     calle: '',
+//     altura: 0,
+//     lat: undefined,
+//     lng: undefined,
+//     tags: [],
+//   };
+
+//   const [form, setForm] = useState<PDIFormData>(initialForm);
+
+//   // ==============================
+//   // INIT FORM
+//   // ==============================
+
+//   useEffect(() => {
+//     if (!show) return;
+
+//     const init = async () => {
+//       if (!pdi) {
+//         setForm(initialForm);
+//         setImagePreview('');
+//         setLocalidades([]);
+//         return;
+//       }
+
+//       const provinciaId = pdi.localidad?.provincia?.id || 0;
+
+//       if (provinciaId) {
+//         const locs = await getLocalidadesByProvincia(provinciaId);
+//         setLocalidades(locs);
+//       }
+
+//       setForm({
+//         nombre: pdi.nombre,
+//         descripcion: pdi.descripcion,
+//         imagen: pdi.imagen,
+//         privado: pdi.privado ?? false,
+//         provincia: provinciaId,
+//         provinciaNombre: pdi.localidad?.provincia?.nombre,
+//         localidad: pdi.localidad?.id || 0,
+//         localidadNombre: pdi.localidad?.nombre,
+//         calle: pdi.calle,
+//         altura: pdi.altura,
+//         lat: pdi.lat,
+//         lng: pdi.lng,
+//         tags:
+//           pdi.tags
+//             ?.map((t) => t.id)
+//             .filter((id): id is number => typeof id === 'number') ?? [],
+//       });
+
+//       if (typeof pdi.imagen === 'string') {
+//         setImagePreview(getImageUrl(pdi.imagen));
+//       }
+//     };
+
+//     init();
+//     setStep(1);
+//   }, [pdi, show]);
+
+//   // ==============================
+//   // GEOCODING
+//   // ==============================
+
+//   useGeocoding({
+//     calle: form.calle,
+//     altura: form.altura,
+//     localidad: form.localidadNombre,
+//     provincia: form.provinciaNombre,
+//     manualOverride,
+//     onCoordinates: (lat, lng) => {
+//       setForm((prev) => ({ ...prev, lat, lng }));
+//     },
+//   });
+
+//   useReverseGeocoding({
+//     lat: form.lat,
+//     lng: form.lng,
+//     enabled: manualOverride,
+//     onAddress: ({ calle, altura, localidad, provincia }) => {
+//       setForm((prev) => ({
+//         ...prev,
+//         calle: calle ?? prev.calle,
+//         altura: altura ?? prev.altura,
+//         localidadNombre: localidad ?? prev.localidadNombre,
+//         provinciaNombre: provincia ?? prev.provinciaNombre,
+//       }));
+//     },
+//   });
+
+//   useEffect(() => {
+//     setManualOverride(false);
+//   }, [form.calle, form.altura, form.localidad, form.provincia]);
+
+//   // ==============================
+//   // HANDLERS
+//   // ==============================
+
+//   const handleChange = (
+//     e: React.ChangeEvent<
+//       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+//     >,
+//   ) => {
+//     const { name, value, type, checked } = e.target as HTMLInputElement;
+
+//     if (name === 'tags' && type === 'checkbox') {
+//       const tagId = Number(value);
+//       setForm((prev) => ({
+//         ...prev,
+//         tags: checked
+//           ? [...prev.tags, tagId]
+//           : prev.tags.filter((id) => id !== tagId),
+//       }));
+//       return;
+//     }
+
+//     if (type === 'checkbox') {
+//       setForm((prev) => ({ ...prev, [name]: checked }));
+//       return;
+//     }
+
+//     if (type === 'number') {
+//       setForm((prev) => ({ ...prev, [name]: value ? Number(value) : 0 }));
+//       return;
+//     }
+
+//     setForm((prev) => ({ ...prev, [name]: value }));
+//   };
+
+//   const handleProvinciaChange = async (
+//     e: React.ChangeEvent<HTMLSelectElement>,
+//   ) => {
+//     const provinciaId = Number(e.target.value);
+//     const provinciaObj = provincias.find((p) => p.id === provinciaId);
+
+//     setForm((prev) => ({
+//       ...prev,
+//       provincia: provinciaId,
+//       provinciaNombre: provinciaObj?.nombre,
+//       localidad: 0,
+//       localidadNombre: undefined,
+//     }));
+
+//     if (provinciaId) {
+//       const locs = await getLocalidadesByProvincia(provinciaId);
+//       setLocalidades(locs);
+//     } else {
+//       setLocalidades([]);
+//     }
+//   };
+
+//   const handleLocalidadChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+//     const localidadId = Number(e.target.value);
+//     const localidadObj = localidades.find((l) => l.id === localidadId);
+
+//     setForm((prev) => ({
+//       ...prev,
+//       localidad: localidadId,
+//       localidadNombre: localidadObj?.nombre,
+//     }));
+//   };
+
+//   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+//     const file = e.target.files?.[0];
+//     if (!file) return;
+
+//     setForm((prev) => ({ ...prev, imagen: file }));
+
+//     const reader = new FileReader();
+//     reader.onloadend = () => setImagePreview(reader.result as string);
+//     reader.readAsDataURL(file);
+//   };
+
+//   const handleSubmit = async (e: FormEvent) => {
+//     e.preventDefault();
+//     setSubmitting(true);
+//     try {
+//       const success = await onSubmit(form);
+//       if (success) onClose();
+//     } finally {
+//       setSubmitting(false);
+//     }
+//   };
+
+//   useEffect(() => {
+//     if (!show) return;
+
+//     const fetchTags = async () => {
+//       try {
+//         const data = await getTags();
+//         setAllTags(data?.data ?? data ?? []);
+//       } catch (error) {
+//         console.error('Error loading tags:', error);
+//         setAllTags([]);
+//       }
+//     };
+
+//     fetchTags();
+//   }, [show]);
+
+//   if (!show) return null;
+
+//   return (
+//     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+//       <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+//         <div className="flex justify-between items-center p-6 border-b">
+//           <h2 className="text-xl font-bold">
+//             {pdi ? 'Editar PDI' : 'Crear PDI'}
+//           </h2>
+//           <button onClick={onClose}>
+//             <X />
+//           </button>
+//         </div>
+
+//         <form onSubmit={handleSubmit} className="p-6 space-y-6">
+//           {step === 1 && (
+//             <>
+//               <input
+//                 name="nombre"
+//                 value={form.nombre}
+//                 onChange={handleChange}
+//                 required
+//                 className="w-full border p-2 rounded"
+//               />
+//               <textarea
+//                 name="descripcion"
+//                 value={form.descripcion}
+//                 onChange={handleChange}
+//                 required
+//                 className="w-full border p-2 rounded"
+//               />
+//               <input
+//                 type="file"
+//                 accept="image/*"
+//                 onChange={handleImageChange}
+//               />
+//               {imagePreview && (
+//                 <img src={imagePreview} className="max-h-40 rounded" />
+//               )}
+
+//               <label className="flex gap-2 items-center">
+//                 <input
+//                   type="checkbox"
+//                   name="privado"
+//                   checked={form.privado}
+//                   onChange={handleChange}
+//                 />
+//                 PDI Privado
+//               </label>
+
+//               <TagsSelector
+//                 tags={allTags}
+//                 selected={form.tags}
+//                 onChange={handleChange}
+//               />
+
+//               <div className="flex justify-end">
+//                 <button
+//                   type="button"
+//                   onClick={() => setStep(2)}
+//                   className="bg-blue-500 text-white px-4 py-2 rounded"
+//                 >
+//                   Siguiente
+//                 </button>
+//               </div>
+//             </>
+//           )}
+
+//           {step === 2 && (
+//             <>
+//               <select
+//                 value={form.provincia}
+//                 onChange={handleProvinciaChange}
+//                 required
+//                 className="w-full border p-2 rounded"
+//               >
+//                 <option value="">Seleccionar provincia</option>
+//                 {provincias.map((p) => (
+//                   <option key={p.id} value={p.id}>
+//                     {p.nombre}
+//                   </option>
+//                 ))}
+//               </select>
+
+//               <select
+//                 name="localidad"
+//                 value={form.localidad}
+//                 onChange={handleLocalidadChange}
+//                 required
+//                 className="w-full border p-2 rounded"
+//               >
+//                 <option value="">Seleccionar localidad</option>
+//                 {localidades.map((l) => (
+//                   <option key={l.id} value={l.id}>
+//                     {l.nombre}
+//                   </option>
+//                 ))}
+//               </select>
+
+//               <input
+//                 type="text"
+//                 name="calle"
+//                 value={form.calle}
+//                 onChange={handleChange}
+//                 required
+//                 className="w-full border p-2 rounded"
+//               />
+//               <input
+//                 type="number"
+//                 name="altura"
+//                 value={form.altura}
+//                 onChange={handleChange}
+//                 required
+//                 className="w-full border p-2 rounded"
+//               />
+
+//               <MapSelector
+//                 latitud={form.lat}
+//                 longitud={form.lng}
+//                 setLatitud={(lat) => {
+//                   setManualOverride(true);
+//                   setForm((prev) => ({ ...prev, lat }));
+//                 }}
+//                 setLongitud={(lng) => {
+//                   setManualOverride(true);
+//                   setForm((prev) => ({ ...prev, lng }));
+//                 }}
+//                 setManualOverride={setManualOverride}
+//               />
+
+//               <div className="flex justify-between pt-4">
+//                 <button
+//                   type="button"
+//                   onClick={() => setStep(1)}
+//                   className="bg-gray-300 px-4 py-2 rounded"
+//                 >
+//                   Volver
+//                 </button>
+//                 <button
+//                   type="submit"
+//                   disabled={submitting || loading}
+//                   className="bg-blue-600 text-white px-6 py-2 rounded flex gap-2 items-center"
+//                 >
+//                   {submitting && <Loader2 className="animate-spin" />}
+//                   Guardar
+//                 </button>
+//               </div>
+//             </>
+//           )}
+//         </form>
+//       </div>
+//     </div>
+//   );
+// }
+
 import { useState, useEffect, type FormEvent } from 'react';
 import { X, Loader2 } from 'lucide-react';
-import type { PDI } from '@/types';
+import type { PDI, Tag } from '@/types';
 import { useProvinciasLocalidades } from '@/features/localidades';
+import { getImageUrl, getTags } from '@/utils/api';
+import MapSelector from '@/components/map/MapSelector';
+import TagsSelector from '@/features/tags/components/TagsSelector/TagsSelector';
+import { useGeocoding } from '@/components/map/hooks/useGeocoding';
+import { useReverseGeocoding } from '@/components/map/hooks/useReverseGeocoding';
 
 interface CreatorPDIModalProps {
   show: boolean;
@@ -15,10 +435,20 @@ export interface PDIFormData {
   nombre: string;
   descripcion: string;
   imagen?: File | string;
+  privado: boolean;
+
+  provincia: number;
+  localidad: number;
+  provinciaNombre?: string;
+  localidadNombre?: string;
+
   calle: string;
   altura: number;
-  localidad: number;
-  privado: boolean;
+
+  lat?: number;
+  lng?: number;
+
+  tags: number[];
 }
 
 export default function CreatorPDIModal({
@@ -28,103 +458,213 @@ export default function CreatorPDIModal({
   onSubmit,
   loading = false,
 }: CreatorPDIModalProps) {
-  const {
-    provincias,
-    getLocalidadesByProvincia,
-    loading: loadingUbicaciones,
-  } = useProvinciasLocalidades();
-  const [localidades, setLocalidades] = useState<any[]>([]);
-  const [selectedProvincia, setSelectedProvincia] = useState<number>(0);
+  const { provincias, getLocalidadesByProvincia } = useProvinciasLocalidades();
 
-  const [form, setForm] = useState<PDIFormData>({
+  const [step, setStep] = useState<1 | 2>(1);
+  const [localidades, setLocalidades] = useState<any[]>([]);
+  const [imagePreview, setImagePreview] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [manualOverride, setManualOverride] = useState(false);
+  const [allTags, setAllTags] = useState<Tag[]>([]);
+
+  const initialForm: PDIFormData = {
     nombre: '',
     descripcion: '',
+    privado: false,
+    provincia: 0,
+    localidad: 0,
     calle: '',
     altura: 0,
-    localidad: 0,
-    privado: false,
-  });
+    lat: undefined,
+    lng: undefined,
+    tags: [],
+  };
 
-  const [imagePreview, setImagePreview] = useState<string>('');
-  const [submitting, setSubmitting] = useState(false);
+  const [form, setForm] = useState<PDIFormData>(initialForm);
 
-  // Inicializar con PDI existente
+  // =============================
+  // LOAD TAGS
+  // =============================
+
   useEffect(() => {
-    if (pdi && show) {
+    if (!show) return;
+
+    const fetchTags = async () => {
+      try {
+        const response = await getTags();
+        const tags = response?.data ?? response ?? [];
+        setAllTags(Array.isArray(tags) ? tags : []);
+      } catch (error) {
+        console.error('Error loading tags:', error);
+        setAllTags([]);
+      }
+    };
+
+    fetchTags();
+  }, [show]);
+
+  // =============================
+  // INIT FORM (EDIT MODE)
+  // =============================
+
+  useEffect(() => {
+    if (!show) return;
+
+    const init = async () => {
+      if (!pdi) {
+        setForm(initialForm);
+        setImagePreview('');
+        setLocalidades([]);
+        return;
+      }
+
+      const provinciaId = pdi.localidad?.provincia?.id || 0;
+
+      if (provinciaId) {
+        const locs = await getLocalidadesByProvincia(provinciaId);
+        setLocalidades(locs);
+      }
+
       setForm({
         nombre: pdi.nombre,
         descripcion: pdi.descripcion,
         imagen: pdi.imagen,
+        privado: pdi.privado ?? false,
+        provincia: provinciaId,
+        provinciaNombre: pdi.localidad?.provincia?.nombre,
+        localidad: pdi.localidad?.id || 0,
+        localidadNombre: pdi.localidad?.nombre,
         calle: pdi.calle,
         altura: pdi.altura,
-        localidad: pdi.localidad?.id || 0,
-        privado: pdi.privado || false,
+        lat: pdi.lat,
+        lng: pdi.lng,
+        tags:
+          pdi.tags
+            ?.map((t) => t.id)
+            .filter((id): id is number => typeof id === 'number') ?? [],
       });
-      setImagePreview(pdi.imagen);
-    } else if (show) {
-      setForm({
-        nombre: '',
-        descripcion: '',
-        calle: '',
-        altura: 0,
-        localidad: 0,
-        privado: false,
-      });
-      setImagePreview('');
-    }
+
+      if (typeof pdi.imagen === 'string') {
+        setImagePreview(getImageUrl(pdi.imagen));
+      }
+    };
+
+    init();
+    setStep(1);
   }, [pdi, show]);
 
-  const handleInputChange = (
+  // =============================
+  // GEOCODING
+  // =============================
+
+  useGeocoding({
+    calle: form.calle,
+    altura: form.altura,
+    localidad: form.localidadNombre,
+    provincia: form.provinciaNombre,
+    manualOverride,
+    onCoordinates: (lat, lng) => {
+      setForm((prev) => ({ ...prev, lat, lng }));
+    },
+  });
+
+  useReverseGeocoding({
+    lat: form.lat,
+    lng: form.lng,
+    enabled: manualOverride,
+    onAddress: ({ calle, altura, localidad, provincia }) => {
+      setForm((prev) => ({
+        ...prev,
+        calle: calle ?? prev.calle,
+        altura: altura ?? prev.altura,
+        localidadNombre: localidad ?? prev.localidadNombre,
+        provinciaNombre: provincia ?? prev.provinciaNombre,
+      }));
+    },
+  });
+
+  useEffect(() => {
+    setManualOverride(false);
+  }, [form.calle, form.altura, form.localidad, form.provincia]);
+
+  // =============================
+  // HANDLERS
+  // =============================
+
+  const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
     >,
   ) => {
-    const { name, value, type } = e.target;
+    const { name, value, type, checked } = e.target as HTMLInputElement;
+
+    if (name === 'tags' && type === 'checkbox') {
+      const tagId = Number(value);
+
+      setForm((prev) => ({
+        ...prev,
+        tags: checked
+          ? [...prev.tags, tagId]
+          : prev.tags.filter((id) => id !== tagId),
+      }));
+      return;
+    }
 
     if (type === 'checkbox') {
-      setForm({
-        ...form,
-        [name]: (e.target as HTMLInputElement).checked,
-      });
-    } else if (type === 'number') {
-      setForm({
-        ...form,
-        [name]: parseFloat(value) || 0,
-      });
-    } else {
-      setForm({
-        ...form,
-        [name]: value,
-      });
+      setForm((prev) => ({ ...prev, [name]: checked }));
+      return;
     }
-  };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setForm({
-        ...form,
-        imagen: file,
-      });
-
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+    if (type === 'number') {
+      setForm((prev) => ({ ...prev, [name]: value ? Number(value) : 0 }));
+      return;
     }
+
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleProvinciaChange = async (
     e: React.ChangeEvent<HTMLSelectElement>,
   ) => {
-    const provinciaId = parseInt(e.target.value);
-    setSelectedProvincia(provinciaId);
+    const provinciaId = Number(e.target.value);
+    const provinciaObj = provincias.find((p) => p.id === provinciaId);
+
+    setForm((prev) => ({
+      ...prev,
+      provincia: provinciaId,
+      provinciaNombre: provinciaObj?.nombre,
+      localidad: 0,
+      localidadNombre: undefined,
+    }));
+
     if (provinciaId) {
       const locs = await getLocalidadesByProvincia(provinciaId);
       setLocalidades(locs);
-      setForm({ ...form, localidad: 0 });
+    } else {
+      setLocalidades([]);
     }
+  };
+
+  const handleLocalidadChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const localidadId = Number(e.target.value);
+    const localidadObj = localidades.find((l) => l.id === localidadId);
+
+    setForm((prev) => ({
+      ...prev,
+      localidad: localidadId,
+      localidadNombre: localidadObj?.nombre,
+    }));
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setForm((prev) => ({ ...prev, imagen: file }));
+
+    const reader = new FileReader();
+    reader.onloadend = () => setImagePreview(reader.result as string);
+    reader.readAsDataURL(file);
   };
 
   const handleSubmit = async (e: FormEvent) => {
@@ -133,9 +673,7 @@ export default function CreatorPDIModal({
 
     try {
       const success = await onSubmit(form);
-      if (success) {
-        onClose();
-      }
+      if (success) onClose();
     } finally {
       setSubmitting(false);
     }
@@ -144,209 +682,186 @@ export default function CreatorPDIModal({
   if (!show) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-        {/* Header */}
-        <div className="sticky top-0 flex justify-between items-center p-6 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
-          <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
+    <div className="fixed inset-0 bg-black/50 flex items-start justify-center z-50 p-6 overflow-y-auto">
+      <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-5xl">
+        <div className="flex justify-between items-center p-6 border-b">
+          <h2 className="text-xl font-bold">
             {pdi ? 'Editar Punto de Interés' : 'Crear Punto de Interés'}
           </h2>
-          <button
-            onClick={onClose}
-            className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
-            disabled={submitting}
-          >
-            <X className="w-6 h-6 text-slate-600 dark:text-slate-400" />
+          <button onClick={onClose}>
+            <X />
           </button>
         </div>
 
-        {/* Form */}
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
-          {/* Image */}
-          <div>
-            <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">
-              Imagen
-            </label>
-            <div className="border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-xl p-6 text-center hover:border-blue-500 transition-colors cursor-pointer">
-              {imagePreview && (
-                <img
-                  src={imagePreview}
-                  alt="Preview"
-                  className="max-w-full max-h-48 mx-auto mb-4 rounded-lg"
+          {/* STEP INDICATOR */}
+          <div className="flex gap-4 text-sm font-medium">
+            <span className={step === 1 ? 'text-blue-600' : 'text-gray-400'}>
+              Paso 1 - Información
+            </span>
+            <span className={step === 2 ? 'text-blue-600' : 'text-gray-400'}>
+              Paso 2 - Ubicación
+            </span>
+          </div>
+
+          {step === 1 && (
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium mb-1">
+                    Nombre
+                  </label>
+                  <input
+                    name="nombre"
+                    value={form.nombre}
+                    onChange={handleChange}
+                    required
+                    className="w-full border p-2 rounded"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium mb-1">
+                    Descripción
+                  </label>
+                  <textarea
+                    name="descripcion"
+                    value={form.descripcion}
+                    onChange={handleChange}
+                    required
+                    className="w-full border p-2 rounded"
+                  />
+                </div>
+
+                <label className="flex gap-2 items-center">
+                  <input
+                    type="checkbox"
+                    name="privado"
+                    checked={form.privado}
+                    onChange={handleChange}
+                  />
+                  PDI Privado
+                </label>
+
+                <TagsSelector
+                  tags={allTags}
+                  selected={form.tags}
+                  onChange={handleChange}
                 />
-              )}
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageChange}
-                className="hidden"
-                id="image-input"
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-1">Imagen</label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                />
+                {imagePreview && (
+                  <img src={imagePreview} className="mt-4 rounded max-h-64" />
+                )}
+              </div>
+
+              <div className="md:col-span-2 flex justify-end">
+                <button
+                  type="button"
+                  onClick={() => setStep(2)}
+                  className="bg-blue-500 text-white px-6 py-2 rounded"
+                >
+                  Siguiente →
+                </button>
+              </div>
+            </div>
+          )}
+
+          {step === 2 && (
+            <div className="space-y-4">
+              <div className="grid md:grid-cols-2 gap-4">
+                <select
+                  value={form.provincia}
+                  onChange={handleProvinciaChange}
+                  required
+                  className="border p-2 rounded"
+                >
+                  <option value="">Seleccionar provincia</option>
+                  {provincias.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.nombre}
+                    </option>
+                  ))}
+                </select>
+
+                <select
+                  value={form.localidad}
+                  onChange={handleLocalidadChange}
+                  required
+                  className="border p-2 rounded"
+                >
+                  <option value="">Seleccionar localidad</option>
+                  {localidades.map((l) => (
+                    <option key={l.id} value={l.id}>
+                      {l.nombre}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-4">
+                <input
+                  type="text"
+                  name="calle"
+                  value={form.calle}
+                  onChange={handleChange}
+                  required
+                  placeholder="Calle"
+                  className="border p-2 rounded"
+                />
+
+                <input
+                  type="number"
+                  name="altura"
+                  value={form.altura}
+                  onChange={handleChange}
+                  required
+                  placeholder="Altura"
+                  className="border p-2 rounded"
+                />
+              </div>
+
+              <MapSelector
+                latitud={form.lat}
+                longitud={form.lng}
+                setLatitud={(lat) => {
+                  setManualOverride(true);
+                  setForm((prev) => ({ ...prev, lat }));
+                }}
+                setLongitud={(lng) => {
+                  setManualOverride(true);
+                  setForm((prev) => ({ ...prev, lng }));
+                }}
+                setManualOverride={setManualOverride}
               />
-              <label htmlFor="image-input" className="cursor-pointer">
-                <p className="text-slate-600 dark:text-slate-300">
-                  {imagePreview ? 'Cambiar imagen' : 'Seleccionar imagen'}
-                </p>
-              </label>
+
+              <div className="flex justify-between pt-4">
+                <button
+                  type="button"
+                  onClick={() => setStep(1)}
+                  className="bg-gray-300 px-6 py-2 rounded"
+                >
+                  ← Volver
+                </button>
+
+                <button
+                  type="submit"
+                  disabled={submitting || loading}
+                  className="bg-blue-600 text-white px-6 py-2 rounded flex gap-2 items-center"
+                >
+                  {submitting && <Loader2 className="animate-spin" />}
+                  Guardar
+                </button>
+              </div>
             </div>
-          </div>
-
-          {/* Nombre */}
-          <div>
-            <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">
-              Nombre *
-            </label>
-            <input
-              type="text"
-              name="nombre"
-              value={form.nombre}
-              onChange={handleInputChange}
-              placeholder="Nombre del PDI"
-              required
-              disabled={submitting}
-              className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-slate-100 dark:disabled:bg-slate-600"
-            />
-          </div>
-
-          {/* Descripción */}
-          <div>
-            <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">
-              Descripción *
-            </label>
-            <textarea
-              name="descripcion"
-              value={form.descripcion}
-              onChange={handleInputChange}
-              placeholder="Describe el punto de interés"
-              rows={4}
-              required
-              disabled={submitting}
-              className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-slate-100 dark:disabled:bg-slate-600"
-            />
-          </div>
-
-          {/* Dirección */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">
-                Calle *
-              </label>
-              <input
-                type="text"
-                name="calle"
-                value={form.calle}
-                onChange={handleInputChange}
-                placeholder="Nombre de la calle"
-                required
-                disabled={submitting}
-                className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-slate-100 dark:disabled:bg-slate-600"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">
-                Altura *
-              </label>
-              <input
-                type="number"
-                name="altura"
-                value={form.altura}
-                onChange={handleInputChange}
-                placeholder="0"
-                required
-                disabled={submitting}
-                className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-slate-100 dark:disabled:bg-slate-600"
-              />
-            </div>
-          </div>
-
-          {/* Provincia y Localidad */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">
-                Provincia *
-              </label>
-              <select
-                value={selectedProvincia}
-                onChange={handleProvinciaChange}
-                required
-                disabled={submitting || loadingUbicaciones}
-                className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-slate-100 dark:disabled:bg-slate-600"
-              >
-                <option value="">Seleccionar provincia</option>
-                {provincias.map((prov) => (
-                  <option key={prov.id} value={prov.id}>
-                    {prov.nombre}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">
-                Localidad *
-              </label>
-              <select
-                name="localidad"
-                value={form.localidad}
-                onChange={handleInputChange}
-                required
-                disabled={submitting || !selectedProvincia}
-                className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-slate-100 dark:disabled:bg-slate-600"
-              >
-                <option value="">Seleccionar localidad</option>
-                {localidades.map((loc) => (
-                  <option key={loc.id} value={loc.id}>
-                    {loc.nombre}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          {/* Privado */}
-          <div className="flex items-center gap-3">
-            <input
-              type="checkbox"
-              id="privado"
-              name="privado"
-              checked={form.privado}
-              onChange={handleInputChange}
-              disabled={submitting}
-              className="w-5 h-5 rounded cursor-pointer"
-            />
-            <label
-              htmlFor="privado"
-              className="text-slate-700 dark:text-slate-200 font-medium"
-            >
-              Este PDI es privado
-            </label>
-          </div>
-
-          {/* Actions */}
-          <div className="flex gap-3 justify-end pt-4 border-t border-slate-200 dark:border-slate-700">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-6 py-2 bg-slate-100 dark:bg-slate-700 text-slate-900 dark:text-white rounded-lg font-medium hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors disabled:opacity-50"
-              disabled={submitting}
-            >
-              Cancelar
-            </button>
-            <button
-              type="submit"
-              className="px-6 py-2 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-600 transition-colors disabled:opacity-50 flex items-center gap-2"
-              disabled={submitting || loading}
-            >
-              {submitting || loading ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  Guardando...
-                </>
-              ) : (
-                'Guardar'
-              )}
-            </button>
-          </div>
+          )}
         </form>
       </div>
     </div>
