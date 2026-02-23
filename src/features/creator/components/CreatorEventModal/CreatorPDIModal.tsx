@@ -1,419 +1,4 @@
-// import { useState, useEffect, type FormEvent } from 'react';
-// import { X, Loader2 } from 'lucide-react';
-// import type { PDI, Tag } from '@/types';
-// import { useProvinciasLocalidades } from '@/features/localidades';
-// import { getImageUrl } from '@/utils/api';
-// import MapSelector from '@/components/map/MapSelector';
-// import TagsSelector from '@/features/tags/components/TagsSelector/TagsSelector';
-// import { useGeocoding } from '@/components/map/hooks/useGeocoding';
-// import { useReverseGeocoding } from '@/components/map/hooks/useReverseGeocoding';
-// import { getTags } from '@/utils/api';
-
-// interface CreatorPDIModalProps {
-//   show: boolean;
-//   pdi?: PDI | null;
-//   onClose: () => void;
-//   onSubmit: (data: PDIFormData) => Promise<boolean>;
-//   loading?: boolean;
-// }
-
-// export interface PDIFormData {
-//   nombre: string;
-//   descripcion: string;
-//   imagen?: File | string;
-//   privado: boolean;
-
-//   provincia: number;
-//   localidad: number;
-//   provinciaNombre?: string;
-//   localidadNombre?: string;
-
-//   calle: string;
-//   altura: number;
-
-//   lat?: number;
-//   lng?: number;
-
-//   tags: number[];
-// }
-
-// export default function CreatorPDIModal({
-//   show,
-//   pdi,
-//   onClose,
-//   onSubmit,
-//   loading = false,
-// }: CreatorPDIModalProps) {
-//   const { provincias, getLocalidadesByProvincia } = useProvinciasLocalidades();
-
-//   const [step, setStep] = useState<1 | 2>(1);
-//   const [localidades, setLocalidades] = useState<any[]>([]);
-//   const [imagePreview, setImagePreview] = useState('');
-//   const [submitting, setSubmitting] = useState(false);
-//   const [manualOverride, setManualOverride] = useState(false);
-//   const [allTags, setAllTags] = useState<Tag[]>([]);
-
-//   const initialForm: PDIFormData = {
-//     nombre: '',
-//     descripcion: '',
-//     privado: false,
-//     provincia: 0,
-//     localidad: 0,
-//     calle: '',
-//     altura: 0,
-//     lat: undefined,
-//     lng: undefined,
-//     tags: [],
-//   };
-
-//   const [form, setForm] = useState<PDIFormData>(initialForm);
-
-//   // ==============================
-//   // INIT FORM
-//   // ==============================
-
-//   useEffect(() => {
-//     if (!show) return;
-
-//     const init = async () => {
-//       if (!pdi) {
-//         setForm(initialForm);
-//         setImagePreview('');
-//         setLocalidades([]);
-//         return;
-//       }
-
-//       const provinciaId = pdi.localidad?.provincia?.id || 0;
-
-//       if (provinciaId) {
-//         const locs = await getLocalidadesByProvincia(provinciaId);
-//         setLocalidades(locs);
-//       }
-
-//       setForm({
-//         nombre: pdi.nombre,
-//         descripcion: pdi.descripcion,
-//         imagen: pdi.imagen,
-//         privado: pdi.privado ?? false,
-//         provincia: provinciaId,
-//         provinciaNombre: pdi.localidad?.provincia?.nombre,
-//         localidad: pdi.localidad?.id || 0,
-//         localidadNombre: pdi.localidad?.nombre,
-//         calle: pdi.calle,
-//         altura: pdi.altura,
-//         lat: pdi.lat,
-//         lng: pdi.lng,
-//         tags:
-//           pdi.tags
-//             ?.map((t) => t.id)
-//             .filter((id): id is number => typeof id === 'number') ?? [],
-//       });
-
-//       if (typeof pdi.imagen === 'string') {
-//         setImagePreview(getImageUrl(pdi.imagen));
-//       }
-//     };
-
-//     init();
-//     setStep(1);
-//   }, [pdi, show]);
-
-//   // ==============================
-//   // GEOCODING
-//   // ==============================
-
-//   useGeocoding({
-//     calle: form.calle,
-//     altura: form.altura,
-//     localidad: form.localidadNombre,
-//     provincia: form.provinciaNombre,
-//     manualOverride,
-//     onCoordinates: (lat, lng) => {
-//       setForm((prev) => ({ ...prev, lat, lng }));
-//     },
-//   });
-
-//   useReverseGeocoding({
-//     lat: form.lat,
-//     lng: form.lng,
-//     enabled: manualOverride,
-//     onAddress: ({ calle, altura, localidad, provincia }) => {
-//       setForm((prev) => ({
-//         ...prev,
-//         calle: calle ?? prev.calle,
-//         altura: altura ?? prev.altura,
-//         localidadNombre: localidad ?? prev.localidadNombre,
-//         provinciaNombre: provincia ?? prev.provinciaNombre,
-//       }));
-//     },
-//   });
-
-//   useEffect(() => {
-//     setManualOverride(false);
-//   }, [form.calle, form.altura, form.localidad, form.provincia]);
-
-//   // ==============================
-//   // HANDLERS
-//   // ==============================
-
-//   const handleChange = (
-//     e: React.ChangeEvent<
-//       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-//     >,
-//   ) => {
-//     const { name, value, type, checked } = e.target as HTMLInputElement;
-
-//     if (name === 'tags' && type === 'checkbox') {
-//       const tagId = Number(value);
-//       setForm((prev) => ({
-//         ...prev,
-//         tags: checked
-//           ? [...prev.tags, tagId]
-//           : prev.tags.filter((id) => id !== tagId),
-//       }));
-//       return;
-//     }
-
-//     if (type === 'checkbox') {
-//       setForm((prev) => ({ ...prev, [name]: checked }));
-//       return;
-//     }
-
-//     if (type === 'number') {
-//       setForm((prev) => ({ ...prev, [name]: value ? Number(value) : 0 }));
-//       return;
-//     }
-
-//     setForm((prev) => ({ ...prev, [name]: value }));
-//   };
-
-//   const handleProvinciaChange = async (
-//     e: React.ChangeEvent<HTMLSelectElement>,
-//   ) => {
-//     const provinciaId = Number(e.target.value);
-//     const provinciaObj = provincias.find((p) => p.id === provinciaId);
-
-//     setForm((prev) => ({
-//       ...prev,
-//       provincia: provinciaId,
-//       provinciaNombre: provinciaObj?.nombre,
-//       localidad: 0,
-//       localidadNombre: undefined,
-//     }));
-
-//     if (provinciaId) {
-//       const locs = await getLocalidadesByProvincia(provinciaId);
-//       setLocalidades(locs);
-//     } else {
-//       setLocalidades([]);
-//     }
-//   };
-
-//   const handleLocalidadChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-//     const localidadId = Number(e.target.value);
-//     const localidadObj = localidades.find((l) => l.id === localidadId);
-
-//     setForm((prev) => ({
-//       ...prev,
-//       localidad: localidadId,
-//       localidadNombre: localidadObj?.nombre,
-//     }));
-//   };
-
-//   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-//     const file = e.target.files?.[0];
-//     if (!file) return;
-
-//     setForm((prev) => ({ ...prev, imagen: file }));
-
-//     const reader = new FileReader();
-//     reader.onloadend = () => setImagePreview(reader.result as string);
-//     reader.readAsDataURL(file);
-//   };
-
-//   const handleSubmit = async (e: FormEvent) => {
-//     e.preventDefault();
-//     setSubmitting(true);
-//     try {
-//       const success = await onSubmit(form);
-//       if (success) onClose();
-//     } finally {
-//       setSubmitting(false);
-//     }
-//   };
-
-//   useEffect(() => {
-//     if (!show) return;
-
-//     const fetchTags = async () => {
-//       try {
-//         const data = await getTags();
-//         setAllTags(data?.data ?? data ?? []);
-//       } catch (error) {
-//         console.error('Error loading tags:', error);
-//         setAllTags([]);
-//       }
-//     };
-
-//     fetchTags();
-//   }, [show]);
-
-//   if (!show) return null;
-
-//   return (
-//     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-//       <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
-//         <div className="flex justify-between items-center p-6 border-b">
-//           <h2 className="text-xl font-bold">
-//             {pdi ? 'Editar PDI' : 'Crear PDI'}
-//           </h2>
-//           <button onClick={onClose}>
-//             <X />
-//           </button>
-//         </div>
-
-//         <form onSubmit={handleSubmit} className="p-6 space-y-6">
-//           {step === 1 && (
-//             <>
-//               <input
-//                 name="nombre"
-//                 value={form.nombre}
-//                 onChange={handleChange}
-//                 required
-//                 className="w-full border p-2 rounded"
-//               />
-//               <textarea
-//                 name="descripcion"
-//                 value={form.descripcion}
-//                 onChange={handleChange}
-//                 required
-//                 className="w-full border p-2 rounded"
-//               />
-//               <input
-//                 type="file"
-//                 accept="image/*"
-//                 onChange={handleImageChange}
-//               />
-//               {imagePreview && (
-//                 <img src={imagePreview} className="max-h-40 rounded" />
-//               )}
-
-//               <label className="flex gap-2 items-center">
-//                 <input
-//                   type="checkbox"
-//                   name="privado"
-//                   checked={form.privado}
-//                   onChange={handleChange}
-//                 />
-//                 PDI Privado
-//               </label>
-
-//               <TagsSelector
-//                 tags={allTags}
-//                 selected={form.tags}
-//                 onChange={handleChange}
-//               />
-
-//               <div className="flex justify-end">
-//                 <button
-//                   type="button"
-//                   onClick={() => setStep(2)}
-//                   className="bg-blue-500 text-white px-4 py-2 rounded"
-//                 >
-//                   Siguiente
-//                 </button>
-//               </div>
-//             </>
-//           )}
-
-//           {step === 2 && (
-//             <>
-//               <select
-//                 value={form.provincia}
-//                 onChange={handleProvinciaChange}
-//                 required
-//                 className="w-full border p-2 rounded"
-//               >
-//                 <option value="">Seleccionar provincia</option>
-//                 {provincias.map((p) => (
-//                   <option key={p.id} value={p.id}>
-//                     {p.nombre}
-//                   </option>
-//                 ))}
-//               </select>
-
-//               <select
-//                 name="localidad"
-//                 value={form.localidad}
-//                 onChange={handleLocalidadChange}
-//                 required
-//                 className="w-full border p-2 rounded"
-//               >
-//                 <option value="">Seleccionar localidad</option>
-//                 {localidades.map((l) => (
-//                   <option key={l.id} value={l.id}>
-//                     {l.nombre}
-//                   </option>
-//                 ))}
-//               </select>
-
-//               <input
-//                 type="text"
-//                 name="calle"
-//                 value={form.calle}
-//                 onChange={handleChange}
-//                 required
-//                 className="w-full border p-2 rounded"
-//               />
-//               <input
-//                 type="number"
-//                 name="altura"
-//                 value={form.altura}
-//                 onChange={handleChange}
-//                 required
-//                 className="w-full border p-2 rounded"
-//               />
-
-//               <MapSelector
-//                 latitud={form.lat}
-//                 longitud={form.lng}
-//                 setLatitud={(lat) => {
-//                   setManualOverride(true);
-//                   setForm((prev) => ({ ...prev, lat }));
-//                 }}
-//                 setLongitud={(lng) => {
-//                   setManualOverride(true);
-//                   setForm((prev) => ({ ...prev, lng }));
-//                 }}
-//                 setManualOverride={setManualOverride}
-//               />
-
-//               <div className="flex justify-between pt-4">
-//                 <button
-//                   type="button"
-//                   onClick={() => setStep(1)}
-//                   className="bg-gray-300 px-4 py-2 rounded"
-//                 >
-//                   Volver
-//                 </button>
-//                 <button
-//                   type="submit"
-//                   disabled={submitting || loading}
-//                   className="bg-blue-600 text-white px-6 py-2 rounded flex gap-2 items-center"
-//                 >
-//                   {submitting && <Loader2 className="animate-spin" />}
-//                   Guardar
-//                 </button>
-//               </div>
-//             </>
-//           )}
-//         </form>
-//       </div>
-//     </div>
-//   );
-// }
-
-import { useState, useEffect, type FormEvent } from 'react';
+import { useState, useEffect, type FormEvent, useRef } from 'react';
 import { X, Loader2 } from 'lucide-react';
 import type { PDI, Tag } from '@/types';
 import { useProvinciasLocalidades } from '@/features/localidades';
@@ -423,12 +8,17 @@ import TagsSelector from '@/features/tags/components/TagsSelector/TagsSelector';
 import { useGeocoding } from '@/components/map/hooks/useGeocoding';
 import { useReverseGeocoding } from '@/components/map/hooks/useReverseGeocoding';
 
+const EMPTY_INITIAL_DATA = {};
+
 interface CreatorPDIModalProps {
   show: boolean;
   pdi?: PDI | null;
   onClose: () => void;
   onSubmit: (data: PDIFormData) => Promise<boolean>;
   loading?: boolean;
+  usuarios?: any[];
+  isAdmin?: boolean;
+  initialData?: Partial<PDIFormData>;
 }
 
 export interface PDIFormData {
@@ -449,6 +39,7 @@ export interface PDIFormData {
   lng?: number;
 
   tags: number[];
+  usuarioId?: number;
 }
 
 export default function CreatorPDIModal({
@@ -457,8 +48,17 @@ export default function CreatorPDIModal({
   onClose,
   onSubmit,
   loading = false,
+  usuarios = [],
+  isAdmin = false,
+  initialData = EMPTY_INITIAL_DATA,
 }: CreatorPDIModalProps) {
   const { provincias, getLocalidadesByProvincia } = useProvinciasLocalidades();
+  // Creamos una ref para mantener la versión más reciente de la función
+  // sin que el useEffect principal se vuelva a ejecutar innecesariamente.
+  const getLocalidadesByProvinciaRef = useRef(getLocalidadesByProvincia);
+  useEffect(() => {
+    getLocalidadesByProvinciaRef.current = getLocalidadesByProvincia;
+  }, [getLocalidadesByProvincia]);
 
   const [step, setStep] = useState<1 | 2>(1);
   const [localidades, setLocalidades] = useState<any[]>([]);
@@ -478,6 +78,7 @@ export default function CreatorPDIModal({
     lat: undefined,
     lng: undefined,
     tags: [],
+    usuarioId: undefined,
   };
 
   const [form, setForm] = useState<PDIFormData>(initialForm);
@@ -512,16 +113,31 @@ export default function CreatorPDIModal({
 
     const init = async () => {
       if (!pdi) {
-        setForm(initialForm);
+        // Separamos la localidad para setearla después de cargar la lista.
+        const { localidad: initialLocalidad, ...restOfInitialData } =
+          initialData;
+        const baseForm = { ...initialForm, ...restOfInitialData };
+
+        setForm(baseForm); // Seteamos el form sin la localidad
         setImagePreview('');
-        setLocalidades([]);
+
+        if (baseForm.provincia) {
+          const locs = await getLocalidadesByProvinciaRef.current(
+            baseForm.provincia,
+          );
+          setLocalidades(locs);
+          // Ahora que tenemos las localidades, seteamos el valor correcto.
+          setForm((prev) => ({ ...prev, localidad: initialLocalidad || 0 }));
+        } else {
+          setLocalidades([]);
+        }
         return;
       }
 
       const provinciaId = pdi.localidad?.provincia?.id || 0;
 
       if (provinciaId) {
-        const locs = await getLocalidadesByProvincia(provinciaId);
+        const locs = await getLocalidadesByProvinciaRef.current(provinciaId);
         setLocalidades(locs);
       }
 
@@ -542,6 +158,7 @@ export default function CreatorPDIModal({
           pdi.tags
             ?.map((t) => t.id)
             .filter((id): id is number => typeof id === 'number') ?? [],
+        usuarioId: (pdi as any).usuario?.id ?? (pdi as any).usuario,
       });
 
       if (typeof pdi.imagen === 'string') {
@@ -551,7 +168,7 @@ export default function CreatorPDIModal({
 
     init();
     setStep(1);
-  }, [pdi, show]);
+  }, [pdi, show, initialData]);
 
   // =============================
   // GEOCODING
@@ -606,6 +223,14 @@ export default function CreatorPDIModal({
         tags: checked
           ? [...prev.tags, tagId]
           : prev.tags.filter((id) => id !== tagId),
+      }));
+      return;
+    }
+
+    if (name === 'usuarioId') {
+      setForm((prev) => ({
+        ...prev,
+        usuarioId: value ? Number(value) : undefined,
       }));
       return;
     }
@@ -743,6 +368,30 @@ export default function CreatorPDIModal({
                   PDI Privado
                 </label>
 
+                {isAdmin && usuarios && usuarios.length > 0 && !pdi && (
+                  <div>
+                    <label className="block text-sm font-medium mb-1">
+                      Usuario Creador
+                    </label>
+                    <select
+                      name="usuarioId"
+                      value={form.usuarioId ?? ''}
+                      onChange={handleChange}
+                      className="w-full border p-2 rounded"
+                      required
+                    >
+                      <option value="" disabled>
+                        Seleccione un usuario
+                      </option>
+                      {usuarios.map((user) => (
+                        <option key={user.id} value={user.id}>
+                          {user.nombre} ({user.gmail})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+
                 <TagsSelector
                   tags={allTags}
                   selected={form.tags}
@@ -756,6 +405,7 @@ export default function CreatorPDIModal({
                   type="file"
                   accept="image/*"
                   onChange={handleImageChange}
+                  required={!pdi}
                 />
                 {imagePreview && (
                   <img src={imagePreview} className="mt-4 rounded max-h-64" />

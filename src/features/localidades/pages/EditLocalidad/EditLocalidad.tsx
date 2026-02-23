@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Navbar from '@/components/layout/Navbar/Navbar';
 import Estrellas from '@/components/ui/Rating/Estrellas';
@@ -6,11 +6,14 @@ import PantallaDeCarga from '@/components/ui/Loading/PantallaDeCarga';
 import FormField from '@/components/forms/FormField/FormField';
 import FormSelect from '@/components/forms/FormSelect/FormSelect';
 import PDIListItem from '@/components/PDI/PDIListItem';
-import { API_BASE_URL } from '@/utils/api';
+import { API_BASE_URL, createPDI, uploadImage, useApiGet } from '@/utils/api';
 import type { PDI as PDIType } from '@/types';
 import './EditLocalidad.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useAuthAdmin } from '@/features/auth';
+import CreatorPDIModal, {
+  type PDIFormData,
+} from '@/features/creator/components/CreatorEventModal/CreatorPDIModal';
 
 interface Provincia {
   id: number;
@@ -42,7 +45,9 @@ export default function EditLocalidad() {
   const [imagenFile, setImagenFile] = useState<File | null>(null);
   const [guardando, setGuardando] = useState(false);
   const [mensaje, setMensaje] = useState<string | null>(null);
-  const [errorLocalidad, setError] = useState<string | null>(null);
+  const [errorLocalidad, setErrorLocalidad] = useState<string | null>(null);
+  const { data: usuarios } = useApiGet<any[]>('/api/usuarios');
+  const [showCreatePDIModal, setShowCreatePDIModal] = useState(false);
 
   // Cargar localidad + provincias
   useEffect(() => {
@@ -82,10 +87,10 @@ export default function EditLocalidad() {
         setLocalidad(locData);
         originalRef.current = JSON.parse(JSON.stringify(locData));
         setProvincias(Array.isArray(provData) ? provData : []);
-        setError(null);
+        setErrorLocalidad(null);
       } catch (err: any) {
         console.error(err);
-        setError(err.message ?? 'Error inesperado al cargar datos');
+        setErrorLocalidad(err.message ?? 'Error inesperado al cargar datos');
       } finally {
         setLoading(false);
       }
@@ -93,6 +98,16 @@ export default function EditLocalidad() {
 
     fetchAll();
   }, [localidadId]);
+
+  const initialPdiData = useMemo<Partial<PDIFormData>>(() => {
+    if (!localidad) return {};
+    return {
+      provincia: localidad.provincia?.id,
+      localidad: localidad.id,
+      provinciaNombre: localidad.provincia?.nombre,
+      localidadNombre: localidad.nombre,
+    };
+  }, [localidad]);
 
   if (loadingLocalidad)
     return <PantallaDeCarga mensaje="Cargando localidad..." />;
@@ -153,11 +168,70 @@ export default function EditLocalidad() {
     navigate(`/localidad/${localidadId}`);
   };
 
+  const refetchLocalidad = async () => {
+    if (!localidadId) return;
+    try {
+      const locRes = await fetch(
+        `${API_BASE_URL}/api/localidades/${localidadId}`,
+        {
+          credentials: 'include',
+        },
+      );
+      if (!locRes.ok) {
+        throw new Error('Failed to refetch localidad');
+      }
+      const locJson = await locRes.json();
+      const locData: Localidad = locJson.data ?? locJson;
+      setLocalidad(locData);
+      originalRef.current = JSON.parse(JSON.stringify(locData));
+    } catch (error) {
+      console.error('Error refetching localidad:', error);
+    }
+  };
+
+  const handleCreatePDISubmit = async (pdiFormData: PDIFormData) => {
+    setGuardando(true);
+    try {
+      if (!pdiFormData.imagen || !(pdiFormData.imagen instanceof File)) {
+        throw new Error('Tenés que seleccionar una imagen');
+      }
+
+      const uploadResult = await uploadImage(pdiFormData.imagen);
+      if (!uploadResult.success || !uploadResult.data) {
+        throw new Error(uploadResult.error || 'Error al subir imagen');
+      }
+      const imagenUrl =
+        uploadResult.data.nombreArchivo || uploadResult.data.filename;
+      if (!imagenUrl) {
+        throw new Error('No se pudo obtener el nombre de la imagen subida');
+      }
+
+      const payload: any = {
+        ...pdiFormData,
+        imagen: imagenUrl,
+        usuario: isAdmin ? pdiFormData.usuarioId : undefined,
+      };
+
+      const result = await createPDI(payload);
+      if (!result.success) {
+        throw new Error(result.error || 'Error al crear el PDI');
+      }
+
+      await refetchLocalidad();
+      return true;
+    } catch (err: any) {
+      setErrorLocalidad(err.message ?? 'Error inesperado al crear PDI');
+      return false;
+    } finally {
+      setGuardando(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setGuardando(true);
     setMensaje(null);
-    setError(null);
+    setErrorLocalidad(null);
 
     try {
       let imagenNombre = localidad.imagen ?? '';
@@ -210,7 +284,7 @@ export default function EditLocalidad() {
       }, 900);
     } catch (err: any) {
       console.error('Error guardando localidad:', err);
-      setError(err.message ?? 'Error inesperado al guardar');
+      setErrorLocalidad(err.message ?? 'Error inesperado al guardar');
     } finally {
       setGuardando(false);
     }
@@ -400,7 +474,7 @@ export default function EditLocalidad() {
           </div>
         </div>
 
-        {/* Searchbox */}
+        {/* Searchbox - Not implemented */}
         <div className="pdiSearchboxDiv mt-3">
           <input
             className="pdiSearchbox form-control"
@@ -421,7 +495,7 @@ export default function EditLocalidad() {
 
           {/* Card para agregar nuevo PDI */}
           <div
-            onClick={() => navigate('/CreatePDI')}
+            onClick={() => setShowCreatePDIModal(true)}
             style={{ cursor: 'pointer' }}
             className="h-100"
           >
@@ -435,6 +509,17 @@ export default function EditLocalidad() {
           </div>
         </div>
       </div>
+      {showCreatePDIModal && (
+        <CreatorPDIModal
+          show={showCreatePDIModal}
+          onClose={() => setShowCreatePDIModal(false)}
+          onSubmit={handleCreatePDISubmit}
+          isAdmin={isAdmin ?? false}
+          usuarios={usuarios ?? []}
+          loading={guardando}
+          initialData={initialPdiData}
+        />
+      )}
     </div>
   );
 }
