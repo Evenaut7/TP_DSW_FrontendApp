@@ -52,11 +52,13 @@ export function useCreatorDashboard() {
         descripcion: data.descripcion,
         calle: data.calle,
         altura: Number(data.altura),
+        lat: data.lat,
+        lng: data.lng,
         localidad: Number(data.localidad),
         privado: Boolean(data.privado),
         imagen: imagenNombre,
         usuario: user.id,
-        tags: data.tags, // 🔥 ESTA ES LA LÍNEA QUE FALTABA
+        tags: data.tags,
       };
 
       const result = editingPDI

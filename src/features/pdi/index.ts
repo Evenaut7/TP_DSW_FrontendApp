@@ -5,7 +5,6 @@ export { default as PDIForm } from './components/PDIForm/PDIForm';
 
 // Pages
 export { default as PDIPage } from './pages/PDIPage/PDIPage';
-export { default as CreatePDI } from './pages/CreatePDI/CreatePDI';
 export { default as EditPDI } from './pages/EditPDI/EditPDI';
 
 // Hooks

@@ -53,8 +53,7 @@ export default function CreatorPDIModal({
   initialData = EMPTY_INITIAL_DATA,
 }: CreatorPDIModalProps) {
   const { provincias, getLocalidadesByProvincia } = useProvinciasLocalidades();
-  // Creamos una ref para mantener la versión más reciente de la función
-  // sin que el useEffect principal se vuelva a ejecutar innecesariamente.
+
   const getLocalidadesByProvinciaRef = useRef(getLocalidadesByProvincia);
   useEffect(() => {
     getLocalidadesByProvinciaRef.current = getLocalidadesByProvincia;

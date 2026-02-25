@@ -9,7 +9,7 @@ import { HomePage } from '@/features/home';
 import { PerfilPage, FavoritosPage } from '@/features/user';
 import { TagsPage } from '@/features/tags';
 import { Localidad, EditLocalidad } from '@/features/localidades';
-import { PDIPage, CreatePDI, EditPDI } from '@/features/pdi';
+import { PDIPage, EditPDI } from '@/features/pdi';
 import { CRUDProvincia } from '@/features/provincias';
 import { CreatorDashboard, CreatorEventsPage } from '@/features/creator';
 import MapPage from './features/map/MapPage.tsx';
@@ -25,7 +25,6 @@ export const router = createBrowserRouter([
   { path: '/working-on-it', element: <WorkingOnItPage /> },
   { path: '/localidad/:id', element: <Localidad /> },
   { path: '/pdi/:id', element: <PDIPage /> },
-  { path: '/CreatePDI', element: <CreatePDI /> },
   { path: '/provincias', element: <CRUDProvincia /> },
   { path: '/EditPDI/:id', element: <EditPDI /> },
   { path: '/editLocalidad/:id', element: <EditLocalidad /> },
