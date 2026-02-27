@@ -47,6 +47,7 @@ export type Evento = {
   estado?: string;
   tags?: Array<number | Tag>;
   puntoDeInteres?: number;
+  usuarios?: number[];
 };
 
 export type TipoTag = 'Evento' | 'Punto de Interés' | 'Actividad';

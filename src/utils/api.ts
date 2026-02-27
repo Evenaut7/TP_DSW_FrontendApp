@@ -511,3 +511,21 @@ export function getImageUrl(filename: string): string {
 }
 
 export { API_BASE_URL };
+
+// ==================== EVENTOS - AGENDA ====================
+
+export async function checkEventoAgendado(eventoId: number) {
+  return apiGet(`/api/eventos/estaAgendado/${eventoId}`);
+}
+
+export async function addEventoToAgenda(eventoId: number) {
+  return apiPost('/api/eventos/addToAgenda', { id: eventoId });
+}
+
+export async function removeEventoFromAgenda(eventoId: number) {
+  return apiPost('/api/eventos/sacarDeAgenda', { id: eventoId });
+}
+
+export async function getAgendaUsuario() {
+  return apiGet('/api/eventos/getAgenda');
+}
