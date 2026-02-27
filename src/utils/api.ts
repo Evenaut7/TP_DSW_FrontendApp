@@ -481,10 +481,15 @@ export async function uploadImage(
       };
     }
 
+    const normalizedData = {
+      filename: data?.data?.filename || data?.nombreArchivo || data?.data?.nombreArchivo,
+      url: data?.data?.url || data?.url,
+    };
+
     return {
       success: true,
-      data: data?.data || data,
-      message: data?.message,
+      data: normalizedData,
+      message: data?.message || data?.mensaje,
     };
   } catch (error) {
     return {
