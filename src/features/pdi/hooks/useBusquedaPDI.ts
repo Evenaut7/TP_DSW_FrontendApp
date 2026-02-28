@@ -24,19 +24,24 @@ export function useBusquedaPDI({
   pdisIniciales,
 }: UseBusquedaPDIParams) {
   const [pdis, setPdis] = useState<PDI[]>(pdisIniciales);
-  // const [pdis, setPdis] = useState<PDI[]>([]);
   const [loadingPDIs, setLoading] = useState(false);
 
-  // Generamos claves estables para evitar bucles infinitos por referencias de arrays
   const tagsKey = JSON.stringify(tags);
   const pdisIds = pdisIniciales.map((p) => p.id).join(',');
 
   useEffect(() => {
-    if (!localidadId) return;
-
-    // SIN filtros → mostramos los PDIs iniciales
     if (busqueda.trim() === '' && tags.length === 0) {
       setPdis(pdisIniciales);
+      setLoading(false);
+    }
+  }, [pdisIds]);
+
+  useEffect(() => {
+    if (!localidadId) return;
+
+    if (busqueda.trim() === '' && tags.length === 0) {
+      setPdis(pdisIniciales);
+      setLoading(false);
       return;
     }
 
@@ -57,7 +62,7 @@ export function useBusquedaPDI({
         const json = await res.json();
         setPdis(Array.isArray(json.data) ? json.data : []);
       } catch (err) {
-        console.error('Error en búsqueda PDI:', err);
+        console.error('Error en busqueda PDI:', err);
         setPdis([]);
       } finally {
         setLoading(false);

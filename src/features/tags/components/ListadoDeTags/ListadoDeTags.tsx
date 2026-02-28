@@ -43,7 +43,7 @@ const ListadoDeTags = ({ onTagsChange }: ListadoDeTagsProps) => {
       nuevos = [...seleccionados, id];
     }
     setSeleccionados(nuevos);
-    onTagsChange?.(nuevos); // enviamos solo ids al padre
+    onTagsChange?.(nuevos);
   };
 
   return (

@@ -1,9 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
-  ],
+  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   darkMode: 'class',
   theme: {
     extend: {
@@ -22,7 +19,19 @@ export default {
         xl: '1.5rem',
         full: '9999px',
       },
+      backgroundSize: {
+        400: '400% 100%',
+      },
+      animation: {
+        shimmer: 'shimmer 1.4s ease infinite',
+      },
+      keyframes: {
+        shimmer: {
+          '0%': { backgroundPosition: '100% 0' },
+          '100%': { backgroundPosition: '-100% 0' },
+        },
+      },
     },
   },
   plugins: [],
-}
+};

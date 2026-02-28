@@ -100,15 +100,13 @@ const PDIPage = () => {
     <div className="min-h-screen bg-slate-50 dark:bg-slate-800 font-display transition-colors duration-300">
       <Navbar />
 
-      {/* ── Hero (60vh) ── */}
       <div className="relative w-full h-[60vh] overflow-hidden">
         <img
           src={`${API_BASE_URL}/public/${pdi.imagen}`}
           alt={pdi.nombre}
           className="w-full h-full object-cover"
         />
-        {/* Light: degradado sutil solo para legibilidad del texto, no cambia el fondo */}
-        {/* Dark: termina en slate-800 para fundirse */}
+
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent dark:from-slate-800 dark:via-black/30 dark:to-transparent" />
         <div className="absolute bottom-0 left-0 w-full px-5 md:px-16 pb-8">
           <div className="max-w-7xl mx-auto">
@@ -126,7 +124,6 @@ const PDIPage = () => {
       <div className="bg-[#ffffff] dark:bg-slate-800">
         <div className="max-w-7xl mx-auto px-5 md:px-16 py-8 md:py-12">
           <div className="flex flex-col md:flex-row gap-8 md:gap-16">
-            {/* Izquierda: descripción + rating + tags */}
             <div className="flex-1 space-y-5">
               <p className="text-slate-600 dark:text-slate-300 text-base md:text-lg leading-relaxed">
                 {pdi.descripcion}
@@ -149,9 +146,6 @@ const PDIPage = () => {
               )}
             </div>
 
-            {/* Derecha: acciones
-                Mobile: grilla 2x2 para que los 3 botones + "ver eventos" entren en pantalla
-                Desktop: columna de ancho fijo */}
             <div className="grid grid-cols-2 md:grid-cols-1 gap-3 w-full md:w-52 flex-shrink-0">
               <button className="col-span-1 h-11 px-5 rounded-full bg-primary text-white font-semibold hover:bg-accent transition-colors text-sm">
                 Conocer historias
@@ -174,7 +168,6 @@ const PDIPage = () => {
                 {localEsFavorito ? 'En favoritos' : 'Favoritos'}
               </button>
 
-              {/* "Ver eventos" ocupa las 2 columnas en mobile para destacar como CTA */}
               <button
                 onClick={scrollToEventos}
                 className="col-span-2 md:col-span-1 h-11 px-5 rounded-full border border-primary/30 bg-primary/5 dark:bg-primary/10 text-primary font-semibold flex items-center justify-center gap-2 hover:bg-primary/10 dark:hover:bg-primary/20 transition-colors group text-sm"
@@ -214,7 +207,6 @@ const PDIPage = () => {
         </div>
       </div>
 
-      {/* ── Dark mode toggle flotante ── */}
       <button
         onClick={toggleTheme}
         aria-label="Cambiar tema"
