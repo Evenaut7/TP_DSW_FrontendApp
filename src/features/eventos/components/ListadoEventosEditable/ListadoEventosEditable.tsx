@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import { Row, Col, Modal, Button } from 'react-bootstrap';
+import React, { useState } from 'react';
 import EventCard from '@/features/eventos/components/EventCard/EventCard';
 import {
   useApiGetById,
@@ -7,294 +6,224 @@ import {
   createEvento,
   updateEvento,
   deleteEvento,
+  getPDIById,
 } from '@/utils/api';
-import { getPDIById } from '@/utils/api';
-import EventoForm from './EventoForm.tsx';
-
+import CreatorEventModal, {
+  type EventoFormData,
+} from '@/features/creator/components/CreatorEventModal/CreatorEventModal';
 import type { Evento, Tag } from '@/types';
+import { Plus, Pencil, Trash2, X } from 'lucide-react';
 
-type Props = {
-  pdiId: number;
-};
+type Props = { pdiId: number };
 
+// ── Modal de confirmación de eliminación ──────────────────────────────────────
+const DeleteModal = ({
+  evento,
+  onConfirm,
+  onCancel,
+}: {
+  evento: Evento;
+  onConfirm: () => void;
+  onCancel: () => void;
+}) => (
+  <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
+    <div
+      className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+      onClick={onCancel}
+    />
+    <div className="relative bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-md">
+      <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-slate-700">
+        <h3 className="font-bold text-slate-900 dark:text-slate-100 text-lg">
+          Confirmar eliminación
+        </h3>
+        <button
+          onClick={onCancel}
+          className="p-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-400 transition-colors"
+        >
+          <X className="w-5 h-5" />
+        </button>
+      </div>
+      <div className="px-6 py-5 space-y-5">
+        <p className="text-slate-600 dark:text-slate-300">
+          ¿Estás seguro que querés eliminar{' '}
+          <span className="font-semibold">"{evento.titulo}"</span>?
+        </p>
+        <div className="flex gap-3">
+          <button
+            onClick={onCancel}
+            className="flex-1 py-2.5 rounded-full border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-300 font-semibold hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors text-sm"
+          >
+            Cancelar
+          </button>
+          <button
+            onClick={onConfirm}
+            className="flex-1 py-2.5 rounded-full bg-red-500 text-white font-semibold hover:bg-red-600 transition-colors text-sm"
+          >
+            Eliminar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+// ── Componente principal ──────────────────────────────────────────────────────
 const ListadoEventosEditable: React.FC<Props> = ({ pdiId }) => {
   const { data, loading, error } = useApiGetById<{ eventos: Evento[] }>(
     '/api/puntosDeInteres',
     pdiId,
   );
-
   const { data: allTags } = useApiGet<Tag[]>('/api/tags');
 
+  const [events, setEvents] = React.useState<Evento[]>([]);
   const [showModal, setShowModal] = useState(false);
-  const [editEvento, setEditEvento] = useState<Evento | null>(null);
-  const [events, setEvents] = useState<Evento[]>([]);
-  const [form, setForm] = useState<Evento>({
-    titulo: '',
-    descripcion: '',
-    horaDesde: '',
-    horaHasta: '',
-    estado: 'Disponible',
-    tags: [],
-    puntoDeInteres: pdiId,
-  });
-
-  const [showSuccess, setShowSuccess] = useState(false);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [editingEvent, setEditingEvent] = useState<Evento | null>(null);
   const [eventoAEliminar, setEventoAEliminar] = useState<Evento | null>(null);
+  const [submitting, setSubmitting] = useState(false);
 
-  useEffect(() => {
-    if (editEvento) {
-      const normalizedTags: number[] = Array.isArray(editEvento.tags)
-        ? editEvento.tags.map((t: any) => (typeof t === 'number' ? t : t.id))
-        : [];
-
-      const toDatetimeLocal = (iso?: string) => {
-        if (!iso) return '';
-        const d = new Date(iso);
-        const offsetMs = d.getTimezoneOffset() * 60000;
-        return new Date(d.getTime() - offsetMs).toISOString().slice(0, 16);
-      };
-
-      setForm({
-        ...editEvento,
-        horaDesde: toDatetimeLocal(editEvento.horaDesde),
-        horaHasta: toDatetimeLocal(editEvento.horaHasta),
-        tags: normalizedTags,
-      });
-      setShowModal(true);
-    }
-  }, [editEvento]);
-
-  // Inicializar/actualizar lista local de eventos cuando cambie la data del hook
-  useEffect(() => {
-    if (data && Array.isArray(data.eventos)) {
-      setEvents(data.eventos);
-    }
+  React.useEffect(() => {
+    if (data?.eventos) setEvents(data.eventos);
   }, [data]);
 
-  const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >,
-  ) => {
-    const { name, value, checked, type } = e.target as HTMLInputElement;
-    if (name === 'tags') {
-      const id = Number(value);
-      setForm((prev) => {
-        const prevTags = Array.isArray(prev.tags) ? prev.tags : [];
-        const normalized = checked
-          ? [...prevTags, id]
-          : prevTags.filter(
-              (t: any) => (typeof t === 'number' ? t : t.id) !== id,
-            );
-        return { ...prev, tags: normalized };
-      });
-      return;
+  // Refrescar lista desde el backend
+  const refrescarEventos = async () => {
+    try {
+      const refreshed = await getPDIById(pdiId);
+      if (refreshed.success && (refreshed.data as any)?.eventos) {
+        setEvents((refreshed.data as any).eventos);
+      }
+    } catch (e) {
+      console.warn('No se pudo refrescar eventos:', e);
     }
-
-    setForm((prev) => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value,
-    }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  // Submit — mismo contrato que useCreatorEventsPage
+  const handleEventSubmit = async (
+    formData: EventoFormData,
+  ): Promise<boolean> => {
+    if (!formData.fecha) {
+      return false;
+    }
+    setSubmitting(true);
     try {
-      const formatDatetimeLocalToSQL = (v?: string) => {
-        if (!v) return undefined;
-        const [date, time] = v.split('T');
-        if (!time) return `${date} 00:00:00`;
-        const timeWithSeconds =
-          time.length === 5 ? `${time}:00` : time.split('.')[0];
-        return `${date} ${timeWithSeconds}`;
-      };
+      const formatTimestamp = (date: string, time: string) =>
+        `${date} ${time}:00`;
 
-      const body = {
-        titulo: form.titulo,
-        descripcion: form.descripcion,
-        horaDesde: formatDatetimeLocalToSQL(form.horaDesde),
-        horaHasta: formatDatetimeLocalToSQL(form.horaHasta),
-        estado: form.estado,
-        tags: form.tags,
+      const payload = {
+        ...formData,
+        horaDesde: formatTimestamp(formData.fecha, formData.horaDesde),
+        horaHasta: formatTimestamp(formData.fecha, formData.horaHasta),
+        tags: formData.tags || [],
         puntoDeInteres: pdiId,
       };
 
-      const result = form.id
-        ? await updateEvento(form.id, body)
-        : await createEvento(body);
+      const result = editingEvent?.id
+        ? await updateEvento(editingEvent.id, payload)
+        : await createEvento(payload);
 
-      if (!result.success) {
-        throw new Error(result.error || 'Error al guardar el evento');
-      }
+      if (!result.success) throw new Error(result.error || 'Error al guardar');
 
-      // Refrescar lista de eventos desde el backend para actualizar la UI inmediatamente
-      try {
-        const refreshed = await getPDIById(pdiId);
-        if (
-          refreshed.success &&
-          refreshed.data &&
-          (refreshed.data as any).eventos
-        ) {
-          setEvents((refreshed.data as any).eventos);
-        }
-      } catch (refreshErr) {
-        // no bloquear el flujo si falla el re-fetch
-        console.warn('No se pudo refrescar eventos tras guardar:', refreshErr);
-      }
-
-      setShowModal(false);
-      setShowSuccess(true);
-    } catch (err) {
-      alert(`❌ Error al guardar el evento: ${err}`);
+      await refrescarEventos();
+      return true;
+    } catch (err: any) {
+      console.error('Error guardando evento:', err.message);
+      return false;
+    } finally {
+      setSubmitting(false);
     }
-  };
-
-  const handleSuccessClose = () => {
-    setShowSuccess(false);
-    setEditEvento(null);
   };
 
   const handleDelete = async () => {
-    if (!eventoAEliminar || !eventoAEliminar.id) return;
+    if (!eventoAEliminar?.id) return;
     try {
       const result = await deleteEvento(eventoAEliminar.id);
-      if (!result.success) {
-        throw new Error(result.error || 'Error al eliminar el evento');
-      }
-      try {
-        const refreshed = await getPDIById(pdiId);
-        if (
-          refreshed.success &&
-          refreshed.data &&
-          (refreshed.data as any).eventos
-        ) {
-          setEvents((refreshed.data as any).eventos);
-        }
-      } catch (refreshErr) {
-        console.warn('No se pudo refrescar eventos tras eliminar:', refreshErr);
-      }
-      setShowDeleteModal(false);
+      if (!result.success) throw new Error(result.error || 'Error al eliminar');
+      await refrescarEventos();
       setEventoAEliminar(null);
-    } catch (err) {
-      alert(`❌ No se pudo eliminar el evento: ${err}`);
+    } catch (err: any) {
+      console.error('Error eliminando evento:', err.message);
     }
   };
 
-  if (loading) return <p>Cargando eventos...</p>;
-  if (error) return <p>{error}</p>;
-  if (!data) return <p>No hay eventos disponibles.</p>;
+  const handleOpenCreate = () => {
+    setEditingEvent(null);
+    setShowModal(true);
+  };
+  const handleOpenEdit = (evento: Evento) => {
+    setEditingEvent(evento);
+    setShowModal(true);
+  };
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setEditingEvent(null);
+  };
+
+  if (loading)
+    return (
+      <p className="text-slate-400 dark:text-slate-500 text-sm">
+        Cargando eventos...
+      </p>
+    );
+  if (error) return <p className="text-red-500 text-sm">{error}</p>;
 
   return (
-    <div className="eventos-container">
-      <Row className="g-4">
-        <Col xs={12} md={6}>
-          <div
-            className="evento-card placeholder-card"
-            onClick={() => {
-              setEditEvento(null);
-              setForm({
-                id: undefined,
-                titulo: '',
-                descripcion: '',
-                horaDesde: '',
-                horaHasta: '',
-                estado: 'Disponible',
-                tags: [],
-                puntoDeInteres: pdiId,
-              });
-              setShowModal(true);
-            }}
-          >
-            <div className="evento-fecha">
-              <span className="evento-dia">+</span>
-            </div>
-            <div className="evento-info">
-              <h3 className="evento-titulo">Agregar evento</h3>
-            </div>
+    <>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Card agregar evento */}
+        <button
+          type="button"
+          onClick={handleOpenCreate}
+          className="flex items-stretch bg-white dark:bg-slate-700 rounded-xl border-2 border-dashed border-slate-200 dark:border-slate-600 hover:border-primary dark:hover:border-primary hover:shadow-md transition-all duration-300 group min-h-[100px]"
+        >
+          <div className="flex flex-col items-center justify-center bg-slate-100 dark:bg-slate-600 group-hover:bg-primary/10 dark:group-hover:bg-primary/20 text-slate-400 group-hover:text-primary px-4 py-5 w-20 flex-shrink-0 rounded-l-xl transition-colors">
+            <Plus className="w-7 h-7" />
           </div>
-        </Col>
+          <div className="flex-1 flex items-center px-5 py-4">
+            <span className="font-semibold text-slate-500 dark:text-slate-300 group-hover:text-primary transition-colors">
+              Agregar evento
+            </span>
+          </div>
+        </button>
 
+        {/* Eventos existentes */}
         {events.map((evento) => (
-          <Col key={evento.id} xs={12} md={6}>
-            <EventCard evento={evento}>
-              <Button
-                variant="outline-primary"
-                size="sm"
-                onClick={() => setEditEvento(evento)}
-              >
-                Editar
-              </Button>
-              <Button
-                variant="outline-danger"
-                size="sm"
-                className="ms-2"
-                onClick={() => {
-                  setEventoAEliminar(evento);
-                  setShowDeleteModal(true);
-                }}
-              >
-                Eliminar
-              </Button>
-            </EventCard>
-          </Col>
+          <EventCard key={evento.id} evento={evento}>
+            <button
+              type="button"
+              onClick={() => handleOpenEdit(evento)}
+              className="flex-1 flex items-center justify-center gap-1.5 px-4 py-2 rounded-full border border-primary/30 text-primary text-sm font-semibold hover:bg-primary/5 transition-colors"
+            >
+              <Pencil className="w-3.5 h-3.5" /> Editar
+            </button>
+            <button
+              type="button"
+              onClick={() => setEventoAEliminar(evento)}
+              className="flex-1 flex items-center justify-center gap-1.5 px-4 py-2 rounded-full border border-red-200 dark:border-red-800 text-red-500 text-sm font-semibold hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+            >
+              <Trash2 className="w-3.5 h-3.5" /> Eliminar
+            </button>
+          </EventCard>
         ))}
-      </Row>
+      </div>
 
-      {/* Modal Crear/Editar */}
-      <Modal show={showModal} onHide={() => setShowModal(false)}>
-        <Modal.Header closeButton>
-          <Modal.Title>
-            {form.id ? 'Editar Evento' : 'Crear Evento'}
-          </Modal.Title>
-        </Modal.Header>
-
-        <Modal.Body>
-          <EventoForm
-            form={form}
-            allTags={Array.isArray(allTags) ? allTags : []}
-            onChange={handleChange}
-            onSubmit={handleSubmit}
-            onCancel={() => setShowModal(false)}
-          />
-        </Modal.Body>
-      </Modal>
-
-      {/* Modal de éxito */}
-      <Modal show={showSuccess} onHide={handleSuccessClose} centered>
-        <Modal.Header closeButton>
-          <Modal.Title>✅ Éxito</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>Evento modificado correctamente.</Modal.Body>
-        <Modal.Footer>
-          <Button variant="primary" onClick={handleSuccessClose}>
-            Aceptar
-          </Button>
-        </Modal.Footer>
-      </Modal>
+      <CreatorEventModal
+        show={showModal}
+        evento={editingEvent}
+        onClose={handleCloseModal}
+        onSubmit={handleEventSubmit}
+        loading={submitting}
+        allTags={allTags || []}
+      />
 
       {/* Modal eliminar */}
-      <Modal
-        show={showDeleteModal}
-        onHide={() => setShowDeleteModal(false)}
-        centered
-      >
-        <Modal.Header closeButton>
-          <Modal.Title>⚠️ Confirmar eliminación</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          ¿Estás seguro que deseas eliminar "{eventoAEliminar?.titulo}"?
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
-            Cancelar
-          </Button>
-          <Button variant="danger" onClick={handleDelete}>
-            Eliminar
-          </Button>
-        </Modal.Footer>
-      </Modal>
-    </div>
+      {eventoAEliminar && (
+        <DeleteModal
+          evento={eventoAEliminar}
+          onConfirm={handleDelete}
+          onCancel={() => setEventoAEliminar(null)}
+        />
+      )}
+    </>
   );
 };
 

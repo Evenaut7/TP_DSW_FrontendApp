@@ -1,7 +1,43 @@
 import { useState, useEffect, type FormEvent } from 'react';
 import { X, Loader2 } from 'lucide-react';
+import { z } from 'zod';
 import type { Evento, PDI, Tag } from '@/types';
 import TagsSelector from '@/features/tags/components/TagsSelector/TagsSelector';
+
+// ── Zod v4 schema (espejo del backend) ────────────────────────────────────────
+const eventoSchema = z
+  .object({
+    titulo: z
+      .string()
+      .min(1, 'El título no puede estar vacío')
+      .max(255, 'Máximo 255 caracteres'),
+    descripcion: z
+      .string()
+      .min(1, 'La descripción no puede estar vacía')
+      .max(1024, 'Máximo 1024 caracteres'),
+    fecha: z.string().min(1, 'La fecha es obligatoria'),
+    horaDesde: z.string().min(1, 'La hora de inicio es obligatoria'),
+    horaHasta: z.string().min(1, 'La hora de fin es obligatoria'),
+    estado: z.enum(['Disponible', 'Cancelado']),
+    tags: z.array(z.number().positive()).optional(),
+  })
+  .refine((data) => data.horaDesde < data.horaHasta, {
+    message: 'La hora de inicio debe ser anterior a la hora de fin',
+    path: ['horaHasta'],
+  });
+
+type EventoErrors = Partial<Record<keyof z.infer<typeof eventoSchema>, string>>;
+
+// ── Tipos ─────────────────────────────────────────────────────────────────────
+export interface EventoFormData {
+  titulo: string;
+  descripcion: string;
+  horaDesde: string;
+  horaHasta: string;
+  fecha?: string;
+  estado: string;
+  tags?: number[];
+}
 
 interface CreatorEventModalProps {
   show: boolean;
@@ -13,18 +49,31 @@ interface CreatorEventModalProps {
   allTags?: Tag[];
 }
 
-export interface EventoFormData {
-  titulo: string;
-  descripcion: string;
-  horaDesde: string;
-  horaHasta: string;
-  fecha?: string;
-  estado: string;
-  tags?: number[];
-}
+const ESTADOS = ['Disponible', 'Cancelado'];
 
-const ESTADOS = ['Disponible', 'Agotado', 'Cancelado'];
+// ── Input común ───────────────────────────────────────────────────────────────
+const inputCls =
+  'w-full px-4 py-2.5 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-primary focus:border-transparent transition-colors disabled:bg-slate-100 dark:disabled:bg-slate-600';
 
+const Field = ({
+  label,
+  error,
+  children,
+}: {
+  label: string;
+  error?: string;
+  children: React.ReactNode;
+}) => (
+  <div className="flex flex-col gap-1">
+    <label className="text-sm font-semibold text-slate-700 dark:text-slate-200">
+      {label}
+    </label>
+    {children}
+    {error && <p className="text-red-500 text-xs">{error}</p>}
+  </div>
+);
+
+// ── Componente ────────────────────────────────────────────────────────────────
 export default function CreatorEventModal({
   show,
   pdi,
@@ -43,35 +92,31 @@ export default function CreatorEventModal({
     fecha: new Date().toISOString().split('T')[0],
     tags: [],
   });
-
+  const [errors, setErrors] = useState<EventoErrors>({});
   const [submitting, setSubmitting] = useState(false);
 
-  // Inicializar con evento existente
   useEffect(() => {
-    if (evento && show) {
+    if (!show) return;
+    if (evento) {
       const fromDate = new Date(evento.horaDesde);
-      const toDate = new Date(evento.horaHasta);
-
-      // Helper to get HH:mm format
-      const toTimeString = (date: Date) => date.toTimeString().slice(0, 5);
-      // Helper to get YYYY-MM-DD format, timezone-safe for inputs
-      const toDateString = (date: Date) =>
-        new Date(date.getTime() - date.getTimezoneOffset() * 60000)
+      const toDateLocal = (d: Date) =>
+        new Date(d.getTime() - d.getTimezoneOffset() * 60000)
           .toISOString()
           .split('T')[0];
+      const toTime = (d: Date) => d.toTimeString().slice(0, 5);
 
       setForm({
         titulo: evento.titulo,
         descripcion: evento.descripcion,
-        horaDesde: toTimeString(fromDate),
-        horaHasta: toTimeString(toDate),
-        fecha: toDateString(fromDate),
+        horaDesde: toTime(fromDate),
+        horaHasta: toTime(new Date(evento.horaHasta)),
+        fecha: toDateLocal(fromDate),
         estado: evento.estado || 'Disponible',
         tags: Array.isArray(evento.tags)
-          ? evento.tags.map((t) => (typeof t === 'number' ? t : t.id || 0))
+          ? evento.tags.map((t: any) => (typeof t === 'number' ? t : t.id || 0))
           : [],
       });
-    } else if (show) {
+    } else {
       setForm({
         titulo: '',
         descripcion: '',
@@ -82,66 +127,50 @@ export default function CreatorEventModal({
         tags: [],
       });
     }
+    setErrors({});
   }, [evento, show]);
 
-  const handleInputChange = (
+  const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
     >,
   ) => {
     const { name, value, type } = e.target;
-
-    // Manejo especial para los tags (checkboxes)
     if (name === 'tags' && type === 'checkbox') {
       const checked = (e.target as HTMLInputElement).checked;
       const tagId = Number(value);
-      setForm((prev) => {
-        const currentTags = prev.tags || [];
-        const newTags = checked
-          ? [...currentTags, tagId]
-          : currentTags.filter((id) => id !== tagId);
-        return { ...prev, tags: newTags };
-      });
+      setForm((prev) => ({
+        ...prev,
+        tags: checked
+          ? [...(prev.tags || []), tagId]
+          : (prev.tags || []).filter((id) => id !== tagId),
+      }));
       return;
     }
-
-    setForm({
-      ...form,
-      [name]: value,
-    });
+    setForm((prev) => ({ ...prev, [name]: value }));
+    setErrors((prev) => ({ ...prev, [name]: undefined }));
   };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    setErrors({});
 
-    // Validaciones
-    if (!form.titulo.trim()) {
-      alert('Por favor ingresa un título');
-      return;
-    }
-
-    if (!form.descripcion.trim()) {
-      alert('Por favor ingresa una descripción');
-      return;
-    }
-
-    if (!form.horaDesde || !form.horaHasta) {
-      alert('Por favor selecciona horarios válidos');
-      return;
-    }
-
-    if (form.horaDesde >= form.horaHasta) {
-      alert('La hora de inicio debe ser anterior a la hora de fin');
+    // Validar con Zod
+    const result = eventoSchema.safeParse(form);
+    if (!result.success) {
+      const fieldErrors: EventoErrors = {};
+      result.error.issues.forEach((err) => {
+        const field = err.path[0] as keyof EventoErrors;
+        if (!fieldErrors[field]) fieldErrors[field] = err.message;
+      });
+      setErrors(fieldErrors);
       return;
     }
 
     setSubmitting(true);
-
     try {
       const success = await onSubmit(form);
-      if (success) {
-        onClose();
-      }
+      if (success) onClose();
     } finally {
       setSubmitting(false);
     }
@@ -150,177 +179,145 @@ export default function CreatorEventModal({
   if (!show) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-        {/* Header */}
-        <div className="sticky top-0 flex justify-between items-center p-6 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
-          <div>
-            <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
-              {evento ? 'Editar Evento' : 'Crear Evento'}
-            </h2>
-            {pdi && (
-              <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
-                para {pdi.nombre}
-              </p>
-            )}
-          </div>
+    <div className="fixed inset-0 z-[300] flex items-center justify-center p-4">
+      <div
+        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+        onClick={onClose}
+      />
+
+      <div
+        className="relative bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-2xl flex flex-col"
+        style={{ maxHeight: 'calc(100vh - 80px)' }}
+      >
+        <div className="flex-shrink-0 flex justify-between items-center px-6 py-4 border-b border-slate-200 dark:border-slate-700">
+          <h2 className="text-xl font-bold text-slate-900 dark:text-white">
+            {evento ? 'Editar evento' : 'Crear evento'}
+          </h2>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
             disabled={submitting}
+            className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
           >
-            <X className="w-6 h-6 text-slate-600 dark:text-slate-400" />
+            <X className="w-5 h-5 text-slate-500 dark:text-slate-400" />
           </button>
         </div>
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-6">
-          {/* Título */}
-          <div>
-            <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">
-              Título del Evento *
-            </label>
-            <input
-              type="text"
-              name="titulo"
-              value={form.titulo}
-              onChange={handleInputChange}
-              placeholder="Nombre del evento"
-              required
-              disabled={submitting}
-              className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-slate-100 dark:disabled:bg-slate-600"
-            />
-          </div>
-
-          {/* Descripción */}
-          <div>
-            <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">
-              Descripción *
-            </label>
-            <textarea
-              name="descripcion"
-              value={form.descripcion}
-              onChange={handleInputChange}
-              placeholder="Describe el evento"
-              rows={4}
-              required
-              disabled={submitting}
-              className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-slate-100 dark:disabled:bg-slate-600"
-            />
-          </div>
-
-          {/* Estado */}
-          <div>
-            <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">
-              Estado
-            </label>
-            <select
-              name="estado"
-              value={form.estado}
-              onChange={handleInputChange}
-              disabled={submitting}
-              className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-slate-100 dark:disabled:bg-slate-600"
-            >
-              {ESTADOS.map((estado) => (
-                <option key={estado} value={estado}>
-                  {estado}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Fecha */}
-          <div>
-            <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">
-              Fecha
-            </label>
-            <input
-              type="date"
-              name="fecha"
-              value={form.fecha || ''}
-              onChange={handleInputChange}
-              disabled={submitting}
-              className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-slate-100 dark:disabled:bg-slate-600"
-            />
-          </div>
-
-          {/* Horarios */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">
-                Hora Inicio *
-              </label>
+        <div className="flex-1 overflow-y-auto px-6 py-4">
+          <form id="evento-form" onSubmit={handleSubmit} className="space-y-4">
+            <Field label="Título *" error={errors.titulo}>
               <input
-                type="time"
-                name="horaDesde"
-                value={form.horaDesde}
-                onChange={handleInputChange}
-                required
+                type="text"
+                name="titulo"
+                value={form.titulo}
+                onChange={handleChange}
+                placeholder="Nombre del evento"
                 disabled={submitting}
-                className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-slate-100 dark:disabled:bg-slate-600"
+                className={inputCls}
               />
+            </Field>
+
+            <Field label="Descripción *" error={errors.descripcion}>
+              <textarea
+                name="descripcion"
+                value={form.descripcion}
+                onChange={handleChange}
+                placeholder="Describe el evento"
+                rows={2}
+                disabled={submitting}
+                className={`${inputCls} resize-none`}
+              />
+            </Field>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Field label="Estado" error={errors.estado}>
+                <select
+                  name="estado"
+                  value={form.estado}
+                  onChange={handleChange}
+                  disabled={submitting}
+                  className={inputCls}
+                >
+                  {ESTADOS.map((e) => (
+                    <option key={e} value={e}>
+                      {e}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+
+              <Field label="Fecha *" error={errors.fecha}>
+                <input
+                  type="date"
+                  name="fecha"
+                  value={form.fecha || ''}
+                  onChange={handleChange}
+                  disabled={submitting}
+                  className={inputCls}
+                />
+              </Field>
             </div>
 
-            <div>
-              <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">
-                Hora Fin *
-              </label>
-              <input
-                type="time"
-                name="horaHasta"
-                value={form.horaHasta}
-                onChange={handleInputChange}
-                required
-                disabled={submitting}
-                className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-slate-100 dark:disabled:bg-slate-600"
-              />
+            <div className="grid grid-cols-2 gap-4">
+              <Field label="Hora inicio *" error={errors.horaDesde}>
+                <input
+                  type="time"
+                  name="horaDesde"
+                  value={form.horaDesde}
+                  onChange={handleChange}
+                  disabled={submitting}
+                  className={inputCls}
+                />
+              </Field>
+              <Field label="Hora fin *" error={errors.horaHasta}>
+                <input
+                  type="time"
+                  name="horaHasta"
+                  value={form.horaHasta}
+                  onChange={handleChange}
+                  disabled={submitting}
+                  className={inputCls}
+                />
+              </Field>
             </div>
-          </div>
 
-          {/* Tags */}
-          <TagsSelector
-            tags={allTags.filter(
-              (tag): tag is Tag & { id: number; nombre: string } =>
-                tag.id != null && typeof tag.nombre === 'string',
-            )}
-            selected={form.tags || []}
-            onChange={handleInputChange as any}
-          />
-
-          {/* Info box */}
-          <div className="bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-500 p-4 rounded">
-            <p className="text-sm text-blue-900 dark:text-blue-200">
-              💡 Los eventos serán visibles en el punto de interés "
-              {pdi?.nombre}"
-            </p>
-          </div>
-
-          {/* Actions */}
-          <div className="flex gap-3 justify-end pt-4 border-t border-slate-200 dark:border-slate-700">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-6 py-2 bg-slate-100 dark:bg-slate-700 text-slate-900 dark:text-white rounded-lg font-medium hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors disabled:opacity-50"
-              disabled={submitting}
-            >
-              Cancelar
-            </button>
-            <button
-              type="submit"
-              className="px-6 py-2 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-600 transition-colors disabled:opacity-50 flex items-center gap-2"
-              disabled={submitting || loading}
-            >
-              {submitting || loading ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  Guardando...
-                </>
-              ) : (
-                'Guardar Evento'
+            <TagsSelector
+              tags={allTags.filter(
+                (t): t is Tag & { id: number; nombre: string } =>
+                  t.id != null && typeof t.nombre === 'string',
               )}
-            </button>
-          </div>
-        </form>
+              selected={form.tags || []}
+              onChange={handleChange as any}
+            />
+
+            {pdi && (
+              <div className="bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-500 px-4 py-3 rounded-r-lg text-sm text-blue-900 dark:text-blue-200">
+                💡 Los eventos serán visibles en "{pdi.nombre}"
+              </div>
+            )}
+          </form>
+        </div>
+
+        <div className="flex-shrink-0 flex gap-3 justify-end px-6 py-4 border-t border-slate-200 dark:border-slate-700">
+          <button
+            type="button"
+            onClick={onClose}
+            disabled={submitting}
+            className="px-5 py-2 rounded-full border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 font-semibold hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors text-sm disabled:opacity-50"
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            form="evento-form"
+            disabled={submitting || loading}
+            className="px-5 py-2 rounded-full bg-primary text-white font-semibold hover:bg-accent transition-colors text-sm disabled:opacity-50 flex items-center gap-2"
+          >
+            {(submitting || loading) && (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            )}
+            {submitting || loading ? 'Guardando...' : 'Guardar evento'}
+          </button>
+        </div>
       </div>
     </div>
   );
