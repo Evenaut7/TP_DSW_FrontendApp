@@ -52,7 +52,7 @@ function TagsPage() {
     }
     return (
         <>
-        <div className="background page-with-navbar-padding">
+        <div className="page-background page-with-navbar-padding">
         <Navbar />
         <div
             className="container mt-4 page-with-navbar-padding"

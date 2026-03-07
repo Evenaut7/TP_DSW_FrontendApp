@@ -3,8 +3,10 @@
    ============================================================ */
 
 /* ==================== BACKGROUNDS ==================== */
+
+/* Estilo base para páginas con fondo */
 .page-background {
-    background-image: url("@/assets/pdi/fondo2.png");
+    background-image: url("../assets/pdi/fondo2.png");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -14,7 +16,7 @@
 }
 
 .page-background-padded {
-    background-image: url("@/assets/pdi/fondo2.png");
+    background-image: url("../assets/pdi/fondo2.png");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
