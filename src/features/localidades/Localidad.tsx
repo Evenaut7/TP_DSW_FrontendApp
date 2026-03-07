@@ -64,7 +64,7 @@ const Localidad = () => {
     <div className="min-h-screen bg-slate-50 dark:bg-slate-800 font-display transition-colors duration-300">
       <Navbar />
 
-      <div className="w-full bg-gradient-to-br from-sky-50 via-blue-100 to-slate-50 dark:from-slate-900 dark:via-primary/30 dark:to-slate-800 pt-24 pb-12 md:pt-32 md:pb-16">
+      <div className="w-full bg-gradient-to-br from-sky-50 via-blue-100 to-slate-50 dark:from-slate-900 dark:via-primary/30 dark:to-slate-800 pt-32 pb-12 md:pt-40 md:pb-16">
         <div className="max-w-7xl mx-auto px-5 md:px-16">
           <div className="flex items-center gap-1.5 text-sm mb-8 flex-wrap text-slate-400 dark:text-white/60">
             <Link
