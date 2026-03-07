@@ -1,5 +1,5 @@
 // Pages
-export { default as CRUDProvincia } from './pages/CRUDProvincia/CRUDProvincia';
+export { default as CRUDProvincia } from './CRUDProvincia';
 
 // Hooks
-export { useProvinciaCRUD } from './hooks/useProvinciaCRUD';
+export { useProvinciaCRUD } from './useProvinciaCRUD';

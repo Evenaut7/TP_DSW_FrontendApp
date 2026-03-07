@@ -1,12 +1,12 @@
 // Components
-export { default as ListadoPDI } from './components/ListadoPDI/ListadoPDI';
-export { default as ListadoPDISkeleton } from './components/ListadoPDISkeleton/ListadoPDISkeleton';
-export { default as PDIForm } from './components/PDIForm/PDIForm';
+export { default as ListadoPDI } from './ListadoPDI';
+export { default as ListadoPDISkeleton } from './ListadoPDISkeleton';
+export { default as PDIForm } from './PDIForm';
 
 // Pages
-export { default as PDIPage } from './pages/PDIPage/PDIPage';
-export { default as EditPDI } from './pages/EditPDI/EditPDI';
+export { default as PDIPage } from './PDIPage';
+export { default as EditPDI } from './EditPDI';
 
 // Hooks
-export { useBusquedaPDI } from './hooks/useBusquedaPDI';
-export { usePDIForm } from './hooks/usePDIForm';
+export { useBusquedaPDI } from './useBusquedaPDI';
+export { usePDIForm } from './usePDIForm';

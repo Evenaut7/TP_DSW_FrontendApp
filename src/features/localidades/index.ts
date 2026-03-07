@@ -1,11 +1,11 @@
 // Components
-export { default as ListadoLocalidades } from './components/ListadoLocalidades/ListadoLocalidades';
-export { default as ListadoLocalidadesModal } from './components/ListadoLocalidadesModal/ListadoLocalidadesModal';
-export { default as CreateLocalidadModal } from './components/CreateLocalidadModal/CreateLocalidadModal';
+export { default as ListadoLocalidades } from './ListadoLocalidades';
+export { default as ListadoLocalidadesModal } from './ListadoLocalidadesModal';
+export { default as CreateLocalidadModal } from './CreateLocalidadModal';
 
 // Pages
-export { default as Localidad } from './pages/Localidad/Localidad';
-export { default as EditLocalidad } from './pages/EditLocalidad/EditLocalidad';
+export { default as Localidad } from './Localidad';
+export { default as EditLocalidad } from './EditLocalidad';
 
 // Hooks
-export { useProvinciasLocalidades } from './hooks/useProvinciasLocalidades';
+export { useProvinciasLocalidades } from './useProvinciasLocalidades';

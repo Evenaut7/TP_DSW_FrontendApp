@@ -1,9 +1,9 @@
 // Components
-export { default as ListadoDeTags } from './components/ListadoDeTags/ListadoDeTags';
-export { default as TagsSelector } from './components/TagsSelector/TagsSelector';
+export { default as ListadoDeTags } from './ListadoDeTags';
+export { default as TagsSelector } from './TagsSelector';
 
 // Pages
-export { default as TagsPage } from './pages/TagsPage/TagsPage';
+export { default as TagsPage } from './TagsPage';
 
 // Hooks
-export { useTagCRUD, type TipoTag } from './hooks/useTagCRUD';
+export { useTagCRUD, type TipoTag } from './useTagCRUD';

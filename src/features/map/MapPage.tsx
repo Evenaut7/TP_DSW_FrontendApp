@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import './MapPage.css';
-import Navbar from '@/components/layout/Navbar/Navbar.tsx';
+import Navbar from '@/components/layout/Navbar.tsx';
 import { useApiGet } from '@/utils/api.ts';
 import { API_BASE_URL } from '@/utils/api';
 

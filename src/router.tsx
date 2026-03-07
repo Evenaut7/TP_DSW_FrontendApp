@@ -1,8 +1,8 @@
 import { createBrowserRouter } from 'react-router-dom';
 
 // Pages
-import NotFoundPage from '@/pages/NotFoundPage/NotFoundPage';
-import WorkingOnItPage from '@/pages/WorkingOnItPage/WorkingOnItPage';
+import NotFoundPage from '@/pages/NotFoundPage';
+import WorkingOnItPage from '@/pages/WorkingOnItPage';
 
 // Features
 import { HomePage } from '@/features/home';

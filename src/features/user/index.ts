@@ -1,13 +1,13 @@
 // Components
-export { default as UserButton } from './components/UserButton/UserButton';
-export { default as UserCanvas } from './components/UserCanvas/UserCanvas';
+export { default as UserButton } from './UserButton';
+export { default as UserCanvas } from './UserCanvas';
 
 // Pages
-export { default as PerfilPage } from './pages/PerfilPage/PerfilPage';
-export { default as FavoritosPage } from './pages/FavoritosPage/FavoritosPage';
+export { default as PerfilPage } from './PerfilPage';
+export { default as FavoritosPage } from './FavoritosPage';
 
 // Context
-export { UserProvider } from './context/UserContext';
+export { UserProvider } from './UserContext';
 
 // Hooks
-export { useUser } from './hooks/useUser';
+export { useUser } from './useUser';

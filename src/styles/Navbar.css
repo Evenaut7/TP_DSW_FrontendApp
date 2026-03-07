@@ -1,0 +1,171 @@
+/* ========== NAVBAR PRINCIPAL (Desktop) ========== */
+.navbar {
+  /* Posicionamiento fijo para que se mantenga visible al hacer scroll */
+  position: fixed !important;
+  
+  /* Glassmorphism effect - fondo celeste semi-transparente con blur */
+  background: rgba(42, 135, 189, 0.678);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+
+  /* Layout y espaciado - más padding para que no toque los bordes */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 32px;
+
+  /* Bordes y sombras para efecto de profundidad */
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow:
+    0 8px 32px 0 rgba(31, 38, 135, 0.15),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.2);
+
+  transition: all 0.3s ease;
+}
+
+/* Logo "Discover" - color personalizable */
+.navLogo {
+  color: #ffffff;
+  transition: color 0.3s ease;
+}
+
+.navLogo:hover {
+  color: #f9d400; 
+}
+
+/* Texto del logo */
+.navLogo-text {
+  font-size: 1.125rem;
+  font-weight: 900;
+  letter-spacing: -0.05em;
+  text-transform: uppercase;
+}
+
+.navRight {
+  display: flex;
+  align-items: center;
+  justify-content: right;
+  gap: 8px; 
+}
+
+.navLetters {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #ffffff;
+  font-size: large;
+  font-family: "poppins";
+  text-decoration: none;
+}
+
+.navLetters:hover {
+  color: #dda600;
+}
+
+/* Botón de Iniciar Sesión */
+.loginButton {
+  padding: 10px 24px;
+  font-weight: bold;
+  border-radius: 8px;
+  border: 1px solid rgba(217, 119, 6, 0.3); 
+  backdrop-filter: blur(4px);
+  transition: all 0.2s ease;
+  cursor: pointer;
+  
+  /* Gradiente personalizable */
+  background: linear-gradient(to bottom right, #dda600, #dda600);
+  color: #ffffff;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.loginButton:hover {
+  /* Gradiente hover personalizable */
+  background: linear-gradient(to bottom right, #dda600, #dda600);
+  box-shadow: 0 4px 12px rgba(217, 119, 6, 0.5);
+  transform: scale(1.02);
+}
+
+/* ========== DROPDOWN STYLES (Normalización) ========== */
+/* Normalizar dropdown buttons en navbar principal */
+.navbar .dropdown-toggle.navLetters,
+.navbar .dropdown-toggle.navLetters:focus,
+.navbar .dropdown-toggle.navLetters:hover {
+  padding: 0;
+  margin: 0;
+  font-size: large;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+/* Caret (flecha dropdown) */
+.navbar .dropdown-toggle.navLetters::after {
+  margin-left: 0.25rem;
+  vertical-align: baseline;
+  font-size: 0.85em;
+  display: inline-block;
+  transition: transform 200ms ease;
+  transform-origin: 50% 40%;
+}
+
+/* Animación: rotar caret cuando dropdown está abierto */
+.navbar .dropdown.show > .dropdown-toggle.navLetters::after {
+  transform: rotate(180deg);
+}
+
+/* ========== DROPDOWN MENU STYLES ========== */
+/* Asegurar que los dropdown-menu tengan el texto visible */
+.dropdown-menu {
+  background-color: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 0.25rem;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.175);
+}
+
+.dropdown-item {
+  color: #212529 !important;
+  padding: 0.5rem 1rem;
+  text-decoration: none;
+  display: block;
+  width: 100%;
+  text-align: left;
+  background-color: transparent;
+  border: 0;
+}
+
+.dropdown-item:hover,
+.dropdown-item:focus {
+  color: #1e2125 !important;
+  background-color: #f8f9fa;
+}
+
+.dropdown-item:disabled {
+  color: #6c757d !important;
+  pointer-events: none;
+  background-color: transparent;
+}
+
+/* ========== MODAL STYLES ========== */
+.modal-backdrop.show {
+  backdrop-filter: blur(25px);
+  background-color: rgba(0, 0, 0, 0.074);
+}
+
+.modal-body > * {
+  margin-bottom: 1rem;
+}
+
+.modal-footer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}

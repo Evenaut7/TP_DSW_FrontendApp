@@ -1,7 +1,7 @@
 // Components
-export { default as AuthModal } from './components/AuthModal/AuthModal';
-export { default as RegisterModal } from './components/RegisterModal/RegisterModal';
-export { default as WelcomeModal } from './components/WelcomeModal/WelcomeModal';
+export { default as AuthModal } from './AuthModal';
+export { default as RegisterModal } from './RegisterModal';
+export { default as WelcomeModal } from './WelcomeModal';
 
 // Hooks
-export { useAuthAdmin } from './hooks/useAuthAdmin';
+export { useAuthAdmin } from './useAuthAdmin';
