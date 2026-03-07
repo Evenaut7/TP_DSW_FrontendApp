@@ -3,6 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { useUser } from '@/features/user';
 import { checkIsAdmin } from '@/utils/api';
 
+let adminCheckPromise: Promise<boolean> | null = null;
+let lastUserId: string | number | null | undefined = null;
+
 export function useAuthAdmin() {
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null); // null = sin saber aún
@@ -11,39 +14,56 @@ export function useAuthAdmin() {
   const { user } = useUser();
 
   useEffect(() => {
+    let isMounted = true;
+
     const checkAdmin = async () => {
       
-      if (!user) {  // Si no hay usuario, no es admin
-        setIsAdmin(false);
-        setLoading(false);
+      if (!user) {  
+        if (isMounted) {
+          setIsAdmin(false);
+          setLoading(false);
+        }
         return;
       }
 
-      try {
-        setLoading(true);
-        const response = await checkIsAdmin();
+      const currentUserId = user.id || user.gmail;
+      if (lastUserId !== currentUserId) {
+        adminCheckPromise = null;
+        lastUserId = currentUserId;
+      }
 
-        if (response.success && response.data) {
-          // @ts-expect-error - data puede tener isAdmin
-          setIsAdmin(response.data.isAdmin === true);
-          setError(null);
-        } else if (response.error === 'User is not admin') {
-          setIsAdmin(false);
-          setError('No tenés permisos para acceder a esta página');
-        } else {
-          // Usuario no logueado
-          navigate('/'); //redirije al home, deberia redirigir al login
-        }
-      } catch (err) {
-        console.error(err);
-        setError('Error al verificar permisos');
-      } finally {
+      if (isMounted) setLoading(true);
+
+      if (!adminCheckPromise) {
+        adminCheckPromise = checkIsAdmin()
+          .then((response) => {
+            if (response.success && response.data) {
+              // @ts-expect-error - data puede tener isAdmin
+              return response.data.isAdmin === true;
+            }
+            return false;
+          })
+          .catch((err) => {
+            console.error(err);
+            return false;
+          });
+      }
+
+      const result = await adminCheckPromise;
+
+      if (isMounted) {
+        setIsAdmin(result);
+        setError(null);
         setLoading(false);
       }
     };
 
     checkAdmin();
-  }, [navigate, user]); // Ahora depende del user
+
+    return () => {
+      isMounted = false;
+    };
+  }, [navigate, user]); 
 
   return { loading, isAdmin, error };
 }
