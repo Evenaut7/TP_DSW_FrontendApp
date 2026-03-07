@@ -3,8 +3,8 @@ import { Sun, Moon, Pencil, Save, X, MapPin } from 'lucide-react';
 import Navbar from '@/components/layout/Navbar';
 import PantallaDeCarga from '@/components/ui/PantallaDeCarga';
 import { ListadoEventosEditable } from '@/features/eventos';
-import UbicacionModal from './ubicacionModal.tsx';
-import { useEditPDI } from './useEditPDI.tsx';
+import UbicacionModal from '@/features/pdi/UbicacionModal.tsx';
+import { useEditPDI } from '@/features/pdi/useEditPDI.tsx';
 
 // ── Componentes UI locales ────────────────────────────────────────────────────
 const Field = ({
@@ -305,7 +305,7 @@ const EditPDI = () => {
         className="fixed bottom-6 right-6 z-50 p-3 rounded-full shadow-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-600 dark:text-slate-200 hover:scale-110 transition-all duration-300"
       >
         {theme === 'dark' ? (
-          <Sun className="w-5 h-5" />
+          <Sun className="w-5 h-5 text-amber-400" />
         ) : (
           <Moon className="w-5 h-5" />
         )}
