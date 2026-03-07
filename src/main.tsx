@@ -1,6 +1,7 @@
 //import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import './styles/index.css';
+import './styles/PageLayout.css';
 import { RouterProvider } from 'react-router-dom';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import 'bootstrap-icons/font/bootstrap-icons.css';

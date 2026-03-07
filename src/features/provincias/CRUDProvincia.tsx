@@ -61,9 +61,10 @@ function CRUDProvincia() {
 
   return (
     <>
+    <div className="background page-with-navbar-padding">
       <Navbar />
       <div
-        className="container mt-4"
+        className="container mt-4 page-with-navbar-padding"
         style={{ border: 'none', backgroundColor: '#f8f9fa', padding: '1rem' }}
       >
         <h2>CRUD Provincias</h2>
@@ -180,6 +181,7 @@ function CRUDProvincia() {
           provinciaId={provActual?.id ?? 0}
         />
       </Modal.Body>
+    </div>
     </>
   );
 }

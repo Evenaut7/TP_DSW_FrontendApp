@@ -106,7 +106,7 @@ function PerfilPage() {
 
     return (
         <>
-        <div className="background">
+        <div className="background page-with-navbar-padding">
             <Navbar />
             <div className="perfil-container">
                 <div className="perfil-card">

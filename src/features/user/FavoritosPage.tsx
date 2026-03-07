@@ -43,7 +43,7 @@ function FavoritosPage() {
 
     return (
         <>
-            <div className="favoritos-background">
+            <div className="favoritos-background page-with-navbar-padding">
                 <Navbar />
                 <div className="favoritos-container">
                     <h2 className="favoritos-title">Favoritos</h2>

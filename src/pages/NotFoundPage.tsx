@@ -5,7 +5,7 @@ import './NotFoundPage.css';
 const NotFoundPage = () => {
     return (
         <>
-            <div className="not-found-background">
+            <div className="not-found-background page-with-navbar-padding">
                 <Navbar />
                 <div className="not-found-container">
                     <div className="not-found-content">
