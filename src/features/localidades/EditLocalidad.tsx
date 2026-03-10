@@ -24,8 +24,8 @@ interface Localidad {
   id: number;
   nombre: string;
   descripcion?: string;
-  latitud?: number;
-  longitud?: number;
+  lat?: number;
+  lng?: number;
   imagen?: string;
   provincia?: Provincia;
   puntosDeInteres?: PDIType[];
@@ -134,7 +134,7 @@ export default function EditLocalidad() {
         ? {
             ...prev,
             [name]:
-              name === 'latitud' || name === 'longitud'
+              name === 'lat' || name === 'lng'
                 ? value === ''
                   ? undefined
                   : Number(value)
@@ -252,8 +252,8 @@ export default function EditLocalidad() {
       const payload: any = {
         nombre: localidad.nombre,
         descripcion: localidad.descripcion ?? '',
-        latitud: localidad.latitud ?? null,
-        longitud: localidad.longitud ?? null,
+        lat: localidad.lat ?? null,
+        lng: localidad.lng ?? null,
         imagen: imagenNombre,
         provincia: localidad.provincia?.id ?? null,
       };
@@ -379,18 +379,18 @@ export default function EditLocalidad() {
                 <div className="col-md-3">
                   <FormField
                     label="Latitud"
-                    name="latitud"
+                    name="lat"
                     type="number"
-                    value={localidad.latitud ?? ''}
+                    value={localidad.lat ?? ''}
                     onChange={handleInputChange}
                   />
                 </div>
                 <div className="col-md-3">
                   <FormField
                     label="Longitud"
-                    name="longitud"
+                    name="lng"
                     type="number"
-                    value={localidad.longitud ?? ''}
+                    value={localidad.lng ?? ''}
                     onChange={handleInputChange}
                   />
                 </div>

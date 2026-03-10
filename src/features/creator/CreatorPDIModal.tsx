@@ -1,4 +1,4 @@
-import { useState, useEffect, type FormEvent, useRef } from 'react';
+import { useState, useEffect, type FormEvent, useRef, useMemo } from 'react';
 import { X, Loader2 } from 'lucide-react';
 import type { PDI, Tag } from '@/types';
 import { useProvinciasLocalidades } from '@/features/localidades';
@@ -81,6 +81,9 @@ export default function CreatorPDIModal({
   };
 
   const [form, setForm] = useState<PDIFormData>(initialForm);
+  const [coordSource, setCoordSource] = useState<
+    'full' | 'partial' | 'manual' | null
+  >(null);
 
   // =============================
   // LOAD TAGS
@@ -109,6 +112,7 @@ export default function CreatorPDIModal({
 
   useEffect(() => {
     if (!show) return;
+    setCoordSource(null);
 
     const init = async () => {
       if (!pdi) {
@@ -181,6 +185,11 @@ export default function CreatorPDIModal({
     manualOverride,
     onCoordinates: (lat, lng) => {
       setForm((prev) => ({ ...prev, lat, lng }));
+      setCoordSource('full');
+    },
+    onCoordinatesParcial: (lat, lng) => {
+      setForm((prev) => ({ ...prev, lat, lng }));
+      setCoordSource('partial');
     },
   });
 
@@ -202,6 +211,13 @@ export default function CreatorPDIModal({
   useEffect(() => {
     setManualOverride(false);
   }, [form.calle, form.altura, form.localidad, form.provincia]);
+
+  const zoomLevel = useMemo(() => {
+    if (coordSource === 'manual' || coordSource === 'full') return 16;
+    if (coordSource === 'partial' && form.localidadNombre) return 11;
+    if (coordSource === 'partial' && form.provinciaNombre) return 7;
+    return 5;
+  }, [coordSource, form.localidadNombre, form.provinciaNombre]);
 
   // =============================
   // HANDLERS
@@ -240,7 +256,10 @@ export default function CreatorPDIModal({
     }
 
     if (type === 'number') {
-      setForm((prev) => ({ ...prev, [name]: value ? Number(value) : 0 }));
+      setForm((prev) => ({
+        ...prev,
+        [name]: value === '' ? 0 : Number(value),
+      }));
       return;
     }
 
@@ -469,7 +488,7 @@ export default function CreatorPDIModal({
                 <input
                   type="number"
                   name="altura"
-                  value={form.altura}
+                  value={form.altura || ''}
                   onChange={handleChange}
                   required
                   placeholder="Altura"
@@ -482,6 +501,7 @@ export default function CreatorPDIModal({
                 longitud={form.lng}
                 setLatitud={(lat) => {
                   setManualOverride(true);
+                  setCoordSource('manual');
                   setForm((prev) => ({ ...prev, lat }));
                 }}
                 setLongitud={(lng) => {
@@ -489,6 +509,7 @@ export default function CreatorPDIModal({
                   setForm((prev) => ({ ...prev, lng }));
                 }}
                 setManualOverride={setManualOverride}
+                zoomLevel={zoomLevel}
               />
 
               <div className="flex justify-between pt-4">

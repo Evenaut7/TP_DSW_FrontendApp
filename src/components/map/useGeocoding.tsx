@@ -1,67 +1,3 @@
-// import { useEffect, useState } from 'react';
-
-// interface UseGeocodingParams {
-//   calle?: string;
-//   altura?: string;
-//   localidad?: string;
-//   provincia?: string;
-// }
-
-// export const useGeocoding = ({
-//   calle,
-//   altura,
-//   localidad,
-//   provincia,
-// }: UseGeocodingParams) => {
-//   const [latitud, setLatitud] = useState<number | undefined>();
-//   const [longitud, setLongitud] = useState<number | undefined>();
-//   const [manualOverride, setManualOverride] = useState(false);
-
-//   const direccionCompleta =
-//     calle && altura && localidad && provincia
-//       ? `${calle} ${altura}, ${localidad}, ${provincia}, Argentina`
-//       : null;
-
-//   //  Reactivar geocoding si cambia la dirección
-//   useEffect(() => {
-//     setManualOverride(false);
-//   }, [calle, altura, localidad, provincia]);
-
-//   //  Geocoding con debounce
-//   useEffect(() => {
-//     if (!direccionCompleta) return;
-//     if (manualOverride) return;
-
-//     const timeout = setTimeout(async () => {
-//       try {
-//         const response = await fetch(
-//           `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
-//             direccionCompleta,
-//           )}`,
-//         );
-
-//         const data = await response.json();
-
-//         if (data.length > 0) {
-//           setLatitud(parseFloat(data[0].lat));
-//           setLongitud(parseFloat(data[0].lon));
-//         }
-//       } catch (error) {
-//         console.error('Error geocoding:', error);
-//       }
-//     }, 600);
-
-//     return () => clearTimeout(timeout);
-//   }, [direccionCompleta, manualOverride]);
-
-//   return {
-//     latitud,
-//     longitud,
-//     setLatitud,
-//     setLongitud,
-//     setManualOverride,
-//   };
-// };
 import { useEffect } from 'react';
 
 interface UseGeocodingParams {
@@ -71,6 +7,7 @@ interface UseGeocodingParams {
   provincia?: string;
   manualOverride: boolean;
   onCoordinates: (lat: number, lng: number) => void;
+  onCoordinatesParcial?: (lat: number, lng: number) => void;
 }
 
 export const useGeocoding = ({
@@ -80,6 +17,7 @@ export const useGeocoding = ({
   provincia,
   manualOverride,
   onCoordinates,
+  onCoordinatesParcial,
 }: UseGeocodingParams) => {
   const direccionCompleta =
     calle && altura && localidad && provincia
@@ -87,22 +25,15 @@ export const useGeocoding = ({
       : null;
 
   useEffect(() => {
-    if (!direccionCompleta) return;
-    if (manualOverride) return;
+    if (!direccionCompleta || manualOverride) return;
 
     const timeout = setTimeout(async () => {
       try {
-        console.log('Buscando:', direccionCompleta);
         const response = await fetch(
-          `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
-            direccionCompleta,
-          )}`,
+          `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(direccionCompleta)}`,
         );
-
         const data = await response.json();
-
         if (data.length > 0) {
-          console.log('Resultado geocoding:', data);
           onCoordinates(parseFloat(data[0].lat), parseFloat(data[0].lon));
         }
       } catch (error) {
@@ -112,4 +43,36 @@ export const useGeocoding = ({
 
     return () => clearTimeout(timeout);
   }, [direccionCompleta, manualOverride]);
+
+  const direccionParcial =
+    !calle || !altura
+      ? localidad
+        ? `${localidad}, ${provincia}, Argentina`
+        : provincia
+          ? `${provincia}, Argentina`
+          : null
+      : null;
+
+  useEffect(() => {
+    if (!direccionParcial || manualOverride) return;
+
+    const timeout = setTimeout(async () => {
+      try {
+        const response = await fetch(
+          `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(direccionParcial)}`,
+        );
+        const data = await response.json();
+        if (data.length > 0) {
+          onCoordinatesParcial?.(
+            parseFloat(data[0].lat),
+            parseFloat(data[0].lon),
+          );
+        }
+      } catch (error) {
+        console.error('Error geocoding parcial:', error);
+      }
+    }, 400);
+
+    return () => clearTimeout(timeout);
+  }, [direccionParcial, manualOverride]);
 };

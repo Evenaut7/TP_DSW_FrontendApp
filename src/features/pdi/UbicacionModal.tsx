@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { MapPin, X } from 'lucide-react';
 import MapSelector from '@/components/map/MapSelector';
 import { useGeocoding } from '@/components/map/useGeocoding';
@@ -64,8 +64,10 @@ const UbicacionModal: React.FC<UbicacionModalProps> = ({
   const [lat, setLat] = useState(latInit);
   const [lng, setLng] = useState(lngInit);
   const [manualOverride, setManualOverride] = useState(false);
+  const [coordSource, setCoordSource] = useState<
+    'full' | 'partial' | 'manual' | null
+  >(null);
 
-  // Sincronizar cuando el modal abre con los valores actuales del form
   useEffect(() => {
     if (show) {
       setCalle(calleInit);
@@ -90,7 +92,6 @@ const UbicacionModal: React.FC<UbicacionModalProps> = ({
   )?.nombre;
   const provinciaNombre = provincias.find((p) => p.id === provincia)?.nombre;
 
-  // Dirección → coordenadas
   useGeocoding({
     calle,
     altura,
@@ -100,10 +101,20 @@ const UbicacionModal: React.FC<UbicacionModalProps> = ({
     onCoordinates: (newLat, newLng) => {
       setLat(newLat);
       setLng(newLng);
+      setCoordSource('full');
+    },
+    onCoordinatesParcial: (newLat, newLng) => {
+      setLat(newLat);
+      setLng(newLng);
+      setCoordSource('partial');
     },
   });
 
-  // Coordenadas → dirección (cuando toca el mapa)
+  const handleManualOverride = (value: boolean) => {
+    setManualOverride(value);
+    if (value) setCoordSource('manual');
+  };
+
   useReverseGeocoding({
     lat,
     lng,
@@ -113,6 +124,13 @@ const UbicacionModal: React.FC<UbicacionModalProps> = ({
       if (a) setAltura(a);
     },
   });
+
+  const zoomLevel = useMemo(() => {
+    if (coordSource === 'manual' || coordSource === 'full') return 16;
+    if (coordSource === 'partial' && localidadNombre) return 11;
+    if (coordSource === 'partial' && provinciaNombre) return 7;
+    return 5;
+  }, [coordSource, localidadNombre, provinciaNombre]);
 
   if (!show) return null;
 
@@ -190,7 +208,7 @@ const UbicacionModal: React.FC<UbicacionModalProps> = ({
             <Field label="Altura">
               <input
                 type="number"
-                value={altura || ''}
+                value={altura === 0 ? '' : altura}
                 onChange={(e) => {
                   setAltura(Number(e.target.value));
                   setManualOverride(false);
@@ -229,7 +247,8 @@ const UbicacionModal: React.FC<UbicacionModalProps> = ({
               longitud={lng}
               setLatitud={setLat}
               setLongitud={setLng}
-              setManualOverride={setManualOverride}
+              setManualOverride={handleManualOverride}
+              zoomLevel={zoomLevel}
             />
           </div>
 

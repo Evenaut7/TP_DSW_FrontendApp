@@ -9,6 +9,7 @@ interface Props {
   setLatitud: (lat: number) => void;
   setLongitud: (lng: number) => void;
   setManualOverride: (value: boolean) => void;
+  zoomLevel?: number;
 }
 
 function MapClickHandler({
@@ -34,17 +35,19 @@ function MapClickHandler({
 function RecenterMap({
   latitud,
   longitud,
+  zoomLevel = 15,
 }: {
   latitud?: number;
   longitud?: number;
+  zoomLevel?: number;
 }) {
   const map = useMap();
 
   useEffect(() => {
     if (latitud !== undefined && longitud !== undefined) {
-      map.setView([latitud, longitud], 15);
+      map.setView([latitud, longitud], zoomLevel);
     }
-  }, [latitud, longitud, map]);
+  }, [latitud, longitud, zoomLevel, map]);
 
   return null;
 }
@@ -55,9 +58,10 @@ export default function MapSelector({
   setLatitud,
   setLongitud,
   setManualOverride,
+  zoomLevel,
 }: Props) {
   const argentinaCenter: LatLngExpression = [-38.4161, -63.6167];
-  console.log('Map recibe:', latitud, longitud);
+
   return (
     <MapContainer
       center={argentinaCenter}
@@ -75,7 +79,11 @@ export default function MapSelector({
         setManualOverride={setManualOverride}
       />
 
-      <RecenterMap latitud={latitud} longitud={longitud} />
+      <RecenterMap
+        latitud={latitud}
+        longitud={longitud}
+        zoomLevel={zoomLevel}
+      />
 
       {latitud !== undefined && longitud !== undefined && (
         <Marker
