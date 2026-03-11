@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Modal, Card, Row, Col } from 'react-bootstrap';
+import { X, Pencil, Trash2, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import CreateLocalidadModal from '@/features/localidades/CreateLocalidadModal';
 import { getProvinciaById, deleteLocalidad, getImageUrl } from '@/utils/api';
-import './ListadoLocalidadesModal.css';
 
 interface Localidad {
   id: number;
@@ -32,11 +31,8 @@ const ListadoLocalidadesModal: React.FC<Props> = ({
     try {
       const response = await getProvinciaById(provinciaId);
       if (response.success && response.data) {
-        // TypeScript: response.data es de tipo unknown, necesitamos hacer type assertion
         const provincia = response.data as { localidades?: Localidad[] };
         setLocalidades(provincia.localidades || []);
-      } else {
-        console.error('Error al obtener las localidades:', response.error);
       }
     } catch (error) {
       console.error('Error al obtener las localidades:', error);
@@ -47,6 +43,16 @@ const ListadoLocalidadesModal: React.FC<Props> = ({
     if (show) fetchLocalidades();
   }, [show]);
 
+  useEffect(() => {
+    const reopenHandler = () => {
+      const modal = document.getElementById('listadoLocalidadesTrigger');
+      if (modal) modal.click();
+    };
+    window.addEventListener('reopenListadoLocalidades', reopenHandler);
+    return () =>
+      window.removeEventListener('reopenListadoLocalidades', reopenHandler);
+  }, []);
+
   const handleEditar = (id: number) => {
     onHide();
     navigate(`/editLocalidad/${id}`);
@@ -54,13 +60,10 @@ const ListadoLocalidadesModal: React.FC<Props> = ({
 
   const handleEliminar = async (id: number) => {
     if (!window.confirm('¿Seguro que querés eliminar esta localidad?')) return;
-
     try {
       const response = await deleteLocalidad(id);
       if (response.success) {
         setLocalidades((prev) => prev.filter((loc) => loc.id !== id));
-      } else {
-        console.error('Error al eliminar la localidad:', response.error);
       }
     } catch (error) {
       console.error('Error al eliminar la localidad:', error);
@@ -82,73 +85,86 @@ const ListadoLocalidadesModal: React.FC<Props> = ({
     }, 200);
   };
 
-  useEffect(() => {
-    const reopenHandler = () => {
-      const modal = document.getElementById('listadoLocalidadesTrigger');
-      if (modal) modal.click();
-    };
-    window.addEventListener('reopenListadoLocalidades', reopenHandler);
-    return () =>
-      window.removeEventListener('reopenListadoLocalidades', reopenHandler);
-  }, []);
+  if (!show) return null;
 
   return (
     <>
-      <Modal show={show} onHide={onHide} size="xl" centered>
-        <Modal.Header closeButton>
-          <Modal.Title>Localidades de la provincia</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Row className="g-4">
-            {localidades.map((loc) => (
-              <Col key={loc.id} xs={12} md={6} lg={4}>
-                <Card className="localidad-card shadow-sm border-0 h-100">
+      {/* Modal */}
+      <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
+        <div
+          className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+          onClick={onHide}
+        />
+        <div className="relative bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-5xl max-h-[85vh] flex flex-col">
+          {/* Header */}
+          <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-slate-700 shrink-0">
+            <h3 className="font-bold text-slate-900 dark:text-slate-100 text-lg">
+              Localidades de la provincia
+            </h3>
+            <button
+              onClick={onHide}
+              className="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-400 transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+
+          {/* Body */}
+          <div className="overflow-y-auto p-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {localidades.map((loc) => (
+                <div
+                  key={loc.id}
+                  className="bg-slate-50 dark:bg-slate-700/50 rounded-2xl overflow-hidden border border-slate-100 dark:border-slate-700 hover:shadow-md transition-shadow"
+                >
                   {loc.imagen && (
-                    <Card.Img
-                      variant="top"
+                    <img
                       src={getImageUrl(loc.imagen)}
                       alt={loc.nombre}
-                      className="localidad-img"
+                      className="w-full h-40 object-cover"
                     />
                   )}
-                  <Card.Body>
-                    <Card.Title className="d-flex justify-content-between align-items-center">
-                      <span className="fw-semibold">{loc.nombre}</span>
-                      <div className="icon-group">
-                        <i
-                          className="bi bi-pencil-square text-primary fs-5 me-2 icon-action"
-                          onClick={() => handleEditar(loc.id)}
-                        ></i>
-                        <i
-                          className="bi bi-trash3 text-danger fs-5 icon-action"
-                          onClick={() => handleEliminar(loc.id)}
-                        ></i>
-                      </div>
-                    </Card.Title>
-                  </Card.Body>
-                </Card>
-              </Col>
-            ))}
-
-            {/* Tarjeta para agregar nueva */}
-            <Col xs={12} md={6} lg={4}>
-              <Card
-                className="add-localidad-card shadow-sm border-0 d-flex align-items-center justify-content-center text-center h-100"
-                onClick={handleAbrirCrear}
-              >
-                <div>
-                  <i className="bi bi-plus-circle fs-1 text-primary"></i>
-                  <div className="fw-semibold mt-2">
-                    Agregar nueva localidad
+                  <div className="p-4 flex items-center justify-between">
+                    <span className="font-semibold text-slate-800 dark:text-slate-100 text-sm">
+                      {loc.nombre}
+                    </span>
+                    <div className="flex items-center gap-1">
+                      <button
+                        onClick={() => handleEditar(loc.id)}
+                        className="p-1.5 rounded-full hover:bg-white dark:hover:bg-slate-600 text-slate-400 hover:text-primary transition-colors"
+                        title="Editar"
+                      >
+                        <Pencil className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => handleEliminar(loc.id)}
+                        className="p-1.5 rounded-full hover:bg-red-50 dark:hover:bg-red-900/20 text-slate-400 hover:text-red-500 transition-colors"
+                        title="Eliminar"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </Card>
-            </Col>
-          </Row>
-        </Modal.Body>
-      </Modal>
+              ))}
 
-      {/* Modal de creación */}
+              {/* Card agregar */}
+              <button
+                onClick={handleAbrirCrear}
+                className="flex flex-col items-center justify-center gap-3 h-48 rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-700 hover:border-primary dark:hover:border-primary hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-all group"
+              >
+                <div className="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-700 group-hover:bg-primary/10 flex items-center justify-center transition-colors">
+                  <Plus className="w-6 h-6 text-slate-400 dark:text-slate-500 group-hover:text-primary transition-colors" />
+                </div>
+                <span className="text-sm font-semibold text-slate-400 dark:text-slate-500 group-hover:text-primary transition-colors">
+                  Agregar nueva localidad
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <CreateLocalidadModal
         show={showCreateModal}
         onHide={() => setShowCreateModal(false)}
