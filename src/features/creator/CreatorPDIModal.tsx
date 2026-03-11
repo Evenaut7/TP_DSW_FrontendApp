@@ -325,7 +325,7 @@ export default function CreatorPDIModal({
   if (!show) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-start justify-center z-50 p-6 overflow-y-auto">
+    <div className="fixed inset-0 bg-black/50 flex items-start justify-center z-[300] p-6 overflow-y-auto">
       <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-5xl">
         <div className="flex justify-between items-center p-6 border-b">
           <h2 className="text-xl font-bold">
