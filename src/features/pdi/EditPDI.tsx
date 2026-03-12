@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sun, Moon, Pencil, Save, X, MapPin } from 'lucide-react';
+import { Sun, Moon, Pencil, Save, X, MapPin, AlertCircle } from 'lucide-react';
 import Navbar from '@/components/layout/Navbar';
 import PantallaDeCarga from '@/components/ui/PantallaDeCarga';
 import { ListadoEventosEditable } from '@/features/eventos';
@@ -107,18 +107,25 @@ const EditPDI = () => {
             )}
 
             {/* Dirección — abre modal */}
-            <button
-              type="button"
-              onClick={() => setShowUbicacionModal(true)}
-              className="mt-2 flex items-center gap-1.5 text-white/70 hover:text-white text-sm transition-colors group/dir"
-            >
-              <MapPin className="w-4 h-4" />
-              <span>
-                {form.calle} {form.altura}
-                {localidadNombre ? `, ${localidadNombre}` : ''}
-              </span>
-              <Pencil className="w-3 h-3 opacity-0 group-hover/dir:opacity-100 transition-opacity" />
-            </button>
+            <div className="flex flex-col items-start">
+              <button
+                type="button"
+                onClick={() => setShowUbicacionModal(true)}
+                className="mt-2 flex items-center gap-1.5 text-white/70 hover:text-white text-sm transition-colors group/dir"
+              >
+                <MapPin className="w-4 h-4" />
+                <span>
+                  {form.calle} {form.altura}
+                  {localidadNombre ? `, ${localidadNombre}` : ''}
+                </span>
+                <Pencil className="w-3 h-3 opacity-0 group-hover/dir:opacity-100 transition-opacity" />
+              </button>
+              {(errors.calle || errors.altura || errors.localidad) && (
+                <p className="text-red-300 bg-red-900/40 px-2 py-1 rounded text-xs mt-1 font-medium backdrop-blur-sm border border-red-500/20">
+                  {errors.calle || errors.altura || errors.localidad}
+                </p>
+              )}
+            </div>
           </div>
         </div>
 
@@ -144,6 +151,13 @@ const EditPDI = () => {
             {saveError && (
               <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 text-sm">
                 <X className="w-4 h-4 flex-shrink-0" /> {saveError}
+              </div>
+            )}
+
+            {Object.keys(errors).length > 0 && (
+              <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-400 text-sm">
+                <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                Hay campos inválidos. Por favor, revisá el formulario.
               </div>
             )}
 

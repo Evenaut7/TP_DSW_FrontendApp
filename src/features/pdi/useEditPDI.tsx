@@ -209,6 +209,7 @@ export function useEditPDI() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaveError('');
+    setErrors({});
 
     const result = pdiSchema.safeParse({
       ...form,
