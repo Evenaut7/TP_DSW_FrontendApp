@@ -100,9 +100,9 @@ const Navbar = () => {
                       </Link>
                     </li>
                     <li>
-                      <button className="dropdown-item" disabled>
-                        Gestión PDI (próximamente)
-                      </button>
+                      <Link className="dropdown-item" to="/usuarios">
+                        Gestión Usuarios
+                      </Link>
                     </li>
                   </ul>
                 </div>

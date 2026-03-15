@@ -19,16 +19,62 @@ interface PDI {
   };
 }
 
+function Modal({
+  type,
+  message,
+  onClose,
+}: {
+  type: 'loading' | 'error';
+  message: string;
+  onClose?: () => void;
+}) {
+  return (
+    <div className="fixed inset-x-0 bottom-0 flex items-center justify-center z-50"
+      style={{ top: '60px' }}>
+      <div className={`flex flex-col items-center gap-3 px-8 py-6 rounded-xl shadow-2xl min-w-[280px] text-center backdrop-blur-sm border
+        ${type === 'loading'
+          ? 'bg-white/90 border-white/20'
+          : 'bg-white/90 border-red-200'
+        }`}>
+        {type === 'loading' ? (
+          <>
+            <div className="spinner" />
+            <p className="text-sm text-gray-700 font-medium">{message}</p>
+          </>
+        ) : (
+          <>
+            <span className="text-3xl">⚠️</span>
+            <p className="text-sm text-gray-700 font-medium">{message}</p>
+            {onClose && (
+              <button
+                className="mt-1 px-5 py-2 bg-red-500 hover:bg-red-600 text-white text-sm font-medium rounded-lg transition-colors"
+                onClick={onClose}
+              >
+                Cerrar
+              </button>
+            )}
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export default function MapPage() {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<maplibregl.Map | null>(null);
   const [mapLoaded, setMapLoaded] = useState(false);
+  const [errorDismissed, setErrorDismissed] = useState(false);
 
   const {
     data: pdis,
     loading,
     error,
   } = useApiGet<PDI[]>('/api/puntosDeInteres');
+
+  useEffect(() => {
+    if (error) setErrorDismissed(false);
+  }, [error]);
 
   useEffect(() => {
     if (map.current) return;
@@ -160,18 +206,15 @@ export default function MapPage() {
       <Navbar />
       <div className="map-page">
         {loading && (
-          <div className="loading-overlay">
-            <div className="loading-card">
-              <div className="spinner"></div>
-              <p>Cargando puntos de interés...</p>
-            </div>
-          </div>
+          <Modal type="loading" message="Cargando puntos de interés..." />
         )}
 
-        {error && (
-          <div className="error-overlay">
-            <div className="error-card">⚠️ {error}</div>
-          </div>
+        {error && !errorDismissed && (
+          <Modal
+            type="error"
+            message={'Error al cargar los Puntos De Interes'}
+            onClose={() => setErrorDismissed(true)}
+          />
         )}
 
         <div ref={mapContainer} style={{ width: '100vw', height: '100vh' }} />

@@ -11,3 +11,5 @@ export { UserProvider } from './UserContext';
 
 // Hooks
 export { useUser } from './useUser';
+
+export { default as CrudUsuarios } from './CrudUsuarios';

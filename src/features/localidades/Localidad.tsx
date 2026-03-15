@@ -4,6 +4,7 @@ import { useParams, Link } from 'react-router-dom';
 import { useApiGetById, API_BASE_URL } from '@/utils/api';
 import { useState } from 'react';
 import PantallaDeCarga from '@/components/ui/PantallaDeCarga';
+import PantallaDeError from '@/components/ui/PantallaDeError';
 import ListadoDeTags from '@/features/tags/ListadoDeTags';
 import ListadoPDI from '@/features/pdi/ListadoPDI';
 import { useBusquedaPDI } from '@/features/pdi/useBusquedaPDI';
@@ -57,7 +58,7 @@ const Localidad = () => {
   });
 
   if (loading) return <PantallaDeCarga mensaje="Localidad" />;
-  if (error) return <p>Error: {error}</p>;
+  if (error) return <PantallaDeError mensaje="Error al cargar la localidad" error={error} />;
   if (!localidad) return <p>No se encontró la localidad</p>;
 
   return (

@@ -12,6 +12,7 @@ import { useTheme } from '@/context/ThemeContext';
 import { useState, useEffect } from 'react';
 import ResultModal from '@/components/modals/ResultModal';
 import PantallaDeCarga from '@/components/ui/PantallaDeCarga';
+import PantallaDeError from '@/components/ui/PantallaDeError';
 import { ListadoDeTags } from '@/features/tags';
 import { ListadoEventos } from '@/features/eventos';
 import { Sun, Moon } from 'lucide-react';
@@ -92,8 +93,8 @@ const PDIPage = () => {
   const scrollToEventos = () =>
     document.getElementById('eventos')?.scrollIntoView({ behavior: 'smooth' });
 
-  if (loading) return <PantallaDeCarga mensaje={'PDI'} />;
-  if (error) return <p>Error: {error}</p>;
+  if (loading) return <PantallaDeCarga mensaje={'Punto De Interes'} />;
+  if (error) return <PantallaDeError mensaje="Error al cargar el Punto De Interes" error={error} />;
   if (!pdi) return <p>No se encontró el PDI</p>;
 
   return (
