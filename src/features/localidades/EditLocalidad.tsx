@@ -286,6 +286,10 @@ export default function EditLocalidad() {
     }
   };
 
+  const handleAddEvent = (pdi: PDIType) => {
+    navigate(`/creator/pdi/${pdi.id}/events`);
+  };
+
   // ── Render ──
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
@@ -463,6 +467,7 @@ export default function EditLocalidad() {
                 pdi={pdi}
                 onEdit={() => navigate(`/editPDI/${pdi.id}`)}
                 onDelete={handleDeletePDI}
+                onAddEvent={handleAddEvent}
               />
             ))}
 

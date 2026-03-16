@@ -23,6 +23,16 @@ export type Localidad = {
   puntosDeInteres?: PDI[];
 };
 
+export interface Historia {
+  id: number;
+  titulo: string;
+  descripcion: string;
+  fechaDesde: string;
+  fechaHasta?: string;
+  imagen?: string;
+  puntoDeInteres: number;
+}
+
 export type PDI = {
   id: number;
   nombre: string;
@@ -36,6 +46,9 @@ export type PDI = {
   localidad: Localidad;
   eventos?: Evento[];
   tags?: Tag[];
+  historias?: Historia[];
+  promedio: number;
+  valoraciones: any[];
 };
 
 export type Evento = {

@@ -14,6 +14,7 @@ import { CRUDProvincia } from '@/features/provincias';
 import { CrudUsuarios } from '@/features/user';
 import { CreatorDashboard, CreatorEventsPage } from '@/features/creator';
 import MapPage from './features/map/MapPage.tsx';
+import HistoriasPage from './features/historias/HistoriasPage.tsx';
 
 export const router = createBrowserRouter([
   { path: '*', element: <NotFoundPage /> },
@@ -30,5 +31,6 @@ export const router = createBrowserRouter([
   { path: '/EditPDI/:id', element: <EditPDI /> },
   { path: '/editLocalidad/:id', element: <EditLocalidad /> },
   { path: '/map', element: <MapPage /> },
-  { path: '/usuarios', element: <CrudUsuarios/> }
+  { path: '/usuarios', element: <CrudUsuarios /> },
+  { path: '/pdi/:id/historias', element: <HistoriasPage /> },
 ]);
