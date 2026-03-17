@@ -202,37 +202,6 @@ export function useApiGet<T>(endpoint: string) {
   return { data, loading, error };
 }
 
-// export function useApiGetById<T>(endpoint: string, id: number | null) {
-//   const [data, setData] = useState<T | null>(null);
-//   const [loading, setLoading] = useState<boolean>(false);
-//   const [error, setError] = useState<string | null>(null);
-
-//   useEffect(() => {
-//     if (id === null) {
-//       setData(null);
-//       setLoading(false);
-//       return;
-//     }
-
-//     const fetchData = async () => {
-//       setLoading(true);
-//       const response = await apiGet<T>(`${endpoint}/${id}`);
-
-//       if (response.success && response.data) {
-//         setData(response.data as T);
-//         setError(null);
-//       } else {
-//         setError(response.error || 'Error al obtener el recurso');
-//       }
-//       setLoading(false);
-//     };
-
-//     fetchData();
-//   }, [endpoint, id]);
-
-//   return { data, loading, error };
-// } comentado por pruebas de una version con refetch, por las dudas mantengo esta
-
 export function useApiGetById<T>(endpoint: string, id: number | null) {
   const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
@@ -482,7 +451,10 @@ export async function uploadImage(
     }
 
     const normalizedData = {
-      filename: data?.data?.filename || data?.nombreArchivo || data?.data?.nombreArchivo,
+      filename:
+        data?.data?.filename ||
+        data?.nombreArchivo ||
+        data?.data?.nombreArchivo,
       url: data?.data?.url || data?.url,
     };
 

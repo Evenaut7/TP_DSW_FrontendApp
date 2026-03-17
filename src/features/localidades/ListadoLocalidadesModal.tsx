@@ -3,25 +3,20 @@ import { X, Pencil, Trash2, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import CreateLocalidadModal from '@/features/localidades/CreateLocalidadModal';
 import { getProvinciaById, deleteLocalidad, getImageUrl } from '@/utils/api';
-
-interface Localidad {
-  id: number;
-  nombre: string;
-  imagen?: string;
-  latitud?: number;
-  longitud?: number;
-}
+import type { Localidad } from '@/types';
 
 interface Props {
   show: boolean;
   onHide: () => void;
   provinciaId: number;
+  provinciaNombre: string;
 }
 
 const ListadoLocalidadesModal: React.FC<Props> = ({
   show,
   onHide,
   provinciaId,
+  provinciaNombre,
 }) => {
   const [localidades, setLocalidades] = useState<Localidad[]>([]);
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -43,16 +38,6 @@ const ListadoLocalidadesModal: React.FC<Props> = ({
     if (show) fetchLocalidades();
   }, [show]);
 
-  useEffect(() => {
-    const reopenHandler = () => {
-      const modal = document.getElementById('listadoLocalidadesTrigger');
-      if (modal) modal.click();
-    };
-    window.addEventListener('reopenListadoLocalidades', reopenHandler);
-    return () =>
-      window.removeEventListener('reopenListadoLocalidades', reopenHandler);
-  }, []);
-
   const handleEditar = (id: number) => {
     onHide();
     navigate(`/editLocalidad/${id}`);
@@ -70,26 +55,15 @@ const ListadoLocalidadesModal: React.FC<Props> = ({
     }
   };
 
-  const handleAbrirCrear = () => {
-    onHide();
-    setShowCreateModal(true);
-  };
-
   const handleLocalidadCreada = async () => {
     setShowCreateModal(false);
     await fetchLocalidades();
-    onHide();
-    setTimeout(() => {
-      const event = new CustomEvent('reopenListadoLocalidades');
-      window.dispatchEvent(event);
-    }, 200);
   };
 
   if (!show) return null;
 
   return (
     <>
-      {/* Modal */}
       <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
         <div
           className="absolute inset-0 bg-black/40 backdrop-blur-sm"
@@ -98,9 +72,14 @@ const ListadoLocalidadesModal: React.FC<Props> = ({
         <div className="relative bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-5xl max-h-[85vh] flex flex-col">
           {/* Header */}
           <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-slate-700 shrink-0">
-            <h3 className="font-bold text-slate-900 dark:text-slate-100 text-lg">
-              Localidades de la provincia
-            </h3>
+            <div>
+              <h3 className="font-bold text-slate-900 dark:text-slate-100 text-lg">
+                Localidades
+              </h3>
+              <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
+                {provinciaNombre}
+              </p>
+            </div>
             <button
               onClick={onHide}
               className="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-400 transition-colors"
@@ -150,7 +129,7 @@ const ListadoLocalidadesModal: React.FC<Props> = ({
 
               {/* Card agregar */}
               <button
-                onClick={handleAbrirCrear}
+                onClick={() => setShowCreateModal(true)}
                 className="flex flex-col items-center justify-center gap-3 h-48 rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-700 hover:border-primary dark:hover:border-primary hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-all group"
               >
                 <div className="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-700 group-hover:bg-primary/10 flex items-center justify-center transition-colors">
@@ -169,6 +148,7 @@ const ListadoLocalidadesModal: React.FC<Props> = ({
         show={showCreateModal}
         onHide={() => setShowCreateModal(false)}
         provinciaId={provinciaId}
+        provinciaNombre={provinciaNombre}
         onLocalidadCreada={handleLocalidadCreada}
       />
     </>

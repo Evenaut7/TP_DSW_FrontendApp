@@ -229,6 +229,7 @@ function CRUDProvincia() {
         show={showLocalidadesModal}
         onHide={() => setShowLocalidadesModal(false)}
         provinciaId={provActual?.id ?? 0}
+        provinciaNombre={provActual?.nombre ?? ''}
       />
     </div>
   );
