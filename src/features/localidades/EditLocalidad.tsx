@@ -19,6 +19,7 @@ import {
   uploadImage,
   useApiGet,
   updateLocalidad,
+  getImageUrl,
 } from '@/utils/api';
 import type { PDI as PDIType, Provincia, Localidad } from '@/types';
 import { useAuthAdmin } from '@/features/auth';
@@ -415,7 +416,7 @@ export default function EditLocalidad() {
                     src={
                       imagenFile
                         ? URL.createObjectURL(imagenFile)
-                        : `${API_BASE_URL}/public/${localidad.imagen}`
+                        : getImageUrl(localidad.imagen)
                     }
                     alt={localidad.nombre}
                     className="w-full h-full object-cover"
