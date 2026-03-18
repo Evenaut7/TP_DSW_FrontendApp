@@ -1,4 +1,4 @@
-import { useApiGet, API_BASE_URL } from '@/utils/api';
+import { useApiGet, API_BASE_URL, getImageUrl } from '@/utils/api';
 //import 'bootstrap/dist/css/bootstrap.min.css'
 import { Link } from 'react-router-dom';
 import './ListadoLocalidades.css';
@@ -32,7 +32,7 @@ const ListadoLocalidades = () => {
           <Link to={`/localidad/${localidad.id}`}>
             <div className="localidadCard">
               <img
-                src={`${API_BASE_URL}/public/${localidad.imagen}`}
+                src={getImageUrl(localidad.imagen)}
                 className="card-img"
               />
               <h5 className="cardTitle">{localidad.nombre}</h5>

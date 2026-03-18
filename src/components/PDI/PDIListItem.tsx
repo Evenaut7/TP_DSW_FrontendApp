@@ -1,4 +1,4 @@
-import { API_BASE_URL } from '@/utils/api';
+import { getImageUrl } from '@/utils/api';
 import { Trash2, Edit, Calendar, BookOpen } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import type { PDI } from '@/types';
@@ -31,7 +31,7 @@ export default function PDIListItem({
       {/* Image */}
       <div className="relative overflow-hidden bg-slate-100 dark:bg-slate-700 h-40">
         <img
-          src={`${API_BASE_URL}/public/${pdi.imagen}`}
+          src={getImageUrl(pdi.imagen)}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           alt={pdi.nombre}
         />

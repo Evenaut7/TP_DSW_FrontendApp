@@ -18,7 +18,7 @@ import { useAuthAdmin } from '@/features/auth';
 import RedirectModal from '@/components/modals/RedirectModal';
 import { useUser } from '@/features/user';
 import { useTheme } from '@/context/ThemeContext';
-import { filterPDIs, API_BASE_URL } from '@/utils/api';
+import { filterPDIs, API_BASE_URL, getImageUrl } from '@/utils/api';
 import type { PDI } from '@/types';
 
 const inputCls =
@@ -78,7 +78,7 @@ function PDIsDelTag({
             className="flex items-center gap-3 p-2.5 rounded-xl bg-white dark:bg-slate-700 hover:bg-primary/5 dark:hover:bg-primary/10 border border-slate-200 dark:border-slate-600 hover:border-primary/30 transition-all group no-underline shadow-sm"
           >
             <img
-              src={`${API_BASE_URL}/public/${pdi.imagen}`}
+              src={getImageUrl(pdi.imagen)}
               alt={pdi.nombre}
               className="w-10 h-10 rounded-lg object-cover flex-shrink-0"
             />

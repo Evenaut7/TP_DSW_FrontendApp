@@ -1,7 +1,7 @@
 import Navbar from '@/components/layout/Navbar';
 import Estrellas from '@/components/ui/Estrellas';
 import { useParams, Link } from 'react-router-dom';
-import { useApiGetById, API_BASE_URL } from '@/utils/api';
+import { useApiGetById, API_BASE_URL, getImageUrl } from '@/utils/api';
 import { useState } from 'react';
 import PantallaDeCarga from '@/components/ui/PantallaDeCarga';
 import PantallaDeError from '@/components/ui/PantallaDeError';
@@ -106,7 +106,7 @@ const Localidad = () => {
             <div className="w-full md:w-80 lg:w-96 flex-shrink-0">
               <div className="relative rounded-2xl overflow-hidden shadow-xl shadow-slate-300/50 dark:shadow-black/40 aspect-[4/3] ring-1 ring-slate-200 dark:ring-white/10">
                 <img
-                  src={`${API_BASE_URL}/public/${localidad.imagen}`}
+                  src={getImageUrl(localidad.imagen)}
                   alt={localidad.nombre}
                   className="w-full h-full object-cover"
                 />

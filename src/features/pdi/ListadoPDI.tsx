@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { API_BASE_URL } from '@/utils/api';
+import { API_BASE_URL, getImageUrl } from '@/utils/api';
 
 interface PDIData {
   id: number;
@@ -30,7 +30,7 @@ const ListadoPDI = ({ pdis }: ListadoPDIProps) => {
             {/* Imagen */}
             <div className="relative w-full h-44 overflow-hidden flex-shrink-0">
               <img
-                src={`${API_BASE_URL}/public/${pdi.imagen}`}
+                src={getImageUrl(pdi.imagen)}
                 alt={pdi.nombre}
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
               />

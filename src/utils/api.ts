@@ -4,6 +4,9 @@ import { useEffect, useState } from 'react';
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
 
+const IMAGES_BASE_URL =
+  import.meta.env.VITE_IMAGES_URL || `${API_BASE_URL}/public`;
+
 if (import.meta.env.DEV && !import.meta.env.VITE_API_BASE_URL) {
   console.warn(
     'VITE_API_BASE_URL no está configurado. Usando valor por defecto: http://localhost:3000',
@@ -142,11 +145,6 @@ async function apiFetch<T = unknown>(
         }
       }
 
-      //const errorType = classifyErrorByStatus(res.status);
-
-      // Mostrar notificación automática
-      //showNotification(errorMessage, errorType, res.status);
-
       return {
         success: false,
         error: errorMessage,
@@ -161,12 +159,6 @@ async function apiFetch<T = unknown>(
   } catch (error) {
     const errorMessage =
       error instanceof Error ? error.message : 'Error de conexión';
-
-    // Mostrar modal de error de red
-    // showNotification(
-    //     'No se pudo conectar con el servidor. Por favor, verifica tu conexión.',
-    //     NotificationType.NETWORK_ERROR
-    // );
 
     return {
       success: false,
@@ -474,12 +466,15 @@ export async function uploadImage(
 // ==================== FUNCIÓN PARA OBTENER URL DE IMAGEN ====================
 
 /*
- Construye la URL completa para una imagen pública
- @param filename - Nombre del archivo de imagen
- @returns URL completa de la imagen
+ Construye la URL completa para una imagen.
+ - Si ya es una URL completa (Cloudinary u otra), la devuelve tal cual.
+ - Si es solo un nombre de archivo, construye la URL usando VITE_IMAGES_URL
+   (en producción apunta a Cloudinary, en desarrollo al backend local).
 */
 export function getImageUrl(filename: string): string {
-  return `${API_BASE_URL}/public/${filename}`;
+  if (!filename) return '';
+  if (filename.startsWith('http')) return filename;
+  return `${IMAGES_BASE_URL}/${filename}`;
 }
 
 export { API_BASE_URL };
