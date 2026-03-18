@@ -5,21 +5,12 @@ import PantallaDeCarga from '@/components/ui/PantallaDeCarga';
 import { ListadoEventosEditable } from '@/features/eventos';
 import UbicacionModal from '@/features/pdi/UbicacionModal.tsx';
 import { useEditPDI } from '@/features/pdi/useEditPDI.tsx';
+import PantallaDeError from '@/components/ui/PantallaDeError.tsx';
 
 // ── Componentes UI locales ────────────────────────────────────────────────────
-const Field = ({
-  label,
-  error,
-  children,
-}: {
-  label: string;
-  error?: string;
-  children: React.ReactNode;
-}) => (
+const Field = ({ label, error, children }: { label: string; error?: string; children: React.ReactNode }) => (
   <div className="flex flex-col gap-1">
-    <label className="text-xs font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500">
-      {label}
-    </label>
+    <label className="text-xs font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500">{label}</label>
     {children}
     {error && <p className="text-red-500 text-xs">{error}</p>}
   </div>
@@ -54,6 +45,7 @@ const EditPDI = () => {
     localidadNombre,
     provinciaSeleccionada,
     showUbicacionModal,
+    submitted,
     setShowUbicacionModal,
     handleChange,
     handleTagToggle,
@@ -63,14 +55,8 @@ const EditPDI = () => {
     handleSubmit,
   } = useEditPDI();
 
-  if (cargando || userLoading)
-    return <PantallaDeCarga mensaje="Cargando PDI..." />;
-  if (!puedeEditar)
-    return (
-      <p className="text-center mt-8 text-slate-500">
-        No tenés acceso a esta página.
-      </p>
-    );
+  if (cargando || userLoading) return <PantallaDeCarga mensaje="Cargando PDI..." />;
+  if (!puedeEditar) return <PantallaDeError mensaje="No podés acceder a esta página" error="403" />;
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-800 font-display transition-colors duration-300">
@@ -78,11 +64,7 @@ const EditPDI = () => {
 
       {/* ── Hero ── */}
       <div className="relative w-full h-[50vh] overflow-hidden">
-        <img
-          src={previewUrl}
-          alt={form.nombre}
-          className="w-full h-full object-cover"
-        />
+        <img src={previewUrl} alt={form.nombre} className="w-full h-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent dark:from-slate-800 dark:via-black/30 dark:to-transparent" />
 
         <div className="absolute bottom-0 left-0 w-full px-5 md:px-16 pb-6">
@@ -102,9 +84,7 @@ const EditPDI = () => {
               />
               <Pencil className="absolute right-0 bottom-2 w-4 h-4 text-white/40 group-hover/nombre:text-white/70 transition-colors pointer-events-none" />
             </div>
-            {errors.nombre && (
-              <p className="text-red-400 text-xs mt-1">{errors.nombre}</p>
-            )}
+            {errors.nombre && <p className="text-red-400 text-xs mt-1">{errors.nombre}</p>}
 
             {/* Dirección — abre modal */}
             <div className="flex flex-col items-start">
@@ -137,9 +117,7 @@ const EditPDI = () => {
             type="file"
             accept="image/*"
             className="hidden"
-            onChange={(e) =>
-              e.target.files?.[0] && handleImagenChange(e.target.files[0])
-            }
+            onChange={(e) => e.target.files?.[0] && handleImagenChange(e.target.files[0])}
           />
         </label>
       </div>
@@ -154,7 +132,7 @@ const EditPDI = () => {
               </div>
             )}
 
-            {Object.keys(errors).length > 0 && (
+            {submitted && Object.keys(errors).length > 0 && (
               <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-400 text-sm">
                 <AlertCircle className="w-4 h-4 flex-shrink-0" />
                 Hay campos inválidos. Por favor, revisá el formulario.
@@ -186,21 +164,23 @@ const EditPDI = () => {
 
               <Field label="Tags" error={errors.tags}>
                 <div className="flex flex-wrap gap-2 mt-1">
-                  {allTags?.map((tag) => (
-                    <button
-                      key={tag.id}
-                      type="button"
-                      onClick={() => handleTagToggle(tag.id)}
-                      className={`px-3 py-1 rounded-full text-sm font-medium border transition-all
+                  {allTags
+                    ?.filter((tag) => tag.id !== undefined)
+                    .map((tag) => (
+                      <button
+                        key={tag.id}
+                        type="button"
+                        onClick={() => handleTagToggle(tag.id)}
+                        className={`px-3 py-1 rounded-full text-sm font-medium border transition-all
                         ${
                           form.tags?.includes(tag.id)
                             ? 'bg-primary border-primary text-white'
                             : 'border-slate-200 dark:border-slate-600 text-slate-500 dark:text-slate-300 hover:border-primary hover:text-primary'
                         }`}
-                    >
-                      #{tag.nombre}
-                    </button>
-                  ))}
+                      >
+                        #{tag.nombre}
+                      </button>
+                    ))}
                 </div>
               </Field>
 
@@ -237,12 +217,7 @@ const EditPDI = () => {
                   Asignación
                 </h2>
                 <Field label="Usuario propietario" error={errors.usuario}>
-                  <select
-                    name="usuario"
-                    value={form.usuario}
-                    onChange={handleChange}
-                    className={editClsSelect}
-                  >
+                  <select name="usuario" value={form.usuario} onChange={handleChange} className={editClsSelect}>
                     <option value={0}>Seleccioná un usuario</option>
                     {usuarios?.map((u) => (
                       <option key={u.id} value={u.id}>
@@ -287,9 +262,7 @@ const EditPDI = () => {
             <h2 className="text-2xl md:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100">
               Eventos
             </h2>
-            <p className="text-slate-500 dark:text-slate-400 text-sm">
-              Gestioná los eventos asociados a este lugar.
-            </p>
+            <p className="text-slate-500 dark:text-slate-400 text-sm">Gestioná los eventos asociados a este lugar.</p>
           </div>
           <ListadoEventosEditable pdiId={pdiId!} />
         </div>
@@ -318,11 +291,7 @@ const EditPDI = () => {
         aria-label="Cambiar tema"
         className="fixed bottom-6 right-6 z-50 p-3 rounded-full shadow-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-600 dark:text-slate-200 hover:scale-110 transition-all duration-300"
       >
-        {theme === 'dark' ? (
-          <Sun className="w-5 h-5 text-amber-400" />
-        ) : (
-          <Moon className="w-5 h-5" />
-        )}
+        {theme === 'dark' ? <Sun className="w-5 h-5 text-amber-400" /> : <Moon className="w-5 h-5" />}
       </button>
     </div>
   );

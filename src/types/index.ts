@@ -42,13 +42,14 @@ export type PDI = {
   altura: number;
   lat?: number;
   lng?: number;
-  privado?: boolean;
-  localidad: Localidad;
-  eventos?: Evento[];
-  tags?: Tag[];
-  historias?: Historia[];
+  privado: boolean; // nullable: false en backend → siempre presente
+  usuario: number; // ManyToOne serializado como id
+  localidad: Localidad; // ManyToOne populado como objeto
+  tags: Tag[]; // ManyToMany → siempre array (vacío o con elementos)
+  eventos: Evento[]; // OneToMany → siempre array
+  valoraciones: any[]; // OneToMany → siempre array
+  historias: Historia[]; // OneToMany → siempre array
   promedio: number;
-  valoraciones: any[];
 };
 
 export type Evento = {
@@ -66,7 +67,7 @@ export type Evento = {
 export type TipoTag = 'Evento' | 'Punto de Interés' | 'Actividad';
 
 export type Tag = {
-  id?: number;
+  id: number; //puede llegar a ser opcional para la creacion de un nuevo tag.. Ver si genera error en un futuro
   nombre: string;
   tipo: TipoTag;
 };

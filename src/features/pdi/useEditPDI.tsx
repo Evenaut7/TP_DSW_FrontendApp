@@ -7,33 +7,18 @@ import {
   uploadImage,
   updatePDI,
   getImageUrl,
+  API_BASE_URL,
 } from '@/utils/api';
 import { useUser } from '@/features/user';
 import { useAuthAdmin } from '@/features/auth';
 import { useTheme } from '@/context/ThemeContext';
+import type { Tag, Provincia, PDI } from '@/types';
 
-// ── Tipos ─────────────────────────────────────────────────────────────────────
-export interface Tag {
-  id: number;
-  nombre: string;
-}
-export interface Provincia {
-  id: number;
-  nombre: string;
-}
-export interface PDIData {
-  id: number;
-  nombre: string;
-  descripcion: string;
-  imagen: string;
-  calle: string;
-  altura: number;
-  privado: boolean;
-  lat?: number;
-  lng?: number;
-  tags: Tag[];
+// PDI extendido con campos que vienen del backend pero no están en el tipo base
+interface PDIEditable extends Omit<PDI, 'tags' | 'privado'> {
   usuario: number;
-  localidad: number;
+  tags: Tag[];
+  privado: boolean;
 }
 
 // ── Zod schema ────────────────────────────────────────────────────────────────
@@ -88,13 +73,11 @@ export function useEditPDI() {
   const { isAdmin } = useAuthAdmin();
   const { theme, toggleTheme } = useTheme();
 
-  // Datos remotos
   const { data: allTags } = useApiGet<Tag[]>('/api/tags');
   const { data: usuarios } = useApiGet<any[]>('/api/usuarios');
   const { data: provincias } = useApiGet<Provincia[]>('/api/provincias');
   const { data: todasLocalidades } = useApiGet<any[]>('/api/localidades');
 
-  // Estado del formulario
   const [form, setForm] = useState<PDIFormValues>({
     nombre: '',
     descripcion: '',
@@ -115,23 +98,50 @@ export function useEditPDI() {
   const [cargando, setCargando] = useState(true);
   const [saveError, setSaveError] = useState('');
   const [showUbicacionModal, setShowUbicacionModal] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
-  // Cargar PDI al montar
+  const [puedeEditar, setPuedeEditar] = useState(false);
+  const [checkingAccess, setCheckingAccess] = useState(true);
+
+  useEffect(() => {
+    if (!pdiId) return;
+    const check = async () => {
+      setCheckingAccess(true);
+      try {
+        const res = await fetch(
+          `${API_BASE_URL}/api/puntosDeInteres/canEdit/${pdiId}`,
+          { credentials: 'include' },
+        );
+        // 200 = admin o dueño del PDI, cualquier otro = no tiene acceso
+        setPuedeEditar(res.ok);
+      } catch {
+        setPuedeEditar(false);
+      } finally {
+        setCheckingAccess(false);
+      }
+    };
+    check();
+  }, [pdiId]);
+
+  // ── Cargar PDI al montar ──────────────────────────────────────────────────
   useEffect(() => {
     const fetchPDI = async () => {
       if (!pdiId) return;
       try {
         const res = await getPDIById(pdiId);
         if (!res.success || !res.data) throw new Error(res.error);
-        const d = res.data as PDIData;
+        const d = res.data as PDIEditable;
         setForm({
           nombre: d.nombre,
           descripcion: d.descripcion,
           calle: d.calle,
           altura: d.altura,
-          privado: d.privado,
-          tags: d.tags.map((t) => t.id),
-          localidad: d.localidad,
+          privado: d.privado ?? false,
+          tags: d.tags
+            .map((t) => t.id)
+            .filter((id): id is number => id !== undefined),
+          localidad:
+            typeof d.localidad === 'object' ? d.localidad.id : d.localidad,
           usuario: d.usuario,
         });
         setLatitud(d.lat);
@@ -146,17 +156,17 @@ export function useEditPDI() {
     fetchPDI();
   }, [pdiId]);
 
-  // Pre-seleccionar provincia cuando cargan las localidades
   useEffect(() => {
-    if (!form.localidad || !todasLocalidades) return;
+    if (!form.localidad || !todasLocalidades?.length) return;
     const loc = todasLocalidades.find((l) => l.id === form.localidad);
-    if (loc?.provincia?.id) setProvinciaSeleccionada(loc.provincia.id);
-    else if (typeof loc?.provincia === 'number')
-      setProvinciaSeleccionada(loc.provincia);
+    if (!loc) return;
+    const provId =
+      loc.provincia?.id ??
+      (typeof loc.provincia === 'number' ? loc.provincia : 0);
+    if (provId) setProvinciaSeleccionada(provId);
   }, [form.localidad, todasLocalidades]);
 
-  // ── Handlers ─────────────────────────────────────────────────────────────────
-
+  // ── Handlers ─────────────────────────────────────────────────────────────
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
@@ -179,13 +189,9 @@ export function useEditPDI() {
     }));
   };
 
-  const handlePrivadoToggle = (valor: boolean) => {
+  const handlePrivadoToggle = (valor: boolean) =>
     setForm((f) => ({ ...f, privado: valor }));
-  };
-
-  const handleImagenChange = (file: File) => {
-    setImagenFile(file);
-  };
+  const handleImagenChange = (file: File) => setImagenFile(file);
 
   const handleUbicacionConfirm = (data: {
     calle: string;
@@ -210,6 +216,7 @@ export function useEditPDI() {
     e.preventDefault();
     setSaveError('');
     setErrors({});
+    setSubmitted(true);
 
     const result = pdiSchema.safeParse({
       ...form,
@@ -251,50 +258,40 @@ export function useEditPDI() {
     }
   };
 
-  // ── Valores derivados ─────────────────────────────────────────────────────────
+  // ── Valores derivados ─────────────────────────────────────────────────────
   const previewUrl = imagenFile
     ? URL.createObjectURL(imagenFile)
     : getImageUrl(imagenActual);
   const localidadNombre = todasLocalidades?.find(
     (l) => l.id === form.localidad,
   )?.nombre;
-  const puedeEditar =
-    user && (user.tipo === 'admin' || user.tipo === 'creador');
 
   return {
-    // IDs y navegación
     pdiId,
     navigate,
-    // Auth
     user,
     userLoading,
     isAdmin,
     puedeEditar,
-    // Tema
+    cargando: cargando || checkingAccess,
     theme,
     toggleTheme,
-    // Datos remotos
     allTags,
     usuarios,
     provincias,
     todasLocalidades,
-    // Estado del form
     form,
     errors,
     provinciaSeleccionada,
     saving,
-    cargando,
     saveError,
-    // Imagen
+    submitted,
     previewUrl,
-    // Ubicación
     latitud,
     longitud,
     localidadNombre,
-    // UI
     showUbicacionModal,
     setShowUbicacionModal,
-    // Handlers
     handleChange,
     handleTagToggle,
     handlePrivadoToggle,
