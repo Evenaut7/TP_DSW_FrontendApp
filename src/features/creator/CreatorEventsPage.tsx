@@ -14,6 +14,7 @@ import CreatorEventModal from '@/features/creator/CreatorEventModal';
 import DeleteEventConfirmationModal from '@/features/creator/DeleteEventConfirmationModal.tsx';
 import { useCreatorEventsPage } from '@/features/creator/useCreatorEventsPage';
 import type { Evento } from '@/types';
+import {useLocation } from 'react-router-dom';
 
 export default function CreatorEventsPage() {
   const {
@@ -35,6 +36,8 @@ export default function CreatorEventsPage() {
     handleEventSubmit,
     handleDeleteConfirm,
   } = useCreatorEventsPage();
+
+  const location = useLocation();
 
   // Helpers de fecha y hora
   const formatTime = (isoString?: string) => {
@@ -103,7 +106,7 @@ export default function CreatorEventsPage() {
         {/* Header */}
         <div className="mb-8">
           <button
-            onClick={() => navigate('/creator')}
+            onClick={() => navigate(location.state?.from ?? '/creator')}
             className="flex items-center text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 mb-4 transition-colors"
           >
             <ArrowLeft className="w-4 h-4 mr-1" />

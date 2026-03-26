@@ -141,8 +141,10 @@ export function useCreatorDashboard() {
   };
 
   const handleAddEvent = (pdi: PDI) => {
-    navigate(`/creator/pdi/${pdi.id}/events`);
-  };
+  navigate(`/creator/pdi/${pdi.id}/events`, {
+    state: { from: '/creator' }  
+  });
+};
 
   const closePDIModal = () => {
     setShowPDIModal(false);
