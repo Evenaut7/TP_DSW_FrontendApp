@@ -1,15 +1,6 @@
 import { useState, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import {
-  Plus,
-  Pencil,
-  Trash2,
-  ArrowLeft,
-  CalendarRange,
-  Sun,
-  Moon,
-  ImageOff,
-} from 'lucide-react';
+import { Plus, Pencil, Trash2, ArrowLeft, CalendarRange, Sun, Moon, ImageOff } from 'lucide-react';
 import Navbar from '@/components/layout/Navbar';
 import { useTheme } from '@/context/ThemeContext';
 import { getImageUrl, useApiGet } from '@/utils/api';
@@ -28,8 +19,7 @@ function formatFecha(iso: string) {
 const inputCls =
   'w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 text-sm focus:outline-none focus:border-primary transition-colors';
 
-const labelCls =
-  'block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1 uppercase tracking-wide';
+const labelCls = 'block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1 uppercase tracking-wide';
 
 // ── Formulario ────────────────────────────────────────────────────────────────
 function HistoriaForm({
@@ -47,16 +37,12 @@ function HistoriaForm({
   error: string;
   fieldErrors: Record<string, string | undefined>;
   editingId: number | null;
-  onChange: (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => void;
+  onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   onSubmit: () => void;
   onCancel: () => void;
 }) {
   const fe = (field: string) =>
-    fieldErrors[field] ? (
-      <p className="text-xs text-red-500 mt-1">{fieldErrors[field]}</p>
-    ) : null;
+    fieldErrors[field] ? <p className="text-xs text-red-500 mt-1">{fieldErrors[field]}</p> : null;
 
   const preview = form.imagenFile
     ? URL.createObjectURL(form.imagenFile)
@@ -69,11 +55,7 @@ function HistoriaForm({
       <h3 className="font-bold text-slate-800 dark:text-slate-100 text-lg">
         {editingId ? 'Editar historia' : 'Nueva historia'}
       </h3>
-      {error && (
-        <p className="text-sm text-red-500 bg-red-50 dark:bg-red-900/20 px-3 py-2 rounded-lg">
-          {error}
-        </p>
-      )}
+      {error && <p className="text-sm text-red-500 bg-red-50 dark:bg-red-900/20 px-3 py-2 rounded-lg">{error}</p>}
       <div>
         <label className={labelCls}>Título *</label>
         <input
@@ -111,13 +93,7 @@ function HistoriaForm({
         </div>
         <div>
           <label className={labelCls}>Fecha hasta</label>
-          <input
-            type="date"
-            name="fechaHasta"
-            value={form.fechaHasta}
-            onChange={onChange}
-            className={inputCls}
-          />
+          <input type="date" name="fechaHasta" value={form.fechaHasta} onChange={onChange} className={inputCls} />
         </div>
       </div>
       <div>
@@ -149,11 +125,7 @@ function HistoriaForm({
           disabled={saving}
           className="px-5 py-2 rounded-full bg-primary text-white text-sm font-semibold hover:bg-accent transition-colors disabled:opacity-50"
         >
-          {saving
-            ? 'Guardando...'
-            : editingId
-              ? 'Guardar cambios'
-              : 'Crear historia'}
+          {saving ? 'Guardando...' : editingId ? 'Guardar cambios' : 'Crear historia'}
         </button>
         <button
           onClick={onCancel}
@@ -190,9 +162,7 @@ function HistoriaCard({
       ) : (
         <div className="w-full h-40 bg-gradient-to-br from-primary/10 to-primary/5 dark:from-primary/20 dark:to-slate-700 flex items-center justify-center">
           <div className="w-16 h-16 rounded-full bg-primary/15 border-4 border-primary/30 flex items-center justify-center">
-            <span className="text-xl font-black text-primary">
-              {new Date(historia.fechaDesde).getFullYear()}
-            </span>
+            <span className="text-xl font-black text-primary">{new Date(historia.fechaDesde).getFullYear()}</span>
           </div>
         </div>
       )}
@@ -202,12 +172,8 @@ function HistoriaCard({
           {formatFecha(historia.fechaDesde)}
           {historia.fechaHasta && ` → ${formatFecha(historia.fechaHasta)}`}
         </div>
-        <h3 className="font-bold text-slate-800 dark:text-slate-100 leading-snug">
-          {historia.titulo}
-        </h3>
-        <p className="text-sm text-slate-500 dark:text-slate-400 line-clamp-3 flex-1">
-          {historia.descripcion}
-        </p>
+        <h3 className="font-bold text-slate-800 dark:text-slate-100 leading-snug">{historia.titulo}</h3>
+        <p className="text-sm text-slate-500 dark:text-slate-400 line-clamp-3 flex-1">{historia.descripcion}</p>
         <div className="flex gap-2 pt-2 border-t border-slate-100 dark:border-slate-700 mt-auto">
           <button
             onClick={onEdit}
@@ -234,10 +200,7 @@ export default function HistoriasPage() {
   const { theme, toggleTheme } = useTheme();
 
   const [refreshKey, setRefreshKey] = useState(0);
-  // Incluimos refreshKey en el endpoint para forzar re-fetch cuando cambia
-  const { data: pdi, loading: pdiLoading } = useApiGet<PDI>(
-    `/api/puntosDeInteres/${pdiId}?_=${refreshKey}`,
-  );
+  const { data: pdi, loading: pdiLoading } = useApiGet<PDI>(`/api/puntosDeInteres/${pdiId}?_=${refreshKey}`);
   const historias: Historia[] = (pdi as any)?.historias ?? [];
   const onSuccess = useCallback(() => setRefreshKey((k) => k + 1), []);
 
@@ -268,11 +231,7 @@ export default function HistoriasPage() {
   }
 
   if (!puedeEditar) {
-    return (
-      <p className="text-center mt-8 text-slate-500">
-        No tenés acceso a esta página.
-      </p>
-    );
+    return <p className="text-center mt-8 text-slate-500">No tenés acceso a esta página.</p>;
   }
 
   return (
@@ -288,12 +247,9 @@ export default function HistoriasPage() {
               <ArrowLeft className="w-5 h-5" />
             </Link>
             <div>
-              <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white">
-                Historias
-              </h1>
+              <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white">Historias</h1>
               <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">
-                {(pdi as any)?.nombre} · {historias.length} historia
-                {historias.length !== 1 ? 's' : ''}
+                {(pdi as any)?.nombre} · {historias.length} historia{historias.length !== 1 ? 's' : ''}
               </p>
             </div>
           </div>
@@ -330,17 +286,13 @@ export default function HistoriasPage() {
         {historias.length > 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {[...historias]
-              .sort(
-                (a, b) =>
-                  new Date(a.fechaDesde).getTime() -
-                  new Date(b.fechaDesde).getTime(),
-              )
+              .sort((a, b) => new Date(a.fechaDesde).getTime() - new Date(b.fechaDesde).getTime())
               .map((h) => (
                 <HistoriaCard
                   key={h.id}
                   historia={h}
                   onEdit={() => openEdit(h)}
-                  onDelete={() => remove(h.id)}
+                  onDelete={() => remove(h.id, h.imagen)}
                 />
               ))}
           </div>
@@ -352,11 +304,7 @@ export default function HistoriasPage() {
         className="fixed bottom-6 right-6 z-50 p-3 rounded-full shadow-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-600 dark:text-slate-200 hover:scale-110 transition-all duration-300"
         title={theme === 'dark' ? 'Modo claro' : 'Modo oscuro'}
       >
-        {theme === 'dark' ? (
-          <Sun className="w-5 h-5 text-amber-400" />
-        ) : (
-          <Moon className="w-5 h-5" />
-        )}
+        {theme === 'dark' ? <Sun className="w-5 h-5 text-amber-400" /> : <Moon className="w-5 h-5" />}
       </button>
     </div>
   );

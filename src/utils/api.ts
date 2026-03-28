@@ -1,16 +1,12 @@
 import { useEffect, useState } from 'react';
 // import { showNotification, classifyErrorByStatus, NotificationType } from './notifications';
 
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
 
-const IMAGES_BASE_URL =
-  import.meta.env.VITE_IMAGES_URL || `${API_BASE_URL}/public`;
+const IMAGES_BASE_URL = import.meta.env.VITE_IMAGES_URL || `${API_BASE_URL}/public`;
 
 if (import.meta.env.DEV && !import.meta.env.VITE_API_BASE_URL) {
-  console.warn(
-    'VITE_API_BASE_URL no está configurado. Usando valor por defecto: http://localhost:3000',
-  );
+  console.warn('VITE_API_BASE_URL no está configurado. Usando valor por defecto: http://localhost:3000');
 }
 
 if (import.meta.env.VITE_ENABLE_DEBUG === 'true') {
@@ -63,17 +59,8 @@ async function refreshToken(): Promise<boolean> {
 }
 
 // ==================== FUNCIÓN BASE ====================
-async function apiFetch<T = unknown>(
-  endpoint: string,
-  options: FetchOptions = {},
-): Promise<ApiResponse<T>> {
-  const {
-    method = 'GET',
-    body,
-    headers = {},
-    credentials = 'include',
-    _retry = false,
-  } = options;
+async function apiFetch<T = unknown>(endpoint: string, options: FetchOptions = {}): Promise<ApiResponse<T>> {
+  const { method = 'GET', body, headers = {}, credentials = 'include', _retry = false } = options;
 
   const reqHeaders: Record<string, string> = { ...headers };
   let finalBody = body;
@@ -98,9 +85,7 @@ async function apiFetch<T = unknown>(
   }
 
   try {
-    const url = endpoint.startsWith('http')
-      ? endpoint
-      : `${API_BASE_URL}${endpoint}`;
+    const url = endpoint.startsWith('http') ? endpoint : `${API_BASE_URL}${endpoint}`;
     const res = await fetch(url, config);
 
     // Leemos el cuerpo como texto primero para no perder información si falla el parseo JSON
@@ -117,9 +102,7 @@ async function apiFetch<T = unknown>(
         data?.message ||
         data?.error ||
         // Si tenemos texto plano (y no es un HTML gigante), lo usamos como error
-        (textBody && textBody.length < 500
-          ? textBody
-          : `Error: ${res.status} ${res.statusText}`);
+        (textBody && textBody.length < 500 ? textBody : `Error: ${res.status} ${res.statusText}`);
 
       // ==================== INTERCEPTOR DE 401 ====================
       // Si recibimos 401 (Unauthorized) y no hemos intentado refrescar el token
@@ -157,8 +140,7 @@ async function apiFetch<T = unknown>(
       message: data?.message,
     };
   } catch (error) {
-    const errorMessage =
-      error instanceof Error ? error.message : 'Error de conexión';
+    const errorMessage = error instanceof Error ? error.message : 'Error de conexión';
 
     return {
       success: false,
@@ -229,10 +211,7 @@ export function useApiGetById<T>(endpoint: string, id: number | null) {
 
 //Realizar petición GET
 
-export async function apiGet<T = unknown>(
-  endpoint: string,
-  headers?: Record<string, string>,
-): Promise<ApiResponse<T>> {
+export async function apiGet<T = unknown>(endpoint: string, headers?: Record<string, string>): Promise<ApiResponse<T>> {
   return apiFetch<T>(endpoint, { method: 'GET', headers });
 }
 
@@ -271,12 +250,7 @@ export async function getCurrentUser() {
   return apiGet('/api/usuarios/currentUser');
 }
 
-export async function registerUser(data: {
-  nombre: string;
-  tipo: string;
-  gmail: string;
-  password: string;
-}) {
+export async function registerUser(data: { nombre: string; tipo: string; gmail: string; password: string }) {
   return apiPost('/api/usuarios/register', data);
 }
 
@@ -387,11 +361,7 @@ export async function deletePDI(id: number) {
   return apiDelete(`/api/puntosDeInteres/${id}`);
 }
 
-export async function filterPDIs(filters: {
-  localidad?: number;
-  busqueda?: string;
-  tags?: number[];
-}) {
+export async function filterPDIs(filters: { localidad?: number; busqueda?: string; tags?: number[] }) {
   return apiPost('/api/puntosDeInteres/filtro', filters);
 }
 
@@ -421,14 +391,17 @@ export async function deleteEvento(id: number) {
 */
 export async function uploadImage(
   file: File,
+  imagenAnterior?: string, // nombre del archivo a reemplazar (sin path)
 ): Promise<ApiResponse<{ filename?: string; nombreArchivo?: string }>> {
   const formData = new FormData();
   formData.append('imagen', file);
 
+  const url = imagenAnterior ? `${API_BASE_URL}/api/imagenes/${imagenAnterior}` : `${API_BASE_URL}/api/imagenes`;
+  const method = imagenAnterior ? 'PUT' : 'POST';
+
   try {
-    const url = `${API_BASE_URL}/api/imagenes`;
     const res = await fetch(url, {
-      method: 'POST',
+      method,
       body: formData,
       credentials: 'include',
     });
@@ -443,10 +416,7 @@ export async function uploadImage(
     }
 
     const normalizedData = {
-      filename:
-        data?.data?.filename ||
-        data?.nombreArchivo ||
-        data?.data?.nombreArchivo,
+      filename: data?.data?.filename || data?.nombreArchivo || data?.data?.nombreArchivo,
       url: data?.data?.url || data?.url,
     };
 
@@ -462,7 +432,6 @@ export async function uploadImage(
     };
   }
 }
-
 // ==================== FUNCIÓN PARA OBTENER URL DE IMAGEN ====================
 
 /*

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sun, Moon, Pencil, Save, X, MapPin, AlertCircle } from 'lucide-react';
+import { Sun, Moon, Pencil, Save, X, MapPin, AlertCircle, Camera } from 'lucide-react';
 import Navbar from '@/components/layout/Navbar';
 import PantallaDeCarga from '@/components/ui/PantallaDeCarga';
 import { ListadoEventosEditable } from '@/features/eventos';
@@ -7,7 +7,6 @@ import UbicacionModal from '@/features/pdi/UbicacionModal.tsx';
 import { useEditPDI } from '@/features/pdi/useEditPDI.tsx';
 import PantallaDeError from '@/components/ui/PantallaDeError.tsx';
 
-// ── Componentes UI locales ────────────────────────────────────────────────────
 const Field = ({ label, error, children }: { label: string; error?: string; children: React.ReactNode }) => (
   <div className="flex flex-col gap-1">
     <label className="text-xs font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500">{label}</label>
@@ -20,7 +19,6 @@ const editCls =
   'w-full px-3 py-2 rounded-lg border border-transparent hover:border-slate-200 dark:hover:border-slate-600 focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none bg-transparent hover:bg-slate-50 dark:hover:bg-slate-700/50 text-slate-800 dark:text-slate-100 text-sm transition-all';
 const editClsSelect = `${editCls} cursor-pointer`;
 
-// ── Page ──────────────────────────────────────────────────────────────────────
 const EditPDI = () => {
   const {
     pdiId,
@@ -63,9 +61,21 @@ const EditPDI = () => {
       <Navbar />
 
       {/* ── Hero ── */}
-      <div className="relative w-full h-[50vh] overflow-hidden">
+      <div className="relative w-full h-[50vh]">
         <img src={previewUrl} alt={form.nombre} className="w-full h-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent dark:from-slate-800 dark:via-black/30 dark:to-transparent" />
+
+        {/* Botón cambiar foto */}
+        <label className="absolute top-28 right-4 md:right-6 z-10 cursor-pointer inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/50 hover:bg-black/70 text-white text-xs font-semibold backdrop-blur-sm border border-white/20 transition-colors">
+          <Camera className="w-3.5 h-3.5" />
+          Cambiar foto
+          <input
+            type="file"
+            accept="image/jpeg,image/png"
+            className="hidden"
+            onChange={(e) => e.target.files?.[0] && handleImagenChange(e.target.files[0])}
+          />
+        </label>
 
         <div className="absolute bottom-0 left-0 w-full px-5 md:px-16 pb-6">
           <div className="max-w-7xl mx-auto">
@@ -73,7 +83,7 @@ const EditPDI = () => {
               <Pencil className="w-3 h-3" /> MODO EDICIÓN
             </span>
 
-            {/* Nombre editable inline */}
+            {/* Nombre editable */}
             <div className="relative group/nombre">
               <input
                 name="nombre"
@@ -86,19 +96,22 @@ const EditPDI = () => {
             </div>
             {errors.nombre && <p className="text-red-400 text-xs mt-1">{errors.nombre}</p>}
 
-            {/* Dirección — abre modal */}
-            <div className="flex flex-col items-start">
+            {/* Dirección */}
+            <div className="flex flex-col items-start mt-2">
               <button
                 type="button"
                 onClick={() => setShowUbicacionModal(true)}
-                className="mt-2 flex items-center gap-1.5 text-white/70 hover:text-white text-sm transition-colors group/dir"
+                className="group/dir flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/25 border border-white/20 hover:border-white/50 text-white/80 hover:text-white text-sm transition-all backdrop-blur-sm"
               >
-                <MapPin className="w-4 h-4" />
+                <MapPin className="w-4 h-4 flex-shrink-0" />
                 <span>
                   {form.calle} {form.altura}
                   {localidadNombre ? `, ${localidadNombre}` : ''}
                 </span>
-                <Pencil className="w-3 h-3 opacity-0 group-hover/dir:opacity-100 transition-opacity" />
+                <span className="flex items-center gap-1 ml-1 text-xs text-white/50 group-hover/dir:text-white/80 transition-colors">
+                  <Pencil className="w-3 h-3" />
+                  Editar
+                </span>
               </button>
               {(errors.calle || errors.altura || errors.localidad) && (
                 <p className="text-red-300 bg-red-900/40 px-2 py-1 rounded text-xs mt-1 font-medium backdrop-blur-sm border border-red-500/20">
@@ -108,18 +121,6 @@ const EditPDI = () => {
             </div>
           </div>
         </div>
-
-        {/* Cambiar foto */}
-        <label className="absolute top-6 right-6 cursor-pointer flex items-center gap-2 px-4 py-2 rounded-full bg-white/20 hover:bg-white/30 text-white text-sm font-semibold backdrop-blur-sm transition-colors">
-          <Pencil className="w-4 h-4" />
-          Cambiar foto
-          <input
-            type="file"
-            accept="image/*"
-            className="hidden"
-            onChange={(e) => e.target.files?.[0] && handleImagenChange(e.target.files[0])}
-          />
-        </label>
       </div>
 
       {/* ── Formulario ── */}
@@ -161,7 +162,6 @@ const EditPDI = () => {
               <h2 className="text-xs font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 border-b border-slate-100 dark:border-slate-700 pb-2">
                 Clasificación
               </h2>
-
               <Field label="Tags" error={errors.tags}>
                 <div className="flex flex-wrap gap-2 mt-1">
                   {allTags
@@ -171,8 +171,7 @@ const EditPDI = () => {
                         key={tag.id}
                         type="button"
                         onClick={() => handleTagToggle(tag.id)}
-                        className={`px-3 py-1 rounded-full text-sm font-medium border transition-all
-                        ${
+                        className={`px-3 py-1 rounded-full text-sm font-medium border transition-all ${
                           form.tags?.includes(tag.id)
                             ? 'bg-primary border-primary text-white'
                             : 'border-slate-200 dark:border-slate-600 text-slate-500 dark:text-slate-300 hover:border-primary hover:text-primary'
@@ -194,14 +193,13 @@ const EditPDI = () => {
                       key={String(opt.val)}
                       type="button"
                       onClick={() => handlePrivadoToggle(opt.val)}
-                      className={`px-4 py-2 rounded-full text-sm font-semibold border transition-all
-                        ${
-                          form.privado === opt.val
-                            ? opt.color === 'emerald'
-                              ? 'bg-emerald-500 border-emerald-500 text-white'
-                              : 'bg-amber-400 border-amber-400 text-amber-900'
-                            : 'border-slate-200 dark:border-slate-600 text-slate-500 dark:text-slate-400 hover:border-slate-300'
-                        }`}
+                      className={`px-4 py-2 rounded-full text-sm font-semibold border transition-all ${
+                        form.privado === opt.val
+                          ? opt.color === 'emerald'
+                            ? 'bg-emerald-500 border-emerald-500 text-white'
+                            : 'bg-amber-400 border-amber-400 text-amber-900'
+                          : 'border-slate-200 dark:border-slate-600 text-slate-500 dark:text-slate-400 hover:border-slate-300'
+                      }`}
                     >
                       {opt.label}
                     </button>
@@ -230,11 +228,11 @@ const EditPDI = () => {
             )}
 
             {/* ── Acciones ── */}
-            <div className="flex flex-wrap gap-3 pt-2 border-t border-slate-100 dark:border-slate-700">
+            <div className="flex flex-row gap-3 pt-2 border-t border-slate-100 dark:border-slate-700">
               <button
                 type="submit"
                 disabled={saving}
-                className="flex items-center gap-2 px-6 py-3 rounded-full bg-primary text-white font-semibold hover:bg-accent transition-colors disabled:opacity-50 text-sm"
+                className="flex-1 flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-primary text-white font-semibold hover:bg-accent transition-colors disabled:opacity-50 text-sm"
               >
                 <Save className="w-4 h-4" />
                 {saving ? 'Guardando...' : 'Guardar cambios'}
@@ -242,7 +240,7 @@ const EditPDI = () => {
               <button
                 type="button"
                 onClick={() => navigate(`/pdi/${pdiId}`)}
-                className="flex items-center gap-2 px-6 py-3 rounded-full border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-300 font-semibold hover:border-red-400 hover:text-red-500 transition-all text-sm"
+                className="flex-1 flex items-center justify-center gap-2 px-6 py-3 rounded-full border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-300 font-semibold hover:border-red-400 hover:text-red-500 transition-all text-sm"
               >
                 <X className="w-4 h-4" />
                 Cancelar
@@ -252,10 +250,8 @@ const EditPDI = () => {
         </div>
       </form>
 
-      {/* ── Separador ── */}
       <div className="w-full h-8 bg-gradient-to-b from-white to-slate-100 dark:from-slate-800 dark:to-slate-900" />
 
-      {/* ── Eventos (fuera del form para evitar form anidado) ── */}
       <div className="w-full bg-slate-100 dark:bg-slate-900 py-10 md:py-16">
         <div className="max-w-7xl mx-auto px-5 md:px-16 space-y-6">
           <div className="space-y-1">
@@ -268,7 +264,6 @@ const EditPDI = () => {
         </div>
       </div>
 
-      {/* ── Modal ubicación ── */}
       {provincias && todasLocalidades && (
         <UbicacionModal
           show={showUbicacionModal}
@@ -285,7 +280,6 @@ const EditPDI = () => {
         />
       )}
 
-      {/* ── Dark mode toggle ── */}
       <button
         onClick={toggleTheme}
         aria-label="Cambiar tema"

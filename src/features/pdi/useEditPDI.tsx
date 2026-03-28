@@ -1,20 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { z } from 'zod';
-import {
-  useApiGet,
-  getPDIById,
-  uploadImage,
-  updatePDI,
-  getImageUrl,
-  API_BASE_URL,
-} from '@/utils/api';
+import { useApiGet, getPDIById, uploadImage, updatePDI, getImageUrl, API_BASE_URL } from '@/utils/api';
 import { useUser } from '@/features/user';
 import { useAuthAdmin } from '@/features/auth';
 import { useTheme } from '@/context/ThemeContext';
 import type { Tag, Provincia, PDI } from '@/types';
 
-// PDI extendido con campos que vienen del backend pero no están en el tipo base
 interface PDIEditable extends Omit<PDI, 'tags' | 'privado'> {
   usuario: number;
   tags: Tag[];
@@ -23,22 +15,10 @@ interface PDIEditable extends Omit<PDI, 'tags' | 'privado'> {
 
 // ── Zod schema ────────────────────────────────────────────────────────────────
 export const pdiSchema = z.object({
-  nombre: z
-    .string()
-    .min(1, 'El nombre no puede estar vacío')
-    .max(255, 'Máximo 255 caracteres'),
-  descripcion: z
-    .string()
-    .min(1, 'La descripción no puede estar vacía')
-    .max(1024, 'Máximo 1024 caracteres'),
-  calle: z
-    .string()
-    .min(1, 'La calle no puede estar vacía')
-    .max(255, 'Máximo 255 caracteres'),
-  altura: z
-    .number({ error: 'La altura debe ser un número' })
-    .int('Debe ser entero')
-    .positive('Debe ser positivo'),
+  nombre: z.string().min(1, 'El nombre no puede estar vacío').max(255, 'Máximo 255 caracteres'),
+  descripcion: z.string().min(1, 'La descripción no puede estar vacía').max(1024, 'Máximo 1024 caracteres'),
+  calle: z.string().min(1, 'La calle no puede estar vacía').max(255, 'Máximo 255 caracteres'),
+  altura: z.number({ error: 'La altura debe ser un número' }).int('Debe ser entero').positive('Debe ser positivo'),
   lat: z
     .number({ error: 'Debe ser un número' })
     .refine((v) => v >= -90 && v <= 90, 'Entre -90 y 90')
@@ -49,14 +29,8 @@ export const pdiSchema = z.object({
     .optional(),
   privado: z.boolean(),
   tags: z.array(z.number().int().positive()).optional(),
-  localidad: z
-    .number({ error: 'La localidad es obligatoria' })
-    .int()
-    .positive('Seleccioná una localidad'),
-  usuario: z
-    .number({ error: 'El usuario es obligatorio' })
-    .int()
-    .positive('Seleccioná un usuario'),
+  localidad: z.number({ error: 'La localidad es obligatoria' }).int().positive('Seleccioná una localidad'),
+  usuario: z.number({ error: 'El usuario es obligatorio' }).int().positive('Seleccioná un usuario'),
   imagen: z.string().min(1).max(255).optional(),
 });
 
@@ -108,10 +82,7 @@ export function useEditPDI() {
     const check = async () => {
       setCheckingAccess(true);
       try {
-        const res = await fetch(
-          `${API_BASE_URL}/api/puntosDeInteres/canEdit/${pdiId}`,
-          { credentials: 'include' },
-        );
+        const res = await fetch(`${API_BASE_URL}/api/puntosDeInteres/canEdit/${pdiId}`, { credentials: 'include' });
         // 200 = admin o dueño del PDI, cualquier otro = no tiene acceso
         setPuedeEditar(res.ok);
       } catch {
@@ -137,11 +108,8 @@ export function useEditPDI() {
           calle: d.calle,
           altura: d.altura,
           privado: d.privado ?? false,
-          tags: d.tags
-            .map((t) => t.id)
-            .filter((id): id is number => id !== undefined),
-          localidad:
-            typeof d.localidad === 'object' ? d.localidad.id : d.localidad,
+          tags: d.tags.map((t) => t.id).filter((id): id is number => id !== undefined),
+          localidad: typeof d.localidad === 'object' ? d.localidad.id : d.localidad,
           usuario: d.usuario,
         });
         setLatitud(d.lat);
@@ -160,18 +128,12 @@ export function useEditPDI() {
     if (!form.localidad || !todasLocalidades?.length) return;
     const loc = todasLocalidades.find((l) => l.id === form.localidad);
     if (!loc) return;
-    const provId =
-      loc.provincia?.id ??
-      (typeof loc.provincia === 'number' ? loc.provincia : 0);
+    const provId = loc.provincia?.id ?? (typeof loc.provincia === 'number' ? loc.provincia : 0);
     if (provId) setProvinciaSeleccionada(provId);
   }, [form.localidad, todasLocalidades]);
 
   // ── Handlers ─────────────────────────────────────────────────────────────
-  const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >,
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
     setForm((f) => ({
       ...f,
@@ -180,17 +142,15 @@ export function useEditPDI() {
     setErrors((prev) => ({ ...prev, [name]: undefined }));
   };
 
-  const handleTagToggle = (tagId: number) => {
+  const handleTagToggle = (tagId: number | undefined) => {
+    if (tagId === undefined) return;
     setForm((f) => ({
       ...f,
-      tags: f.tags?.includes(tagId)
-        ? f.tags.filter((t) => t !== tagId)
-        : [...(f.tags || []), tagId],
+      tags: f.tags?.includes(tagId) ? f.tags.filter((t) => t !== tagId) : [...(f.tags || []), tagId],
     }));
   };
 
-  const handlePrivadoToggle = (valor: boolean) =>
-    setForm((f) => ({ ...f, privado: valor }));
+  const handlePrivadoToggle = (valor: boolean) => setForm((f) => ({ ...f, privado: valor }));
   const handleImagenChange = (file: File) => setImagenFile(file);
 
   const handleUbicacionConfirm = (data: {
@@ -201,12 +161,7 @@ export function useEditPDI() {
     lat?: number;
     lng?: number;
   }) => {
-    setForm((f) => ({
-      ...f,
-      calle: data.calle,
-      altura: data.altura,
-      localidad: data.localidad,
-    }));
+    setForm((f) => ({ ...f, calle: data.calle, altura: data.altura, localidad: data.localidad }));
     setProvinciaSeleccionada(data.provincia);
     setLatitud(data.lat);
     setLongitud(data.lng);
@@ -218,11 +173,7 @@ export function useEditPDI() {
     setErrors({});
     setSubmitted(true);
 
-    const result = pdiSchema.safeParse({
-      ...form,
-      lat: latitud,
-      lng: longitud,
-    });
+    const result = pdiSchema.safeParse({ ...form, lat: latitud, lng: longitud });
     if (!result.success) {
       const fieldErrors: FieldErrors = {};
       result.error.issues.forEach((err) => {
@@ -237,17 +188,11 @@ export function useEditPDI() {
     try {
       let imagenUrl = imagenActual;
       if (imagenFile instanceof File) {
-        const up = await uploadImage(imagenFile);
-        if (!up.success || !up.data)
-          throw new Error(up.error || 'Error al subir imagen');
+        const up = await uploadImage(imagenFile, imagenActual || undefined);
+        if (!up.success || !up.data) throw new Error(up.error || 'Error al subir imagen');
         imagenUrl = up.data.nombreArchivo || up.data.filename || '';
       }
-      const payload = {
-        ...result.data,
-        imagen: imagenUrl,
-        lat: latitud,
-        lng: longitud,
-      };
+      const payload = { ...result.data, imagen: imagenUrl, lat: latitud, lng: longitud };
       const res = await updatePDI(pdiId!, payload);
       if (!res.success) throw new Error(res.error || 'Error al actualizar');
       navigate(`/pdi/${pdiId}`);
@@ -259,12 +204,8 @@ export function useEditPDI() {
   };
 
   // ── Valores derivados ─────────────────────────────────────────────────────
-  const previewUrl = imagenFile
-    ? URL.createObjectURL(imagenFile)
-    : getImageUrl(imagenActual);
-  const localidadNombre = todasLocalidades?.find(
-    (l) => l.id === form.localidad,
-  )?.nombre;
+  const previewUrl = imagenFile ? URL.createObjectURL(imagenFile) : getImageUrl(imagenActual);
+  const localidadNombre = todasLocalidades?.find((l) => l.id === form.localidad)?.nombre;
 
   return {
     pdiId,

@@ -6,6 +6,16 @@ import type { Historia } from '@/types';
 
 const API = '/api/historias';
 
+async function deleteImage(filename: string) {
+  if (!filename) return;
+  try {
+    await fetch(`${API_BASE_URL}/api/imagenes/${filename}`, {
+      method: 'DELETE',
+      credentials: 'include',
+    });
+  } catch {}
+}
+
 async function apiFetch(url: string, options?: RequestInit) {
   const res = await fetch(`${API_BASE_URL}${url}`, {
     credentials: 'include',
@@ -19,14 +29,8 @@ async function apiFetch(url: string, options?: RequestInit) {
 
 // ── Schema de validación (espejo del backend) ─────────────────────────────────
 const historiaSchema = z.object({
-  titulo: z
-    .string()
-    .min(1, 'El título no puede estar vacío')
-    .max(255, 'Máximo 255 caracteres'),
-  descripcion: z
-    .string()
-    .min(1, 'La descripción no puede estar vacía')
-    .max(1024, 'Máximo 1024 caracteres'),
+  titulo: z.string().min(1, 'El título no puede estar vacío').max(255, 'Máximo 255 caracteres'),
+  descripcion: z.string().min(1, 'La descripción no puede estar vacía').max(1024, 'Máximo 1024 caracteres'),
   fechaDesde: z
     .string()
     .min(1, 'La fecha desde es obligatoria')
@@ -40,9 +44,7 @@ const historiaSchema = z.object({
   imagen: z.string().min(1).max(255).optional(),
 });
 
-type HistoriaFormErrors = Partial<
-  Record<keyof z.infer<typeof historiaSchema>, string>
->;
+type HistoriaFormErrors = Partial<Record<keyof z.infer<typeof historiaSchema>, string>>;
 
 interface FormState {
   titulo: string;
@@ -79,9 +81,7 @@ export function useHistoriaCRUD(pdiId: number, onSuccess: () => void) {
       setAuthLoading(true);
       try {
         // 1. ¿Es admin?
-        const adminRes = await fetch(`${API_BASE_URL}/api/usuarios/is-admin`, {
-          credentials: 'include',
-        });
+        const adminRes = await fetch(`${API_BASE_URL}/api/usuarios/is-admin`, { credentials: 'include' });
         const adminData = await adminRes.json();
         if (adminData?.isAdmin === true) {
           setPuedeEditar(true);
@@ -89,17 +89,11 @@ export function useHistoriaCRUD(pdiId: number, onSuccess: () => void) {
         }
 
         // 2. ¿Es creador y dueño del PDI?
-        const creatorRes = await fetch(
-          `${API_BASE_URL}/api/usuarios/is-creator`,
-          { credentials: 'include' },
-        );
+        const creatorRes = await fetch(`${API_BASE_URL}/api/usuarios/is-creator`, { credentials: 'include' });
         const creatorData = await creatorRes.json();
         if (creatorData?.isCreator !== true) return;
 
-        const ownerRes = await fetch(
-          `${API_BASE_URL}/api/usuarios/is-pdiOwner/${pdiId}`,
-          { credentials: 'include' },
-        );
+        const ownerRes = await fetch(`${API_BASE_URL}/api/usuarios/is-pdiOwner/${pdiId}`, { credentials: 'include' });
         const ownerData = await ownerRes.json();
         if (ownerData?.isOwner === true) {
           setPuedeEditar(true);
@@ -114,9 +108,7 @@ export function useHistoriaCRUD(pdiId: number, onSuccess: () => void) {
   }, [pdiId]);
 
   // ── Form handlers ─────────────────────────────────────────────────────────
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value, files } = e.target as HTMLInputElement;
     if (name === 'imagenFile' && files?.[0]) {
       setForm((f) => ({ ...f, imagenFile: files[0] }));
@@ -180,9 +172,7 @@ export function useHistoriaCRUD(pdiId: number, onSuccess: () => void) {
     // Validación cruzada: fechaHasta debe ser posterior a fechaDesde
     if (form.fechaHasta && form.fechaDesde) {
       if (new Date(form.fechaHasta) <= new Date(form.fechaDesde)) {
-        setFieldErrors({
-          fechaHasta: 'La fecha hasta debe ser posterior a la fecha desde',
-        });
+        setFieldErrors({ fechaHasta: 'La fecha hasta debe ser posterior a la fecha desde' });
         setError('La fecha hasta debe ser posterior a la fecha desde');
         return;
       }
@@ -201,9 +191,8 @@ export function useHistoriaCRUD(pdiId: number, onSuccess: () => void) {
     try {
       let imagenNombre = form.imagenActual;
       if (form.imagenFile) {
-        const up = await uploadImage(form.imagenFile);
-        if (!up.success || !up.data)
-          throw new Error(up.error || 'Error al subir imagen');
+        const up = await uploadImage(form.imagenFile, form.imagenActual || undefined);
+        if (!up.success || !up.data) throw new Error(up.error || 'Error al subir imagen');
         imagenNombre = up.data.filename ?? '';
       }
 
@@ -217,17 +206,12 @@ export function useHistoriaCRUD(pdiId: number, onSuccess: () => void) {
       };
 
       if (editingId) {
-        await apiFetch(`${API}/${editingId}`, {
-          method: 'PUT',
-          body: JSON.stringify(body),
-        });
+        await apiFetch(`${API}/${editingId}`, { method: 'PUT', body: JSON.stringify(body) });
       } else {
         await apiFetch(API, { method: 'POST', body: JSON.stringify(body) });
       }
 
-      const msg = editingId
-        ? 'Historia actualizada correctamente'
-        : 'Historia creada correctamente';
+      const msg = editingId ? 'Historia actualizada correctamente' : 'Historia creada correctamente';
       showSuccess(msg);
       cancel();
       onSuccess();
@@ -238,9 +222,10 @@ export function useHistoriaCRUD(pdiId: number, onSuccess: () => void) {
     }
   };
 
-  const remove = async (id: number) => {
+  const remove = async (id: number, imagen?: string) => {
     if (!confirm('¿Eliminar esta historia?')) return;
     try {
+      if (imagen) await deleteImage(imagen);
       await apiFetch(`${API}/${id}`, { method: 'DELETE' });
       showSuccess('Historia eliminada correctamente');
       onSuccess();
