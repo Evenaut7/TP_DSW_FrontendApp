@@ -122,8 +122,17 @@ export function useCreatorDashboard() {
     setEditingPDI(null);
     setShowPDIModal(true);
   };
-  const handleEditPDI = (pdi: PDI) => navigate(`/editPDI/${pdi.id}`);
-  const handleAddEvent = (pdi: PDI) => navigate(`/creator/pdi/${pdi.id}/events`);
+
+  const handleEditPDI = (pdi: PDI) => {
+    navigate(`/editPDI/${pdi.id}`);
+  };
+
+  const handleAddEvent = (pdi: PDI) => {
+    navigate(`/creator/pdi/${pdi.id}/events`, {
+      state: { from: '/creator' },
+    });
+  };
+
   const closePDIModal = () => {
     setShowPDIModal(false);
     setEditingPDI(null);

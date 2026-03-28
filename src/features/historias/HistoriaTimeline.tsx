@@ -17,8 +17,31 @@ function formatFechaLarga(iso: string) {
   });
 }
 
-function getCardStyle(offset: number): React.CSSProperties {
+function getCardStyle(offset: number, isMobile: boolean): React.CSSProperties {
   const abs = Math.abs(offset);
+
+  if (isMobile) {
+    if (abs > 1) return { display: 'none' };
+    // Card activa
+    if (abs === 0) return {
+      position: 'absolute',
+      transform: 'translateX(0px) scale(1)',
+      opacity: 1,
+      zIndex: 10,
+      transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+      pointerEvents: 'auto',
+    };
+    // Cards laterales en mobile: visibles pero pequeñas y recortadas
+    return {
+      position: 'absolute',
+      transform: `translateX(${offset * 170}px) scale(0.72)`,
+      opacity: 0.35,
+      zIndex: 5,
+      transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+      pointerEvents: 'none',
+    };
+  }
+
   if (abs > 2) return { display: 'none' };
 
   const translateX = offset * 260;
@@ -55,6 +78,14 @@ export default function HistoriasTimeline({
   );
 
   const [active, setActive] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 640);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -78,61 +109,115 @@ export default function HistoriasTimeline({
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      {/* ── Header flotante ── */}
-      <div className="absolute top-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 z-20 pointer-events-none">
-        <p className="text-xs font-bold uppercase tracking-widest text-white/50">
-          Historias
-        </p>
-        <h2 className="text-2xl font-extrabold text-white drop-shadow-lg">
-          {pdiNombre}
-        </h2>
+      {/* ── Header + botón cerrar en una fila, debajo del navbar ── */}
+      <div className="absolute top-[120px] sm:top-8 left-0 right-0 z-20 flex items-center justify-between px-4 sm:px-6">
+        <div className="w-10 flex-shrink-0" />
+        <div className="flex flex-col items-center gap-0.5 pointer-events-none">
+          <p className="text-xs font-bold uppercase tracking-widest text-white/50">
+            Historias
+          </p>
+          <h2 className="text-lg sm:text-2xl font-extrabold text-white drop-shadow-lg truncate max-w-[200px] sm:max-w-xs">
+            {pdiNombre}
+          </h2>
+        </div>
+        <button
+          onClick={onClose}
+          className="p-2.5 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors backdrop-blur-sm border border-white/20 flex-shrink-0"
+        >
+          <X className="w-5 h-5" />
+        </button>
       </div>
 
-      {/* ── Botón cerrar ── */}
-      <button
-        onClick={onClose}
-        className="absolute top-6 right-6 z-20 p-2.5 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors backdrop-blur-sm border border-white/20"
-      >
-        <X className="w-5 h-5" />
-      </button>
+      {/* ── Escenario Desktop (3D carrusel) ── */}
+      {!isMobile ? (
+        <div
+          className="relative flex items-center justify-center w-full"
+          style={{ perspective: '1200px', height: '480px' }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          {sorted.map((h, i) => (
+            <div key={h.id} style={getCardStyle(i - active, false)}>
+              <HistoriaCard historia={h} />
+            </div>
+          ))}
+        </div>
+      ) : (
+        /* ── Escenario Mobile (card centrada) ── */
+        <div
+          className="flex items-center justify-center w-full px-6 mt-16"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {sorted.map((h, i) => (
+            <div key={h.id} style={getCardStyle(i - active, true)}>
+              <HistoriaCard historia={h} />
+            </div>
+          ))}
+        </div>
+      )}
 
-      {/* ── Escenario 3D ── */}
-      <div
-        className="relative flex items-center justify-center w-full"
-        style={{ perspective: '1200px', height: '480px' }}
-        onClick={(e) => e.stopPropagation()}
-      >
-        {sorted.map((h, i) => (
-          <div key={h.id} style={getCardStyle(i - active)}>
-            <HistoriaCard historia={h} />
+      {/* ── Navegación Desktop — lados ── */}
+      {!isMobile && (
+        <>
+          <div className="absolute left-6 top-1/2 -translate-y-1/2 z-20">
+            <button
+              onClick={prev}
+              disabled={active === 0}
+              className="p-3 rounded-full bg-white/10 hover:bg-white/25 text-white border border-white/20 backdrop-blur-sm transition-all disabled:opacity-20 disabled:cursor-not-allowed"
+            >
+              <ChevronLeft className="w-6 h-6" />
+            </button>
           </div>
-        ))}
-      </div>
+          <div className="absolute right-6 top-1/2 -translate-y-1/2 z-20">
+            <button
+              onClick={next}
+              disabled={active === sorted.length - 1}
+              className="p-3 rounded-full bg-white/10 hover:bg-white/25 text-white border border-white/20 backdrop-blur-sm transition-all disabled:opacity-20 disabled:cursor-not-allowed"
+            >
+              <ChevronRight className="w-6 h-6" />
+            </button>
+          </div>
+        </>
+      )}
 
-      {/* ── Navegación ── */}
-      <div className="absolute left-6 top-1/2 -translate-y-1/2 z-20">
-        <button
-          onClick={prev}
-          disabled={active === 0}
-          className="p-3 rounded-full bg-white/10 hover:bg-white/25 text-white border border-white/20 backdrop-blur-sm transition-all disabled:opacity-20 disabled:cursor-not-allowed"
-        >
-          <ChevronLeft className="w-6 h-6" />
-        </button>
-      </div>
-
-      <div className="absolute right-6 top-1/2 -translate-y-1/2 z-20">
-        <button
-          onClick={next}
-          disabled={active === sorted.length - 1}
-          className="p-3 rounded-full bg-white/10 hover:bg-white/25 text-white border border-white/20 backdrop-blur-sm transition-all disabled:opacity-20 disabled:cursor-not-allowed"
-        >
-          <ChevronRight className="w-6 h-6" />
-        </button>
-      </div>
-
-      {/* ── Dots + contador ── */}
+      {/* ── Dots + contador + navegación mobile ── */}
       <div className="absolute bottom-8 flex flex-col items-center gap-3 z-20">
-        {sorted.length > 1 && (
+        {/* Botones de navegación en mobile — junto a los dots */}
+        {isMobile && sorted.length > 1 && (
+          <div className="flex items-center gap-4">
+            <button
+              onClick={prev}
+              disabled={active === 0}
+              className="p-2.5 rounded-full bg-white/10 hover:bg-white/25 text-white border border-white/20 backdrop-blur-sm transition-all disabled:opacity-20 disabled:cursor-not-allowed"
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+
+            <div className="flex gap-1.5 items-center">
+              {sorted.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setActive(i)}
+                  className={`rounded-full transition-all duration-300 ${
+                    i === active
+                      ? 'w-6 h-2 bg-white'
+                      : 'w-2 h-2 bg-white/30 hover:bg-white/60'
+                  }`}
+                />
+              ))}
+            </div>
+
+            <button
+              onClick={next}
+              disabled={active === sorted.length - 1}
+              className="p-2.5 rounded-full bg-white/10 hover:bg-white/25 text-white border border-white/20 backdrop-blur-sm transition-all disabled:opacity-20 disabled:cursor-not-allowed"
+            >
+              <ChevronRight className="w-5 h-5" />
+            </button>
+          </div>
+        )}
+
+        {/* Dots desktop */}
+        {!isMobile && sorted.length > 1 && (
           <div className="flex gap-1.5">
             {sorted.map((_, i) => (
               <button
@@ -147,6 +232,7 @@ export default function HistoriasTimeline({
             ))}
           </div>
         )}
+
         <span className="text-xs text-white/40 tabular-nums font-medium">
           {active + 1} / {sorted.length}
         </span>
