@@ -53,7 +53,7 @@ export type PDI = {
 };
 
 export type Evento = {
-  id?: number;
+  id: number;
   titulo: string;
   descripcion: string;
   horaDesde: string;
@@ -108,9 +108,7 @@ export type FormFieldProps = {
   value?: string | number;
   type?: string;
   as?: 'input' | 'textarea';
-  onChange: (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => void;
+  onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   required?: boolean;
   placeholder?: string;
 };

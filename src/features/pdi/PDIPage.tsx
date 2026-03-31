@@ -1,12 +1,7 @@
 import Navbar from '@/components/layout/Navbar';
 import Estrellas from '@/components/ui/Estrellas';
-import { useParams } from 'react-router-dom';
-import {
-  useApiGetById,
-  addFavorito,
-  removeFavorito,
-  getImageUrl,
-} from '@/utils/api';
+import { useParams, Link } from 'react-router-dom';
+import { useApiGetById, addFavorito, removeFavorito, getImageUrl } from '@/utils/api';
 import { useUser } from '@/features/user';
 import { useTheme } from '@/context/ThemeContext';
 import { useState, useEffect } from 'react';
@@ -15,7 +10,7 @@ import PantallaDeCarga from '@/components/ui/PantallaDeCarga';
 import PantallaDeError from '@/components/ui/PantallaDeError';
 import { ListadoDeTags } from '@/features/tags';
 import { ListadoEventos } from '@/features/eventos';
-import { Sun, Moon } from 'lucide-react';
+import { Sun, Moon, ChevronRight } from 'lucide-react';
 import HistoriasTimeline from '../historias/HistoriaTimeline';
 import type { PDI } from '@/types';
 
@@ -28,19 +23,13 @@ const PDIPage = () => {
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [showHistorias, setShowHistorias] = useState(false);
+  const [tagsFiltro, setTagsFiltro] = useState<number[]>([]);
 
-  const {
-    data: pdi,
-    loading,
-    error,
-  } = useApiGetById<PDI>('/api/puntosDeInteres', pdiId);
+  const { data: pdi, loading, error } = useApiGetById<PDI>('/api/puntosDeInteres', pdiId);
   const [localEsFavorito, setLocalEsFavorito] = useState(false);
 
   useEffect(() => {
-    if (user && pdiId)
-      setLocalEsFavorito(
-        user.favoritos?.some((fav) => fav.id === pdiId) || false,
-      );
+    if (user && pdiId) setLocalEsFavorito(user.favoritos?.some((fav) => fav.id === pdiId) || false);
   }, [user, pdiId]);
 
   const handleToggleFavorito = async () => {
@@ -68,20 +57,17 @@ const PDIPage = () => {
     setLoadingFavorito(false);
   };
 
-  const scrollToEventos = () =>
-    document.getElementById('eventos')?.scrollIntoView({ behavior: 'smooth' });
+  const scrollToEventos = () => document.getElementById('eventos')?.scrollIntoView({ behavior: 'smooth' });
 
   if (loading) return <PantallaDeCarga mensaje="Punto De Interes" />;
-  if (error)
-    return (
-      <PantallaDeError
-        mensaje="Error al cargar el Punto De Interes"
-        error={error}
-      />
-    );
+  if (error) return <PantallaDeError mensaje="Error al cargar el Punto De Interes" error={error} />;
   if (!pdi) return <p>No se encontró el PDI</p>;
 
   const historias = pdi.historias ?? [];
+
+  // Datos para el breadcrumb
+  const provincia = pdi.localidad.provincia;
+  const localidad = pdi.localidad;
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-800 font-display transition-colors duration-300">
@@ -89,20 +75,41 @@ const PDIPage = () => {
 
       {/* Hero imagen */}
       <div className="relative w-full h-[60vh] overflow-hidden">
-        <img
-          src={getImageUrl(pdi.imagen)}
-          alt={pdi.nombre}
-          className="w-full h-full object-cover"
-        />
+        <img src={getImageUrl(pdi.imagen)} alt={pdi.nombre} className="w-full h-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent dark:from-slate-800 dark:via-black/30 dark:to-transparent" />
         <div className="absolute bottom-0 left-0 w-full px-5 md:px-16 pb-8">
-          <div className="max-w-7xl mx-auto">
+          <div className="max-w-7xl mx-auto space-y-2">
             <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight text-white drop-shadow-lg">
               {pdi.nombre}
             </h1>
-            <p className="text-white/80 mt-2 text-sm md:text-base drop-shadow">
+            <p className="text-white/80 text-sm md:text-base drop-shadow">
               📍 {pdi.calle} {pdi.altura}
             </p>
+            {/* Breadcrumb */}
+            <nav aria-label="Breadcrumb">
+              <ol className="flex items-center flex-wrap gap-1 text-xs text-white/60">
+                <li>
+                  <span className="cursor-default">Argentina</span>
+                </li>
+                <li className="flex items-center gap-1">
+                  <ChevronRight className="w-3 h-3 flex-shrink-0" />
+                  <span className="cursor-default">{provincia.nombre}</span>
+                </li>
+                <li className="flex items-center gap-1">
+                  <ChevronRight className="w-3 h-3 flex-shrink-0" />
+                  <Link
+                    to={`/localidad/${localidad.id}`}
+                    className="hover:text-white transition-colors underline underline-offset-2"
+                  >
+                    {localidad.nombre}
+                  </Link>
+                </li>
+                <li className="flex items-center gap-1">
+                  <ChevronRight className="w-3 h-3 flex-shrink-0" />
+                  <span className="text-white/90 font-medium">{pdi.nombre}</span>
+                </li>
+              </ol>
+            </nav>
           </div>
         </div>
       </div>
@@ -116,10 +123,7 @@ const PDIPage = () => {
               <p className="text-slate-600 dark:text-slate-300 text-base md:text-lg leading-relaxed">
                 {pdi.descripcion}
               </p>
-              <Estrellas
-                rating={pdi.promedio}
-                reviews={pdi.valoraciones.length}
-              />
+              <Estrellas rating={pdi.promedio} reviews={pdi.valoraciones.length} />
               {pdi.tags && pdi.tags.length > 0 && (
                 <div className="flex flex-wrap gap-2">
                   {pdi.tags.map((tag) => (
@@ -136,7 +140,6 @@ const PDIPage = () => {
 
             {/* Columna derecha — botones */}
             <div className="grid grid-cols-2 md:grid-cols-1 gap-3 w-full md:w-52 flex-shrink-0">
-              {/* Conocer historias */}
               {historias.length > 0 && (
                 <button
                   onClick={() => setShowHistorias(true)}
@@ -146,7 +149,6 @@ const PDIPage = () => {
                 </button>
               )}
 
-              {/* Favorito */}
               <button
                 onClick={handleToggleFavorito}
                 disabled={loadingFavorito || !user}
@@ -163,14 +165,11 @@ const PDIPage = () => {
                 {localEsFavorito ? 'En favoritos' : 'Favoritos'}
               </button>
 
-              {/* Ver eventos */}
               <button
                 onClick={scrollToEventos}
                 className="col-span-2 md:col-span-1 h-11 px-5 rounded-full border border-primary/30 bg-primary/5 dark:bg-primary/10 text-primary font-semibold flex items-center justify-center gap-2 hover:bg-primary/10 dark:hover:bg-primary/20 transition-colors group text-sm"
               >
-                <span className="material-symbols-outlined text-base flex-shrink-0">
-                  event
-                </span>
+                <span className="material-symbols-outlined text-base flex-shrink-0">event</span>
                 Ver eventos
                 <span className="material-symbols-outlined text-base transition-transform group-hover:translate-y-0.5 flex-shrink-0">
                   expand_more
@@ -185,10 +184,7 @@ const PDIPage = () => {
       <div className="w-full h-8 bg-gradient-to-b from-white to-slate-100 dark:from-slate-800 dark:to-slate-900" />
 
       {/* Eventos */}
-      <div
-        id="eventos"
-        className="w-full bg-slate-100 dark:bg-slate-900 py-10 md:py-16"
-      >
+      <div id="eventos" className="w-full bg-slate-100 dark:bg-slate-900 py-10 md:py-16">
         <div className="max-w-7xl mx-auto px-5 md:px-16 space-y-6">
           <div className="space-y-1">
             <h2 className="text-2xl md:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100">
@@ -198,8 +194,8 @@ const PDIPage = () => {
               Actividades y eventos programados en este lugar.
             </p>
           </div>
-          <ListadoDeTags />
-          <ListadoEventos pdiId={pdi.id} />
+          <ListadoDeTags onTagsChange={setTagsFiltro} />
+          <ListadoEventos pdiId={pdi.id} tagIds={tagsFiltro} />
         </div>
       </div>
 
@@ -209,20 +205,12 @@ const PDIPage = () => {
         aria-label="Cambiar tema"
         className="fixed bottom-6 right-6 z-50 p-3 rounded-full shadow-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-600 dark:text-slate-200 hover:scale-110 transition-all duration-300"
       >
-        {theme === 'dark' ? (
-          <Sun className="w-5 h-5 text-amber-400" />
-        ) : (
-          <Moon className="w-5 h-5" />
-        )}
+        {theme === 'dark' ? <Sun className="w-5 h-5 text-amber-400" /> : <Moon className="w-5 h-5" />}
       </button>
 
       {/* Modal historias */}
       {showHistorias && (
-        <HistoriasTimeline
-          historias={historias}
-          pdiNombre={pdi.nombre}
-          onClose={() => setShowHistorias(false)}
-        />
+        <HistoriasTimeline historias={historias} pdiNombre={pdi.nombre} onClose={() => setShowHistorias(false)} />
       )}
 
       <ResultModal
