@@ -15,6 +15,8 @@
 
 Repositorio frontend para el Trabajo Práctico de DSW. Esta aplicación web permite a los usuarios visualizar, explorar y conocer detalles sobre diferentes Puntos de Interés (PDI) a través de un mapa interactivo.
 
+🔗 **Backend asociado:** [TP_DSW_BackendApp](https://github.com/Evenaut7/TP_DSW_BackendApp)
+
 🔗 **Demo en vivo:** [tp-dsw-frontend-app.vercel.app](https://tp-dsw-frontend-app.vercel.app)
 
 ---
