@@ -3,7 +3,7 @@ import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import './MapPage.css';
 import Navbar from '@/components/layout/Navbar.tsx';
-import { useApiGet } from '@/utils/api.ts';
+import { useApiGet, getImageUrl } from '@/utils/api.ts';
 
 interface PDI {
   id: number;
@@ -159,14 +159,14 @@ export default function MapPage() {
       const popupHTML = `
         <div class="custom-popup">
           <img
-            src={getImageUrl(props.imagen)}
-            alt={props.nombre}
+            src="${getImageUrl(props.imagen)}"
+            alt="${props.nombre}"
             class="card-image"
           />
           <h4>${props.nombre}</h4>
           ${props.descripcion ? `<p>${props.descripcion}</p>` : ''}
           ${props.localidad ? `<small>📍 ${props.localidad}</small>` : ''}
-          <a href="/pdi/${props.id}">Ver detalles</a>
+          <a href="/pdi/${props.id}" class="bg-blue-500 text-white px-4 py-2 rounded mt-2 inline-block">Ver detalles</a>
         </div>
       `;
 
