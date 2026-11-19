@@ -1,4 +1,4 @@
-import { useApiGet, API_BASE_URL, getImageUrl } from '@/utils/api';
+import { useApiGet, getImageUrl } from '@/utils/api';
 //import 'bootstrap/dist/css/bootstrap.min.css'
 import { Link } from 'react-router-dom';
 import './ListadoLocalidades.css';

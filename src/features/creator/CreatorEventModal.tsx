@@ -113,7 +113,7 @@ export default function CreatorEventModal({
         fecha: toDateLocal(fromDate),
         estado: evento.estado || 'Disponible',
         tags: Array.isArray(evento.tags)
-          ? evento.tags.map((t: any) => (typeof t === 'number' ? t : t.id || 0))
+          ? evento.tags.map((t) => (typeof t === 'number' ? t : t.id || 0))
           : [],
       });
     } else {
@@ -286,7 +286,7 @@ export default function CreatorEventModal({
                   t.id != null && typeof t.nombre === 'string',
               )}
               selected={form.tags || []}
-              onChange={handleChange as any}
+              onChange={handleChange}
             />
 
             {pdi && (

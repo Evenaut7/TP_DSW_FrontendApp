@@ -21,7 +21,7 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ isOpen, onClose, onOpenAuth }: SidebarProps) {
-  const { user, loading, logout } = useUser();
+  const { user, logout } = useUser();
   const { isAdmin } = useAuthAdmin();
 
   const handleLinkClick = () => {

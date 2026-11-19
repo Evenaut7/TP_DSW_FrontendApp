@@ -15,7 +15,7 @@ import EventCard from '@/features/eventos/EventCard';
 import PantallaDeCarga from '@/components/ui/PantallaDeCarga';
 import { getAgendaUsuario, removeEventoFromAgenda } from '@/utils/api';
 import { showSuccess, showValidationError } from '@/utils/notifications';
-import { useTheme } from '@/context/ThemeContext';
+import { useTheme } from '@/context/useTheme';
 import type { Evento } from '@/types';
 
 // ==================== HELPERS ====================
@@ -104,7 +104,7 @@ export default function AgendaPage() {
     const pdiId =
       typeof evento.puntoDeInteres === 'number'
         ? evento.puntoDeInteres
-        : (evento.puntoDeInteres as any)?.id;
+        : evento.puntoDeInteres?.id;
     if (pdiId) navigate(`/pdi/${pdiId}`);
   };
 

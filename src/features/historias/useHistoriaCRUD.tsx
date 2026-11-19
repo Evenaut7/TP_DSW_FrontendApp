@@ -1,3 +1,4 @@
+import { getErrorMessage } from '@/utils/errors';
 import { useState, useEffect } from 'react';
 import { z } from 'zod';
 import { uploadImage, API_BASE_URL } from '@/utils/api';
@@ -13,7 +14,9 @@ async function deleteImage(filename: string) {
       method: 'DELETE',
       credentials: 'include',
     });
-  } catch {}
+  } catch {
+    // Best-effort cleanup: a failed image delete must not block the main flow.
+  }
 }
 
 async function apiFetch(url: string, options?: RequestInit) {
@@ -46,7 +49,7 @@ const historiaSchema = z.object({
 
 type HistoriaFormErrors = Partial<Record<keyof z.infer<typeof historiaSchema>, string>>;
 
-interface FormState {
+export interface FormState {
   titulo: string;
   descripcion: string;
   fechaDesde: string;
@@ -215,8 +218,8 @@ export function useHistoriaCRUD(pdiId: number, onSuccess: () => void) {
       showSuccess(msg);
       cancel();
       onSuccess();
-    } catch (e: any) {
-      setError(e.message || 'Error al guardar');
+    } catch (e) {
+      setError(getErrorMessage(e, 'Error al guardar'));
     } finally {
       setSaving(false);
     }
@@ -229,8 +232,8 @@ export function useHistoriaCRUD(pdiId: number, onSuccess: () => void) {
       await apiFetch(`${API}/${id}`, { method: 'DELETE' });
       showSuccess('Historia eliminada correctamente');
       onSuccess();
-    } catch (e: any) {
-      setError(e.message || 'Error al eliminar');
+    } catch (e) {
+      setError(getErrorMessage(e, 'Error al eliminar'));
     }
   };
 

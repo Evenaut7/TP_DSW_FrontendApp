@@ -13,7 +13,9 @@ async function deleteImage(filename: string) {
       method: 'DELETE',
       credentials: 'include',
     });
-  } catch {}
+  } catch {
+    // Best-effort cleanup: a failed image delete must not block the main flow.
+  }
 }
 
 export function useCreatorDashboard() {

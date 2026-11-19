@@ -1,6 +1,7 @@
 import { useState, useEffect, type FormEvent, useRef, useMemo } from 'react';
 import { X, Loader2 } from 'lucide-react';
-import type { PDI, Tag } from '@/types';
+import type { PDI, Tag, User } from '@/types';
+import type { Localidad } from '@/features/localidades/useProvinciasLocalidades';
 import { useProvinciasLocalidades } from '@/features/localidades';
 import { getImageUrl, getTags } from '@/utils/api';
 import MapSelector from '@/components/map/MapSelector';
@@ -16,7 +17,7 @@ interface CreatorPDIModalProps {
   onClose: () => void;
   onSubmit: (data: PDIFormData) => Promise<boolean>;
   loading?: boolean;
-  usuarios?: any[];
+  usuarios?: NonNullable<User>[];
   isAdmin?: boolean;
   initialData?: Partial<PDIFormData>;
 }
@@ -60,7 +61,7 @@ export default function CreatorPDIModal({
   }, [getLocalidadesByProvincia]);
 
   const [step, setStep] = useState<1 | 2>(1);
-  const [localidades, setLocalidades] = useState<any[]>([]);
+  const [localidades, setLocalidades] = useState<Localidad[]>([]);
   const [imagePreview, setImagePreview] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [manualOverride, setManualOverride] = useState(false);
@@ -161,7 +162,7 @@ export default function CreatorPDIModal({
           pdi.tags
             ?.map((t) => t.id)
             .filter((id): id is number => typeof id === 'number') ?? [],
-        usuarioId: (pdi as any).usuario?.id ?? (pdi as any).usuario,
+        usuarioId: typeof pdi.usuario === 'object' ? pdi.usuario.id : pdi.usuario,
       });
 
       if (typeof pdi.imagen === 'string') {

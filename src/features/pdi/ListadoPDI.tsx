@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { API_BASE_URL, getImageUrl } from '@/utils/api';
+import { getImageUrl } from '@/utils/api';
 
 interface PDIData {
   id: number;

@@ -59,7 +59,11 @@ const ListadoEventos: React.FC<ListadoEventosProps> = ({ pdiId, tagIds = [] }) =
       if (result.success) {
         setEventosAgendados((prev) => {
           const newSet = new Set(prev);
-          isAgendado ? newSet.delete(eventoId) : newSet.add(eventoId);
+          if (isAgendado) {
+            newSet.delete(eventoId);
+          } else {
+            newSet.add(eventoId);
+          }
           return newSet;
         });
         setModalConfig({

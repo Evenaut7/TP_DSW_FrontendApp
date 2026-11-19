@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import type { PDI } from '@/types';
 // import { showNotification, classifyErrorByStatus, NotificationType } from './notifications';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
@@ -346,7 +347,7 @@ export async function getPDIs() {
 }
 
 export async function getPDIById(id: number) {
-  return apiGet(`/api/puntosDeInteres/${id}`);
+  return apiGet<PDI>(`/api/puntosDeInteres/${id}`);
 }
 
 export async function createPDI(data: unknown) {

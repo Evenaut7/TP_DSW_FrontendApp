@@ -1,7 +1,8 @@
+import { getErrorMessage } from '@/utils/errors';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { API_BASE_URL, createPDI, uploadImage, useApiGet, updateLocalidad } from '@/utils/api';
-import type { PDI as PDIType, Provincia, Localidad } from '@/types';
+import type { PDI as PDIType, Provincia, Localidad, User } from '@/types';
 import { useAuthAdmin } from '@/features/auth';
 import type { PDIFormData } from '@/features/creator/CreatorPDIModal';
 
@@ -23,7 +24,7 @@ export function useEditLocalidad() {
   const navigate = useNavigate();
 
   const { isAdmin, loading: loadingAuth, error: errorAuth } = useAuthAdmin();
-  const { data: usuarios } = useApiGet<any[]>('/api/usuarios');
+  const { data: usuarios } = useApiGet<NonNullable<User>[]>('/api/usuarios');
 
   const [localidad, setLocalidad] = useState<Localidad | null>(null);
   const originalRef = useRef<Localidad | null>(null);
@@ -65,8 +66,8 @@ export function useEditLocalidad() {
         originalRef.current = JSON.parse(JSON.stringify(locData));
         setProvincias(Array.isArray(provData) ? provData : []);
         setErrorMsg(null);
-      } catch (err: any) {
-        setErrorMsg(err.message ?? 'Error inesperado al cargar datos');
+      } catch (err) {
+        setErrorMsg(getErrorMessage(err, 'Error inesperado al cargar datos'));
       } finally {
         setLoadingLocalidad(false);
       }
@@ -109,7 +110,7 @@ export function useEditLocalidad() {
   const handleProvinciaChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const idProv = Number(e.target.value);
     const prov = provincias.find((p) => p.id === idProv) ?? undefined;
-    setLocalidad((prev) => (prev ? { ...prev, provincia: prov as any } : prev));
+    setLocalidad((prev) => (prev ? { ...prev, provincia: prov as Localidad['provincia'] } : prev));
   };
 
   const handleImagenChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -160,7 +161,7 @@ export function useEditLocalidad() {
       const result = await updateLocalidad(localidadId!, payload);
       if (!result.success) throw new Error(result.error ?? 'Error al actualizar');
 
-      const updatedData = result.data as any;
+      const updatedData = result.data as Localidad | undefined;
       if (updatedData) {
         setLocalidad(updatedData);
         originalRef.current = JSON.parse(JSON.stringify(updatedData));
@@ -171,8 +172,8 @@ export function useEditLocalidad() {
         setMensaje(null);
         navigate(`/localidad/${localidadId}`);
       }, 900);
-    } catch (err: any) {
-      setErrorMsg(err.message ?? 'Error inesperado al guardar');
+    } catch (err) {
+      setErrorMsg(getErrorMessage(err, 'Error inesperado al guardar'));
     } finally {
       setGuardando(false);
     }
@@ -191,7 +192,7 @@ export function useEditLocalidad() {
       const imagenUrl = uploadResult.data.nombreArchivo || uploadResult.data.filename;
       if (!imagenUrl) throw new Error('No se pudo obtener el nombre de la imagen subida');
 
-      const payload: any = {
+      const payload = {
         ...pdiFormData,
         imagen: imagenUrl,
         usuario: isAdmin ? pdiFormData.usuarioId : undefined,
@@ -202,8 +203,8 @@ export function useEditLocalidad() {
 
       await refetchLocalidad();
       return true;
-    } catch (err: any) {
-      setErrorMsg(err.message ?? 'Error inesperado al crear PDI');
+    } catch (err) {
+      setErrorMsg(getErrorMessage(err, 'Error inesperado al crear PDI'));
       return false;
     } finally {
       setGuardando(false);
@@ -225,8 +226,8 @@ export function useEditLocalidad() {
       setLocalidad((prev) =>
         prev ? { ...prev, puntosDeInteres: prev.puntosDeInteres?.filter((x) => x.id !== deletedPdi.id) } : prev,
       );
-    } catch (err: any) {
-      alert(err.message ?? 'Error al eliminar PDI');
+    } catch (err) {
+      alert(getErrorMessage(err, 'Error al eliminar PDI'));
     }
   };
 

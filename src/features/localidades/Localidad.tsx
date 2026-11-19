@@ -1,7 +1,7 @@
 import Navbar from '@/components/layout/Navbar';
 import Estrellas from '@/components/ui/Estrellas';
 import { useParams, Link } from 'react-router-dom';
-import { useApiGetById, API_BASE_URL, getImageUrl } from '@/utils/api';
+import { useApiGetById, getImageUrl } from '@/utils/api';
 import { useState } from 'react';
 import PantallaDeCarga from '@/components/ui/PantallaDeCarga';
 import PantallaDeError from '@/components/ui/PantallaDeError';
@@ -9,7 +9,7 @@ import ListadoDeTags from '@/features/tags/ListadoDeTags';
 import ListadoPDI from '@/features/pdi/ListadoPDI';
 import { useBusquedaPDI } from '@/features/pdi/useBusquedaPDI';
 import ListadoPDISkeleton from '@/features/pdi/ListadoPDISkeleton';
-import { useTheme } from '@/context/ThemeContext';
+import { useTheme } from '@/context/useTheme';
 import { Sun, Moon } from 'lucide-react';
 
 interface PDI {

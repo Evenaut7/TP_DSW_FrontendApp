@@ -2,14 +2,16 @@ import React from 'react';
 import FormField from '@/components/forms/FormField';
 import FormSelect from '@/components/forms/FormSelect';
 import TagsSelector from '@/features/tags/TagsSelector';
+import type { Tag } from '@/types';
+import type { PDIFormValues } from './useEditPDI';
 
 type PDIFormEditProps = {
-  form: any;
-  usuarios: any[];
-  localidades: any[];
-  tags: any[];
+  form: PDIFormValues;
+  usuarios: { id: number; nombre: string }[];
+  localidades: { id: number; nombre: string }[];
+  tags: Tag[];
   loading: boolean;
-  onChange: (e: React.ChangeEvent<any>) => void;
+  onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void;
   onSubmit: (e: React.FormEvent) => void;
 };
 
@@ -87,7 +89,7 @@ function PDIForm({
         onChange={onChange}
       />
 
-      <TagsSelector tags={tags} selected={form.tags} onChange={onChange} />
+      <TagsSelector tags={tags} selected={form.tags ?? []} onChange={onChange} />
 
       <button disabled={loading} type="submit" className="btn btn-primary mt-3">
         {loading ? 'Guardando...' : 'Actualizar PDI'}

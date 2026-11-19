@@ -1,3 +1,4 @@
+import { getErrorMessage } from '@/utils/errors';
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useUser } from '@/features/user';
@@ -87,8 +88,8 @@ export function useCreatorEventsPage() {
 
       await refetchPdi();
       return true; // Indica éxito para que el modal se cierre
-    } catch (err: any) {
-      alert(err.message);
+    } catch (err) {
+      alert(getErrorMessage(err));
       return false; // Indica fallo
     } finally {
       setSubmitting(false);
@@ -105,8 +106,8 @@ export function useCreatorEventsPage() {
       if (!res.success) throw new Error(res.error);
       await refetchPdi();
       setEventToDelete(null);
-    } catch (err: any) {
-      alert(err.message);
+    } catch (err) {
+      alert(getErrorMessage(err));
     }
   };
 

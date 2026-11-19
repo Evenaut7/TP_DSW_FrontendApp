@@ -3,13 +3,14 @@ import { MapPin, X } from 'lucide-react';
 import MapSelector from '@/components/map/MapSelector';
 import { useGeocoding } from '@/components/map/useGeocoding';
 import { useReverseGeocoding } from '@/components/map/useReverseGeocoding';
-import type { Provincia } from './useEditPDI';
+import type { Provincia } from '@/types';
+import type Localidad from '../localidades/Localidad';
 
 interface UbicacionModalProps {
   show: boolean;
   onClose: () => void;
   provincias: Provincia[];
-  todasLocalidades: any[];
+  todasLocalidades: Localidad[];
   calle: string;
   altura: number;
   latitud?: number;
@@ -84,7 +85,11 @@ const UbicacionModal: React.FC<UbicacionModalProps> = ({
     provincia === 0
       ? todasLocalidades
       : todasLocalidades.filter(
-          (l) => l.provincia?.id === provincia || l.provincia === provincia,
+          (l) => {
+            // El backend puede devolver la provincia como objeto o como id.
+            const p = l.provincia as unknown as number | { id: number } | undefined;
+            return (typeof p === 'object' ? p?.id : p) === provincia;
+          },
         );
 
   const localidadNombre = todasLocalidades.find(

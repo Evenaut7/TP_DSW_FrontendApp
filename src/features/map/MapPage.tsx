@@ -106,7 +106,7 @@ export default function MapPage() {
       (p) => typeof p.lng === 'number' && typeof p.lat === 'number',
     );
 
-    const features = validPDIs.map((p) => ({
+    const features = validPDIs.map((p): GeoJSON.Feature<GeoJSON.Point> => ({
       type: 'Feature',
       properties: {
         id: p.id,
@@ -122,13 +122,13 @@ export default function MapPage() {
       },
     }));
 
-    const geojson = {
+    const geojson: GeoJSON.FeatureCollection = {
       type: 'FeatureCollection',
       features,
     };
 
     if (map.current.getSource('pdis')) {
-      (map.current.getSource('pdis') as any).setData(geojson);
+      (map.current.getSource('pdis') as maplibregl.GeoJSONSource).setData(geojson);
       return;
     }
 
@@ -153,7 +153,7 @@ export default function MapPage() {
       const feature = e.features?.[0];
       if (!feature) return;
 
-      const coordinates = (feature.geometry as any).coordinates.slice();
+      const coordinates = (feature.geometry as GeoJSON.Point).coordinates.slice() as [number, number];
       const props = feature.properties;
 
       const popupHTML = `

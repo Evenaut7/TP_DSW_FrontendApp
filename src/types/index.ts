@@ -33,6 +33,15 @@ export interface Historia {
   puntoDeInteres: number;
 }
 
+export type Valoracion = {
+  id: number;
+  comentario: string;
+  cantEstrellas: number;
+  fechaHora: string;
+  usuario?: number | { id: number; nombre?: string };
+  puntoDeInteres?: number;
+};
+
 export type PDI = {
   id: number;
   nombre: string;
@@ -43,11 +52,11 @@ export type PDI = {
   lat?: number;
   lng?: number;
   privado: boolean; // nullable: false en backend → siempre presente
-  usuario: number; // ManyToOne serializado como id
+  usuario: number | { id: number }; // ManyToOne: id, u objeto si viene populado
   localidad: Localidad; // ManyToOne populado como objeto
   tags: Tag[]; // ManyToMany → siempre array (vacío o con elementos)
   eventos: Evento[]; // OneToMany → siempre array
-  valoraciones: any[]; // OneToMany → siempre array
+  valoraciones: Valoracion[]; // OneToMany → siempre array
   historias: Historia[]; // OneToMany → siempre array
   promedio: number;
 };
@@ -60,7 +69,7 @@ export type Evento = {
   horaHasta: string;
   estado?: string;
   tags?: Array<number | Tag>;
-  puntoDeInteres?: number;
+  puntoDeInteres?: number | { id: number }; // el backend puede devolver el id o el objeto populado
   usuarios?: number[];
 };
 

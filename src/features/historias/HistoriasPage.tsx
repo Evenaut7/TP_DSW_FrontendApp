@@ -2,10 +2,11 @@ import { useState, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Plus, Pencil, Trash2, ArrowLeft, CalendarRange, Sun, Moon, ImageOff } from 'lucide-react';
 import Navbar from '@/components/layout/Navbar';
-import { useTheme } from '@/context/ThemeContext';
+import { useTheme } from '@/context/useTheme';
 import { getImageUrl, useApiGet } from '@/utils/api';
 import { useHistoriaCRUD } from './useHistoriaCRUD';
 import type { Historia, PDI } from '@/types';
+import type { FormState } from './useHistoriaCRUD';
 
 function formatFecha(iso: string) {
   if (!iso) return '—';
@@ -32,7 +33,7 @@ function HistoriaForm({
   onSubmit,
   onCancel,
 }: {
-  form: any;
+  form: FormState;
   saving: boolean;
   error: string;
   fieldErrors: Record<string, string | undefined>;
@@ -201,7 +202,7 @@ export default function HistoriasPage() {
 
   const [refreshKey, setRefreshKey] = useState(0);
   const { data: pdi, loading: pdiLoading } = useApiGet<PDI>(`/api/puntosDeInteres/${pdiId}?_=${refreshKey}`);
-  const historias: Historia[] = (pdi as any)?.historias ?? [];
+  const historias: Historia[] = pdi?.historias ?? [];
   const onSuccess = useCallback(() => setRefreshKey((k) => k + 1), []);
 
   const {
@@ -249,7 +250,7 @@ export default function HistoriasPage() {
             <div>
               <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white">Historias</h1>
               <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">
-                {(pdi as any)?.nombre} · {historias.length} historia{historias.length !== 1 ? 's' : ''}
+                {pdi?.nombre} · {historias.length} historia{historias.length !== 1 ? 's' : ''}
               </p>
             </div>
           </div>

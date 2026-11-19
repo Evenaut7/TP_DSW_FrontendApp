@@ -1,3 +1,4 @@
+import { getErrorMessage } from '@/utils/errors';
 import React, { useState } from 'react';
 import EventCard from '@/features/eventos/EventCard';
 import {
@@ -89,8 +90,8 @@ const ListadoEventosEditable: React.FC<Props> = ({ pdiId }) => {
   const refrescarEventos = async () => {
     try {
       const refreshed = await getPDIById(pdiId);
-      if (refreshed.success && (refreshed.data as any)?.eventos) {
-        setEvents((refreshed.data as any).eventos);
+      if (refreshed.success && refreshed.data?.eventos) {
+        setEvents(refreshed.data.eventos);
       }
     } catch (e) {
       console.warn('No se pudo refrescar eventos:', e);
@@ -125,8 +126,8 @@ const ListadoEventosEditable: React.FC<Props> = ({ pdiId }) => {
 
       await refrescarEventos();
       return true;
-    } catch (err: any) {
-      console.error('Error guardando evento:', err.message);
+    } catch (err) {
+      console.error('Error guardando evento:', getErrorMessage(err));
       return false;
     } finally {
       setSubmitting(false);
@@ -140,8 +141,8 @@ const ListadoEventosEditable: React.FC<Props> = ({ pdiId }) => {
       if (!result.success) throw new Error(result.error || 'Error al eliminar');
       await refrescarEventos();
       setEventoAEliminar(null);
-    } catch (err: any) {
-      console.error('Error eliminando evento:', err.message);
+    } catch (err) {
+      console.error('Error eliminando evento:', getErrorMessage(err));
     }
   };
 

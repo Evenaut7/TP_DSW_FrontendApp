@@ -3,7 +3,7 @@ import Estrellas from '@/components/ui/Estrellas';
 import { useParams, Link } from 'react-router-dom';
 import { useApiGetById, addFavorito, removeFavorito, getImageUrl } from '@/utils/api';
 import { useUser } from '@/features/user';
-import { useTheme } from '@/context/ThemeContext';
+import { useTheme } from '@/context/useTheme';
 import { useState, useEffect } from 'react';
 import ResultModal from '@/components/modals/ResultModal';
 import PantallaDeCarga from '@/components/ui/PantallaDeCarga';

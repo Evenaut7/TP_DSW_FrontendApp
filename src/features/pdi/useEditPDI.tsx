@@ -1,11 +1,13 @@
+import { getErrorMessage } from '@/utils/errors';
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { z } from 'zod';
 import { useApiGet, getPDIById, uploadImage, updatePDI, getImageUrl, API_BASE_URL } from '@/utils/api';
 import { useUser } from '@/features/user';
 import { useAuthAdmin } from '@/features/auth';
-import { useTheme } from '@/context/ThemeContext';
-import type { Tag, Provincia, PDI } from '@/types';
+import { useTheme } from '@/context/useTheme';
+import type { Tag, Provincia, PDI, User } from '@/types';
+import type Localidad from '../localidades/Localidad.tsx';
 
 interface PDIEditable extends Omit<PDI, 'tags' | 'privado'> {
   usuario: number;
@@ -48,9 +50,9 @@ export function useEditPDI() {
   const { theme, toggleTheme } = useTheme();
 
   const { data: allTags } = useApiGet<Tag[]>('/api/tags');
-  const { data: usuarios } = useApiGet<any[]>('/api/usuarios');
+  const { data: usuarios } = useApiGet<NonNullable<User>[]>('/api/usuarios');
   const { data: provincias } = useApiGet<Provincia[]>('/api/provincias');
-  const { data: todasLocalidades } = useApiGet<any[]>('/api/localidades');
+  const { data: todasLocalidades } = useApiGet<Localidad[]>('/api/localidades');
 
   const [form, setForm] = useState<PDIFormValues>({
     nombre: '',
@@ -115,8 +117,8 @@ export function useEditPDI() {
         setLatitud(d.lat);
         setLongitud(d.lng);
         setImagenActual(d.imagen);
-      } catch (e: any) {
-        setSaveError(e.message || 'Error al cargar el PDI');
+      } catch (e) {
+        setSaveError(getErrorMessage(e, 'Error al cargar el PDI'));
       } finally {
         setCargando(false);
       }
@@ -196,8 +198,8 @@ export function useEditPDI() {
       const res = await updatePDI(pdiId!, payload);
       if (!res.success) throw new Error(res.error || 'Error al actualizar');
       navigate(`/pdi/${pdiId}`);
-    } catch (e: any) {
-      setSaveError(e.message || 'Error al guardar');
+    } catch (e) {
+      setSaveError(getErrorMessage(e, 'Error al guardar'));
     } finally {
       setSaving(false);
     }

@@ -17,8 +17,8 @@ import { useTagCRUD } from '@/features/tags';
 import { useAuthAdmin } from '@/features/auth';
 import RedirectModal from '@/components/modals/RedirectModal';
 import { useUser } from '@/features/user';
-import { useTheme } from '@/context/ThemeContext';
-import { filterPDIs, API_BASE_URL, getImageUrl } from '@/utils/api';
+import { useTheme } from '@/context/useTheme';
+import { filterPDIs, getImageUrl } from '@/utils/api';
 import type { PDI } from '@/types';
 
 const inputCls =
