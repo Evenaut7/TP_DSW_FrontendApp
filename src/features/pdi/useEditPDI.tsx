@@ -114,8 +114,9 @@ export function useEditPDI() {
           localidad: typeof d.localidad === 'object' ? d.localidad.id : d.localidad,
           usuario: d.usuario,
         });
-        setLatitud(d.lat);
-        setLongitud(d.lng);
+        // El backend devuelve null cuando el PDI no tiene coordenadas; el schema solo acepta number | undefined.
+        setLatitud(d.lat ?? undefined);
+        setLongitud(d.lng ?? undefined);
         setImagenActual(d.imagen);
       } catch (e) {
         setSaveError(getErrorMessage(e, 'Error al cargar el PDI'));
