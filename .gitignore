@@ -31,3 +31,9 @@ dist-ssr
 
 # Mantener el ejemplo
 !.env.example
+
+# TypeScript incremental build cache
+tsconfig.tsbuildinfo
+
+# local AI agent tooling artifacts
+.atl/
