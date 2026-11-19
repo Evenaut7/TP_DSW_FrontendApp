@@ -16,16 +16,15 @@
     "jsx": "react-jsx",
 
     /* Path Aliases */
-    "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"],
-      "@/features/*": ["src/features/*"],
-      "@/components/*": ["src/components/*"],
-      "@/pages/*": ["src/pages/*"],
-      "@/utils/*": ["src/utils/*"],
-      "@/types/*": ["src/types/*"],
-      "@/assets/*": ["src/assets/*"],
-      "@/styles/*": ["src/styles/*"]
+      "@/*": ["./src/*"],
+      "@/features/*": ["./src/features/*"],
+      "@/components/*": ["./src/components/*"],
+      "@/pages/*": ["./src/pages/*"],
+      "@/utils/*": ["./src/utils/*"],
+      "@/types/*": ["./src/types/*"],
+      "@/assets/*": ["./src/assets/*"],
+      "@/styles/*": ["./src/styles/*"]
     },
 
     /* Linting */
