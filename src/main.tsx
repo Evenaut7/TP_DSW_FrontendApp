@@ -11,14 +11,17 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import { router } from './router.tsx';
 import { UserProvider } from '@/features/user';
 import { ThemeProvider } from './context/ThemeContext';
+import { ConfirmProvider } from './context/ConfirmProvider';
 import 'leaflet/dist/leaflet.css';
 
 createRoot(document.getElementById('root')!).render(
   <ThemeProvider>
     <UserProvider>
-      <RouterProvider router={router} />
-      <Toaster position="top-right" />
-      <ErrorModalManager />
+      <ConfirmProvider>
+        <RouterProvider router={router} />
+        <Toaster position="top-right" />
+        <ErrorModalManager />
+      </ConfirmProvider>
     </UserProvider>
   </ThemeProvider>,
 );

@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import CreateLocalidadModal from '@/features/localidades/CreateLocalidadModal';
 import { getProvinciaById, deleteLocalidad, getImageUrl } from '@/utils/api';
 import type { Localidad } from '@/types';
+import { useConfirm } from '@/context/useConfirm';
 
 interface Props {
   show: boolean;
@@ -18,6 +19,7 @@ const ListadoLocalidadesModal: React.FC<Props> = ({
   provinciaId,
   provinciaNombre,
 }) => {
+  const confirm = useConfirm();
   const [localidades, setLocalidades] = useState<Localidad[]>([]);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const navigate = useNavigate();
@@ -44,7 +46,13 @@ const ListadoLocalidadesModal: React.FC<Props> = ({
   };
 
   const handleEliminar = async (id: number) => {
-    if (!window.confirm('¿Seguro que querés eliminar esta localidad?')) return;
+    const confirmed = await confirm({
+      title: 'Eliminar localidad',
+      message: '¿Estás seguro que querés eliminar esta localidad?',
+      confirmText: 'Eliminar',
+      variant: 'danger',
+    });
+    if (!confirmed) return;
     try {
       const response = await deleteLocalidad(id);
       if (response.success) {

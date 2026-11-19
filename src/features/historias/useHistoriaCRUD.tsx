@@ -1,3 +1,4 @@
+import { useConfirm } from '@/context/useConfirm';
 import { getErrorMessage } from '@/utils/errors';
 import { useState, useEffect } from 'react';
 import { z } from 'zod';
@@ -68,6 +69,7 @@ const emptyForm = (): FormState => ({
 });
 
 export function useHistoriaCRUD(pdiId: number, onSuccess: () => void) {
+  const confirm = useConfirm();
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [fieldErrors, setFieldErrors] = useState<HistoriaFormErrors>({});
@@ -226,7 +228,13 @@ export function useHistoriaCRUD(pdiId: number, onSuccess: () => void) {
   };
 
   const remove = async (id: number, imagen?: string) => {
-    if (!confirm('¿Eliminar esta historia?')) return;
+    const confirmed = await confirm({
+      title: 'Eliminar historia',
+      message: '¿Estás seguro que querés eliminar esta historia?',
+      confirmText: 'Eliminar',
+      variant: 'danger',
+    });
+    if (!confirmed) return;
     try {
       if (imagen) await deleteImage(imagen);
       await apiFetch(`${API}/${id}`, { method: 'DELETE' });

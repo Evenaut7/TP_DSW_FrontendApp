@@ -1,3 +1,4 @@
+import { useConfirm } from '@/context/useConfirm';
 import { getErrorMessage } from '@/utils/errors';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
@@ -19,6 +20,7 @@ async function deleteImage(filename: string) {
 }
 
 export function useEditLocalidad() {
+  const confirm = useConfirm();
   const { id } = useParams<{ id: string }>();
   const localidadId = id ? parseInt(id, 10) : null;
   const navigate = useNavigate();
@@ -212,7 +214,13 @@ export function useEditLocalidad() {
   };
 
   const handleDeletePDI = async (deletedPdi: PDIType) => {
-    if (!confirm(`¿Eliminar el PDI "${deletedPdi.nombre}"?`)) return;
+    const confirmed = await confirm({
+      title: 'Eliminar punto de interés',
+      message: `¿Estás seguro que querés eliminar el PDI "${deletedPdi.nombre}"?`,
+      confirmText: 'Eliminar',
+      variant: 'danger',
+    });
+    if (!confirmed) return;
     try {
       await deleteImage(deletedPdi.imagen);
       const res = await fetch(`${API_BASE_URL}/api/puntosDeInteres/${deletedPdi.id}`, {

@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import type { Tag, TipoTag } from '@/types';
 import * as api from '@/utils/api';
+import { useConfirm } from '@/context/useConfirm';
 
 export type { Tag, TipoTag };
 
 export function useTagCRUD() {
+    const confirm = useConfirm();
     const [tags, setTags] = useState<Tag[]>([]);
     const [editingId, setEditingId] = useState<number | null>(null);
     const [editNombre, setEditNombre] = useState('');
@@ -66,8 +68,13 @@ export function useTagCRUD() {
     // Eliminar
     const handleDelete = async (id?: number, nombre?: string) => {
         if (!id) return;
-        if (!window.confirm(`¿Estás seguro que querés eliminar el tag "${nombre}"?`))
-            return;
+        const confirmed = await confirm({
+            title: 'Eliminar tag',
+            message: `¿Estás seguro que querés eliminar el tag "${nombre}"?`,
+            confirmText: 'Eliminar',
+            variant: 'danger',
+        });
+        if (!confirmed) return;
 
         const response = await api.deleteTag(id);
         if (response.success) {
